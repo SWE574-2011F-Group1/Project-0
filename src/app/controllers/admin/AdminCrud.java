@@ -9,8 +9,10 @@ import models.*;
 
 import controllers.CRUD;
 import controllers.Secure;
+import controllers.Check;
 
 @With(Secure.class)
+@Check("admin")
 public class AdminCrud extends CRUD {
 }
 
