@@ -1,4 +1,32 @@
 #{extends 'main.html' /}
 #{set title:'Home' /}
 
-#{welcome /}
+<div class="wrapper">
+
+    #{secure.check 'admin'}
+        bar
+    #{/secure.check}
+
+	<div id="pageContent">
+
+		<div class="wikistyle">
+            <h1><a name="welcome">Welcome to SES</a></h1>
+            <p>
+                Congratulation, you are on the first step to join our thriving community that will help you on your needs! You might also help others, if you have what it takes...
+            </p>
+            <h2><a name="what">What</a></h2>
+            <p style="height: 500px;">
+                Some description on what this service provides or does...
+            </p>
+            <h2><a name="join">Join Us</a></h2>
+            <p>
+                Some text fields etc...
+            </p>
+        </div>
+    </div>
+			
+		</div>
+
+	</div>
+
+</div>

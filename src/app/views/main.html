@@ -11,6 +11,19 @@
         #{get 'moreScripts' /}
     </head>
     <body>
+        <div id="header">
+            <div style="float: right; margin-right: 10px;">
+                <input type="text" name="q" value="" id="q"><input type="submit" name="search" value="Search" id="search">
+            </div>
+            #{secure.check 'user'}
+                Welcome ${user} |
+                <a href="/">Profile</a> |
+                <a href="@{Secure.logout}">Logout</a>
+            #{/secure.check}
+            #{else}
+                <a href="/">Welcome</a> | <a href="#">Join Us</a>
+            #{/else}
+        </div>
         #{doLayout /}
     </body>
 </html>
