@@ -12,9 +12,9 @@ public class BaseController extends Controller {
 
     @Before
     public static void initLogin() {
-        if (Security.isConnected()) {
-            renderArgs.put("user", Security.connected());
-        }
+        //if (Security.isConnected()) {
+           // renderArgs.put("user", Security.connected());
+        //}
     }
     
 }
