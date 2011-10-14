@@ -5,6 +5,8 @@
 # Home page
 GET     /                                       Application.index
 GET     /foo                                    admin.Foo.index
+GET     /service/add                            service.New.index
+POST    /service/add                            service.New.save
 
 *       /                                       module:secure
 

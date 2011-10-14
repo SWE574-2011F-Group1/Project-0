@@ -162,6 +162,11 @@ a {
     border-radius: 3px;
 }
 
+#crudHeader div.navigation {float: right; color: gold;}
+#crudHeader div.navigation a {color: gold; text-decoration: underline;}
+#crudHeader div.navigation a:hover {text-decoration: none;}
+#newService span.radio-button {cursor: pointer;}
+
 .wikistyle h1,.wikistyle h2,.wikistyle h3,.wikistyle h4,.wikistyle h5,.wikistyle h6{border:0!important;text-shadow: #fff 1px 1px 0px;}
 .wikistyle h1{font-size:170%!important;border-top:4px solid #aaa!important;padding-top:.5em!important;margin-top:1.5em!important;}
 .wikistyle h1:first-child{margin-top:0!important;padding-top:.25em!important;border-top:none!important;}

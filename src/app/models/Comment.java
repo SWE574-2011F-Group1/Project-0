@@ -1,6 +1,5 @@
 package models;
 
-///CommitDeneme  
 import play.*;
 import play.db.jpa.*;
 

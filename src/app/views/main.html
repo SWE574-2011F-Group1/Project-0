@@ -15,15 +15,25 @@
             <div style="float: right; margin-right: 10px;">
                 <input type="text" name="q" value="" id="q"><input type="submit" name="search" value="Search" id="search">
             </div>
-            #{secure.check 'user'}
+            #{if loggedIn}
                 Welcome ${user} |
+                <a href="@{service.New.index}">Add Service</a> |
                 <a href="/">Profile</a> |
+                #{secure.check 'admin'}
+                    <a href="/admin">Admin</a> |
+                #{/secure.check}
                 <a href="@{Secure.logout}">Logout</a>
-            #{/secure.check}
+            #{/if}
             #{else}
-                <a href="/">Welcome</a> | <a href="#">Join Us</a>
+                <a href="/">Welcome</a> | <a href="@{Secure.login}">Login</a> | <a href="#">Join Us</a>
             #{/else}
         </div>
-        #{doLayout /}
+        <div class="wrapper">
+        	<div id="pageContent">
+        		<div class="wikistyle">
+                    #{doLayout /}
+                </div>
+            </div>
+        </div>
     </body>
 </html>

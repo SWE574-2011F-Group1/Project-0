@@ -6,6 +6,10 @@ package models;
  */
 public enum ServiceType  {
     PROVIDES,
-    REQUESTS
+    REQUESTS;
+    
+    public int getOrdinal() {
+        return ordinal();
+    }
 }
 

@@ -11,6 +11,10 @@ import play.data.validation.*;
 @Entity
 public class Service extends CommentableModel {
     
+    public String title;
+    
+    public String desc;
+    
     @Required
     @ManyToOne
     public Task task;
