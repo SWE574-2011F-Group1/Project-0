@@ -21,6 +21,10 @@ public class User extends CommentableModel {
     
     public long requesterPoint;
     
+    public String password;
+    
+    public boolean isAdmin;
+    
     public long getAbsoluteSocialPoint() {
         return providerPoint + requesterPoint;
     }
@@ -28,6 +32,14 @@ public class User extends CommentableModel {
     public User(String name, String email) {
         this.email = email;
         this.name = name;
+    }
+    
+    public static User connect(String email, String password) {
+        return find("byEmailAndPassword", email, password).first();
+    }
+    
+    public static User findByEmail(String email) {
+    	return find("byEmail", email).first();
     }
 }
 

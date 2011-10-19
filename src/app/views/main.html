@@ -3,7 +3,7 @@
 <html>
     <head>
         <title>#{get 'title' /}</title>
-        <meta charset="${_response_encoding}">
+        <meta charset="UTF-8">
         <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
         #{get 'moreStyles' /}
         <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
@@ -18,6 +18,7 @@
             #{if loggedIn}
                 Welcome ${user} |
                 <a href="@{service.New.index}">Add Service</a> |
+                <a href="@{service.New.list}">Services</a> |
                 <a href="/">Profile</a> |
                 #{secure.check 'admin'}
                     <a href="/admin">Admin</a> |
@@ -31,6 +32,7 @@
         <div class="wrapper">
         	<div id="pageContent">
         		<div class="wikistyle">
+        			<h1>#{get 'title' /}</h1>
                     #{doLayout /}
                 </div>
             </div>

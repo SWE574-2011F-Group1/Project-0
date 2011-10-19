@@ -8,20 +8,31 @@ public class Auth extends Secure.Security {
 
     static boolean authenticate(String username, String password) {
         //FIXME: Nice login auth right?
-        return (username.equals("admin@roy.com") && password.equals("test"))
-                || (username.equals("user@roy.com") && password.equals("test"));
+        User u = User.connect(username, password);
+        if (null != u) {
+        	session.put("loggedIn", true);
+        	session.put("user", u.email);
+        	return true;
+        }
+        return false;
     }
     
     /**
      * This one is for roles, like admin or user...
      */
     static boolean check(String profile) {
-        if ("admin".equals(profile)) {
-            return connected().equals("admin@roy.com");
-        } else if ("user".equals(profile)) {
-            return connected().equals("user@roy.com");
-        }
-        return false;
+    	if (isConnected()) {
+	    	User u = User.findByEmail(connected());
+	    	if (null == u) {
+	    		return false;
+	    	}
+	    	if (profile.equals("user")) {
+	    		return true;
+	    	} else if (profile.equals("admin") && u.isAdmin) {
+	    		return true;
+	    	}
+    	}
+    	return false;
     }
 }
 

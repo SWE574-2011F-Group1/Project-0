@@ -1,7 +1,6 @@
 #{extends 'main.html' /}
-#{set title:'Add Service' /}
+#{set title:'Add Your Service' /}
 
-<h1>Add Your Service</h1>
 <div id="newService">
     #{form @save()}
         #{ifErrors}
@@ -22,6 +21,17 @@
             #{field 'title'}
             <label>Title:</label>
             <input id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.title}" />
+            #{/field}
+        </p>
+        
+        <p>
+            #{field 'taskId'}
+            <label>Task:</label>
+            <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
+            	#{list tasks, as:'t'}
+	               	<option value="${t.id}" />${t.name}
+            	#{/list}
+            </select>
             #{/field}
         </p>
         
