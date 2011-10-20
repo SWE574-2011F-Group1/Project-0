@@ -2,5 +2,5 @@
 
 require:
     - play
-    - play:secure
-    - play:crud
+    - crud
+    - secure
