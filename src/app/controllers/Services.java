@@ -1,20 +1,15 @@
-package controllers.service;
+package controllers;
 
 import play.*;
 import play.mvc.*;
 
 import java.util.*;
 
-import com.sun.tools.corba.se.idl.ForwardEntry;
-
-import controllers.BaseController;
-import controllers.Secure;
-import controllers.Check;
 import models.*;
 
 @With(Secure.class)
 @Check("user")
-public class New extends BaseController {
+public class Services extends BaseController {
 
     public static void index() {
         Service service = new Service();
@@ -40,7 +35,14 @@ public class New extends BaseController {
     }
     
 	public static void list() {
+		//TODO: Pagination...
 		Collection<Service> services = Service.findAll();
-		render(services);
+		Collection<Task> tasks = Task.findAll();
+		render(services, tasks);
+	}
+	
+	public static void detail(long serviceId) {
+		Service service = Service.findById(serviceId);
+		render(service);
 	}
 }

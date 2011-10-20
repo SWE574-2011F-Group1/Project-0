@@ -41,5 +41,9 @@ public class User extends CommentableModel {
     public static User findByEmail(String email) {
     	return find("byEmail", email).first();
     }
+    
+    public String toString() {
+    	return this.name;
+    }
 }
 

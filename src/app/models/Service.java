@@ -13,6 +13,7 @@ public class Service extends CommentableModel {
     
     public String title;
     
+    @Lob
     public String desc;
     
     @Required

@@ -1,3 +1,21 @@
+.clearfix {clear:both;}
+
+div.info span.item {font-weight: bold; color: #67A927;}
+div.info span.item span.value {padding-right: 80px; color: black; font-weight: normal;}
+div.desc {background-color: white; margin-top: 10px; padding: 15px;}
+
+div#serviceDetail input.apply-btn {float: right;}
+div#serviceDetail input.apply-btn.top {margin-top: 20px;}
+
+div.service-list-item {background-color: white; padding: 5px; border-top-right-radius: 5px; border-bottom-left-radius:5px; margin-bottom: 10px;}
+div.service-list-item a {color: #67A927;}
+
+#crudHeader div.navigation {float: right; color: gold;}
+#crudHeader div.navigation a {color: gold; text-decoration: underline;}
+#crudHeader div.navigation a:hover {text-decoration: none;}
+span.radio-button {cursor: pointer;}
+
+/* Default Layout is here, everything else below is copied and pasted */
 
 html {
     overflow-y: scroll;
@@ -161,11 +179,6 @@ a {
     -moz-border-radius: 3px;
     border-radius: 3px;
 }
-
-#crudHeader div.navigation {float: right; color: gold;}
-#crudHeader div.navigation a {color: gold; text-decoration: underline;}
-#crudHeader div.navigation a:hover {text-decoration: none;}
-#newService span.radio-button {cursor: pointer;}
 
 .wikistyle h1,.wikistyle h2,.wikistyle h3,.wikistyle h4,.wikistyle h5,.wikistyle h6{border:0!important;text-shadow: #fff 1px 1px 0px;}
 .wikistyle h1{font-size:170%!important;border-top:4px solid #aaa!important;padding-top:.5em!important;margin-top:1.5em!important;}

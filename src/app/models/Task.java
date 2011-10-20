@@ -17,5 +17,9 @@ public class Task extends Model {
         this.name = name;
         this.point = point;
     }
+    
+    public String toString() {
+    	return this.name + " (" + this.point + ")";
+    }
 }
 
