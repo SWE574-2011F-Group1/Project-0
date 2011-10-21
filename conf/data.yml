@@ -1,9 +1,9 @@
-User(roy):
+SUser(roy):
   email: roy@roy.com
   password: 1234
   name: roy simkes  
   isAdmin: false
-User(admin):
+SUser(admin):
   email: admin@test.com
   password: test
   name: test test
