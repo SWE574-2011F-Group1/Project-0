@@ -1,0 +1,56 @@
+#{extends 'main.html' /}
+#{set title:'Add Your Service' /}
+
+<div id="newService">
+    #{form @save()}
+        #{ifErrors}
+            <p class="error">
+                Please correct these errors.
+            </p>
+        #{/ifErrors}
+
+        <p>
+            #{field 'type'}
+            <label>Type:</label>
+            <span class="radio-button"><input type="radio" value="${service.type.PROVIDES}" name="${field.name}" id="type-provides" /> <span>Provide</span></span>
+            <span class="radio-button"><input type="radio" value="${service.type.REQUESTS}" name="${field.name}" id="type-request" /> <span>Request</span></span>
+            #{/field}
+        </p>
+
+        <p>
+            #{field 'title'}
+            <label>Title:</label>
+            <input id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.title}" />
+            #{/field}
+        </p>
+        
+        <p>
+            #{field 'taskId'}
+            <label>Task:</label>
+            <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
+            	#{list tasks, as:'t'}
+	               	<option value="${t.id}" />${t.name}
+            	#{/list}
+            </select>
+            #{/field}
+        </p>
+        
+        <p>
+            #{field 'description'}
+            <label>Description:</label>
+            <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${service.desc}</textarea>
+            #{/field}
+        </p>
+        
+        <p>
+            <input type="submit" value="Continue &rarr;">
+        </p>
+    #{/form}
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+        $("span.radio-button span").bind("click", function() {
+           $(this).parent().find("input[type=radio]").click();
+        });
+    });
+</script>
