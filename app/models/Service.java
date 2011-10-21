@@ -14,17 +14,17 @@ public class Service extends CommentableModel {
     public String title;
     
     @Lob
-    public String desc;
+    public String description;
     
     @Required
     @ManyToOne
     public Task task;
     
     @ManyToOne
-    public User boss;
+    public SUser boss;
     
     @ManyToOne
-    public User employee;
+    public SUser employee;
     
     @Required
     public ServiceStatus status;

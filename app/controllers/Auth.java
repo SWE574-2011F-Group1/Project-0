@@ -8,7 +8,7 @@ public class Auth extends Secure.Security {
 
     static boolean authenticate(String username, String password) {
         //FIXME: Nice login auth right?
-        User u = User.connect(username, password);
+        SUser u = SUser.connect(username, password);
         if (null != u) {
         	session.put("loggedIn", true);
         	session.put("user", u.email);
@@ -22,7 +22,7 @@ public class Auth extends Secure.Security {
      */
     static boolean check(String profile) {
     	if (isConnected()) {
-	    	User u = User.findByEmail(connected());
+	    	SUser u = SUser.findByEmail(connected());
 	    	if (null == u) {
 	    		return false;
 	    	}

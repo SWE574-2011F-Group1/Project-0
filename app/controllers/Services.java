@@ -19,13 +19,13 @@ public class Services extends BaseController {
         render(service, tasks);
     }
     
-    public static void save(String title, ServiceType type, String desc, long taskId) {
+    public static void save(String title, ServiceType type, String description, long taskId) {
         Logger.info("task " + taskId);
         Service service = new Service();
         service.title = title;
-        service.desc = desc;
+        service.description = description;
         service.type = type;
-        User u = User.findByEmail(session.get("user"));
+        SUser u = SUser.findByEmail(session.get("user"));
         service.boss = u;
         Task task = Task.findById(taskId);
         Logger.info("task: " + task);

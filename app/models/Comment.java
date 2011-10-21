@@ -10,7 +10,7 @@ import java.util.*;
 public class Comment extends Model {
     
     @ManyToOne
-    public User commenter;
+    public SUser commenter;
     
     @Lob
     public String comment;
@@ -20,7 +20,7 @@ public class Comment extends Model {
     public int unhelpfulCount;
     
     
-    public Comment(User u, String comment) {
+    public Comment(SUser u, String comment) {
         this.commenter = u;
         this.comment = comment;
     }
