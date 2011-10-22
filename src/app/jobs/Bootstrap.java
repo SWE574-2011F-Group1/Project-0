@@ -1,5 +1,6 @@
 package jobs;
 
+import models.*;
 import play.jobs.*;
 
 import play.test.*;
@@ -8,7 +9,9 @@ import play.test.*;
 public class Bootstrap extends Job {
     
     public void doJob() {
-        //Fixtures.loadModels("data.yml");
+    	if (SUser.count() < 0) {
+    		Fixtures.loadModels("data.yml");
+    	}
     }
     
 }

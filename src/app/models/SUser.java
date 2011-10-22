@@ -9,7 +9,7 @@ import java.util.*;
 import play.data.validation.*;
 
 @Entity
-public class User extends CommentableModel {
+public class SUser extends CommentableModel {
     
     @Required
     public String name;
@@ -29,16 +29,16 @@ public class User extends CommentableModel {
         return providerPoint + requesterPoint;
     }
     
-    public User(String name, String email) {
+    public SUser(String name, String email) {
         this.email = email;
         this.name = name;
     }
     
-    public static User connect(String email, String password) {
+    public static SUser connect(String email, String password) {
         return find("byEmailAndPassword", email, password).first();
     }
     
-    public static User findByEmail(String email) {
+    public static SUser findByEmail(String email) {
     	return find("byEmail", email).first();
     }
     
