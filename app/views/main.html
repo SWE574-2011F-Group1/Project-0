@@ -11,6 +11,13 @@
         <script src="@{'/public/javascripts/jquery-1.6.2.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         <script src="@{'/public/javascripts/jquery-ui-1.8.16.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         #{get 'moreScripts' /}
+        <script type="text/javascript">
+	        $(document).ready(function(){
+	            $("span.radio-button span").bind("click", function() {
+	               $(this).parent().find("input[type=radio]").click();
+	            });
+	        });
+        </script>
     </head>
     <body>
         <div id="header">

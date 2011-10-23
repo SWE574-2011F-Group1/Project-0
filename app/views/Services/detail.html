@@ -15,6 +15,17 @@
         <span class="item">
             Location: <span class="value">${service.location}</span>
         </span>
+        #{if service?.startDate}
+            <span class="item">
+                Date Interval:
+                <span class="value">
+                    ${service.getFormattedStartDate()}
+                    #{if service?.endDate}
+                    - ${service.getFormattedEndDate()}
+                    #{/if}
+                </span>
+            </span>
+        #{/if}
     </div>
     <input type="button" value="Apply Now!" class="apply-btn" />
     <div class="clearfix"></div>

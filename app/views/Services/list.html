@@ -41,15 +41,23 @@
             <span class="item">
                 Location: <span class="value">${s.location}</span>
             </span>
+            #{if s?.startDate}
+                <span class="item">
+                    Date Interval:
+                    <span class="value">
+                        ${s.getFormattedStartDate()}
+                        #{if s?.endDate}
+                        - ${s.getFormattedEndDate()}
+                        #{/if}
+                    </span>
+                </span>
+            #{/if}
         </div>
     </div>
 #{/list}
 
 <script type="text/javascript" charset="utf-8">
-    $(document).ready(function(){
-        $("span.radio-button span").bind("click", function() {
-           $(this).parent().find("input[type=radio]").click();
-        });
+    $(document).ready(function() {
         $("#filter-btn").bind("click", function() {
             alert("Filtered!");
         });
