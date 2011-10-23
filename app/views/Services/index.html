@@ -10,6 +10,17 @@
         #{/ifErrors}
 
         <p>
+            #{field 'taskId'}
+            <label>Task:</label>
+            <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
+                #{list tasks, as:'t'}
+	               	<option value="${t.id}" />${t.name}
+                #{/list}
+            </select>
+            #{/field}
+        </p>
+
+        <p>
             #{field 'type'}
             <label>Type:</label>
             <span class="radio-button"><input type="radio" value="${service.type.PROVIDES}" name="${field.name}" id="type-provides" /> <span>Provide</span></span>
@@ -25,18 +36,7 @@
         </p>
         
         <p>
-            #{field 'taskId'}
-            <label>Task:</label>
-            <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
-            	#{list tasks, as:'t'}
-	               	<option value="${t.id}" />${t.name}
-            	#{/list}
-            </select>
-            #{/field}
-        </p>
-        
-        <p>
-        	#{field 'location'}
+            #{field 'location'}
             <label>Location:</label>
             <input id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
             #{/field}

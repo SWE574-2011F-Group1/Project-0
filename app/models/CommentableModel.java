@@ -7,9 +7,7 @@ import javax.persistence.*;
 import java.util.*;
 
 public class CommentableModel extends Model {
-    
+
     @OneToMany
     public Set<Comment> comments;
-    
 }
-

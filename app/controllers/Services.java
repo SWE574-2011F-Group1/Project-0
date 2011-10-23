@@ -35,15 +35,15 @@ public class Services extends BaseController {
         list();
     }
     
-	public static void list() {
-		//TODO: Pagination...
-		Collection<Service> services = Service.findAll();
-		Collection<Task> tasks = Task.findAll();
-		render(services, tasks);
-	}
-	
-	public static void detail(long serviceId) {
-		Service service = Service.findById(serviceId);
-		render(service);
-	}
+    public static void list() {
+        //TODO: Pagination...
+        Collection<Service> services = Service.findAll();
+        Collection<Task> tasks = Task.findAll();
+        render(services, tasks);
+    }
+    
+    public static void detail(long serviceId) {
+        Service service = Service.findById(serviceId);
+        render(service);
+    }
 }

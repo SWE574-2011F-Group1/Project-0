@@ -10,8 +10,6 @@ public class Auth extends Secure.Security {
         //FIXME: Nice login auth right?
         SUser u = SUser.connect(username, password);
         if (null != u) {
-        	session.put("loggedIn", true);
-        	session.put("user", u.email);
         	return true;
         }
         return false;
