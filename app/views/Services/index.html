@@ -36,6 +36,13 @@
         </p>
         
         <p>
+        	#{field 'location'}
+            <label>Location:</label>
+            <input id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
+            #{/field}
+        </p>	
+        
+        <p>
             #{field 'description'}
             <label>Description:</label>
             <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${service.description}</textarea>

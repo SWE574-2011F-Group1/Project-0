@@ -16,6 +16,12 @@ public class Service extends CommentableModel {
     @Lob
     public String description;
     
+    public String location;
+    
+    public Date startDate;
+    
+    public Date endDate;
+    
     @Required
     @ManyToOne
     public Task task;
