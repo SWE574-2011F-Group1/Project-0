@@ -16,7 +16,7 @@
             Location: <span class="value">${service.location}</span>
         </span>
         #{if service?.startDate}
-            <span class="item">
+            <span class="item date">
                 Date Interval:
                 <span class="value">
                     ${service.getFormattedStartDate()}
@@ -26,16 +26,21 @@
                 </span>
             </span>
         #{/if}
+        <div class="clearfix"></div>
     </div>
+    <input type="button" value="I made a mistake!" class="edit-btn" />
     <input type="button" value="Apply Now!" class="apply-btn" />
     <div class="clearfix"></div>
     <div class="desc">
         ${service.description}
     </div>
-    <input type="button" value="Apply Now!" class="apply-btn top" />
+    <input type="button" value="Apply Now!" class="apply-btn bot" />
 </div>
 <script>
     $("input[type=button].apply-btn").bind("click", function() {
         alert("You have applied for it...");
     });
+    $("input[type=button].edit-btn").bind("click", function() {
+        document.location = '@{Services.edit}/${service.id}';
+    })
 </script>

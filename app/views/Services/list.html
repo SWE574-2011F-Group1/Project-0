@@ -42,7 +42,7 @@
                 Location: <span class="value">${s.location}</span>
             </span>
             #{if s?.startDate}
-                <span class="item">
+                <span class="item date">
                     Date Interval:
                     <span class="value">
                         ${s.getFormattedStartDate()}
@@ -53,6 +53,7 @@
                 </span>
             #{/if}
         </div>
+            <div class="clearfix"></div>
     </div>
 #{/list}
 

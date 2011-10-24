@@ -8,6 +8,6 @@ import java.util.*;
 import models.*;
 import controllers.CRUD;
 
-public class Services extends AdminCrud {    
+public class Services extends AdminCrud {
 }
 

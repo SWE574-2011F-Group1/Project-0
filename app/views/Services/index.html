@@ -1,11 +1,17 @@
 #{extends 'main.html' /}
-#{set title:'Add Your Service' /}
+
+#{if serviceId}
+    <input type="button" class="back-btn" value="&larr; Nope, my bad!" />
+    #{set title:'Edit Your Service: ' + service.title /}
+#{/if}
+#{else}
+    #{set title:'Add Your Service' /}
+#{/else}
 
 <div id="newService">
     #{form @save()}
         <p class="error hidden">
         </p>
-
         <p>
             #{field 'taskId'}
             <label>Task:</label>
@@ -16,7 +22,6 @@
             </select>
             #{/field}
         </p>
-
         <p>
             #{field 'type'}
             <label>Type:</label>
@@ -27,13 +32,13 @@
         <p>
             #{field 'startDate'}
             <label>Start Date:</label>
-            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass} datepicker" value="${service.title}" />
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass} datepicker" value="${service.getFormattedStartDate()}" />
             #{/field}
         </p>
         <p>
             #{field 'endDate'}
             <label>End Date:</label>
-            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass} datepicker" value="${service.title}" />
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass} datepicker" value="${service.getFormattedEndDate()}" />
             #{/field}
         </p>
         <p>
@@ -42,30 +47,30 @@
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.title}" />
             #{/field}
         </p>
-        
         <p>
             #{field 'location'}
             <label>Location:</label>
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
             #{/field}
         </p>	
-        
         <p>
             #{field 'description'}
             <label>Description:</label>
             <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${service.description}</textarea>
             #{/field}
         </p>
-        
         <p>
             <input type="button" value="Continue &rarr;" id="submit-btn">
         </p>
+        #{if serviceId}
+            <input type="hidden" value="${serviceId}" name="serviceId" id="serviceId" />
+        #{/if}
     #{/form}
 </div>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
         $("input[type=text].datepicker").datepicker({dateFormat: "dd.mm.yy"});
-        
+
         $("input[type=button]#submit-btn").bind("click", function() {
             //Check empty values, show an error if there are any empty values...
             var form = $("form");
@@ -82,8 +87,14 @@
                 }
             });
             if (!errors) {
-            	form.submit();
+                form.submit();
             }
         });
+        #{if serviceId}
+            $("input[type=button].back-btn").bind("click", function() {
+                document.location = '@{Services.detail}/${serviceId}';
+            });
+            $("input[type=radio][name=type][value=${service.type}]").attr("checked", "");
+        #{/if}
     });
 </script>

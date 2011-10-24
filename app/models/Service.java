@@ -61,7 +61,7 @@ public class Service extends CommentableModel {
     
     private String formatDate(Date d) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-        return sdf.format(d);
+        return null != d ? sdf.format(d) : "";
     }
 }
 
