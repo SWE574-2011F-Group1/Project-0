@@ -2,26 +2,45 @@
 #{set title: service.title /}
 
 <div id="serviceDetail">
-	<div class="info">
-		<span class="item">
-			Task: <span class="value">${service.task}</span>
-		</span>
-		<span class="item">
-			Type: <span class="value">${service.type}</span>
-		</span>
-		<span class="item">
-			Owner: <span class="value">${service.boss}</span>
-		</span>
-	</div>
-	<input type="button" value="Apply Now!" class="apply-btn" />
-	<div class="clearfix"></div>
-	<div class="desc">
-		${service.description}
-	</div>
-	<input type="button" value="Apply Now!" class="apply-btn top" />
+    <div class="info">
+        <span class="item">
+            Task: <span class="value">${service.task}</span>
+        </span>
+        <span class="item">
+            Type: <span class="value">${service.type}</span>
+        </span>
+        <span class="item">
+            Owner: <span class="value">${service.boss}</span>
+        </span>
+        <span class="item">
+            Location: <span class="value">${service.location}</span>
+        </span>
+        #{if service?.startDate}
+            <span class="item date">
+                Date Interval:
+                <span class="value">
+                    ${service.getFormattedStartDate()}
+                    #{if service?.endDate}
+                    - ${service.getFormattedEndDate()}
+                    #{/if}
+                </span>
+            </span>
+        #{/if}
+        <div class="clearfix"></div>
+    </div>
+    <input type="button" value="I made a mistake!" class="edit-btn" />
+    <input type="button" value="Apply Now!" class="apply-btn" />
+    <div class="clearfix"></div>
+    <div class="desc">
+        ${service.description}
+    </div>
+    <input type="button" value="Apply Now!" class="apply-btn bot" />
 </div>
 <script>
-	$("input[type=button].apply-btn").bind("click", function() {
-		alert("You have applied for it...");
-	});
+    $("input[type=button].apply-btn").bind("click", function() {
+        alert("You have applied for it...");
+    });
+    $("input[type=button].edit-btn").bind("click", function() {
+        document.location = '@{Services.edit}/${service.id}';
+    })
 </script>

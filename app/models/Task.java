@@ -22,4 +22,3 @@ public class Task extends Model {
     	return this.name + " (" + this.point + ")";
     }
 }
-

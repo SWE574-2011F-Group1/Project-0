@@ -1,5 +1,6 @@
 package jobs;
 
+import models.*;
 import play.jobs.*;
 
 import play.test.*;

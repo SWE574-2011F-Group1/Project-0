@@ -10,7 +10,6 @@ import models.*;
 public class Application extends BaseController {
 
     public static void index() {
-        //List<User> xx = User.findAll();
         render();
     }
 

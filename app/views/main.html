@@ -1,14 +1,23 @@
 <!DOCTYPE html>
-
+ 
 <html>
     <head>
         <title>#{get 'title' /}</title>
         <meta charset="UTF-8">
-        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
+       	<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/smoothness/jquery-ui-1.8.16.custom.css'}">
         #{get 'moreStyles' /}
         <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
-        <script src="@{'/public/javascripts/jquery-1.5.2.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <script src="@{'/public/javascripts/jquery-1.6.2.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <script src="@{'/public/javascripts/jquery-ui-1.8.16.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         #{get 'moreScripts' /}
+        <script type="text/javascript">
+	        $(document).ready(function(){
+	            $("span.radio-button span").bind("click", function() {
+	               $(this).parent().find("input[type=radio]").click();
+	            });
+	        });
+        </script>
     </head>
     <body>
         <div id="header">
@@ -31,9 +40,9 @@
             #{/else}
         </div>
         <div class="wrapper">
-        	<div id="pageContent">
-        		<div class="wikistyle">
-        			<h1>#{get 'title' /}</h1>
+            <div id="pageContent">
+                <div class="wikistyle">
+                    <h1>#{get 'title' /}</h1>
                     #{doLayout /}
                 </div>
             </div>

@@ -13,10 +13,17 @@ public class BaseController extends Controller {
     @Before
     public static void initLogin() {
         if (Security.isConnected()) {
-           renderArgs.put("user", Security.connected());
-           renderArgs.put("loggedIn", true);
+        	//Email
+        	renderArgs.put("user", Security.connected());
+        	renderArgs.put("loggedIn", true);
         }
     }
-    
+    /*
+    @Before
+    action()
+    @After
+    templaterender()
+    @Finally
+    */
 }
 

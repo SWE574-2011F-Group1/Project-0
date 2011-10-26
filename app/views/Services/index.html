@@ -1,56 +1,100 @@
 #{extends 'main.html' /}
-#{set title:'Add Your Service' /}
+
+#{if serviceId}
+    <input type="button" class="back-btn" value="&larr; Nope, my bad!" />
+    #{set title:'Edit Your Service: ' + service.title /}
+#{/if}
+#{else}
+    #{set title:'Add Your Service' /}
+#{/else}
 
 <div id="newService">
     #{form @save()}
-        #{ifErrors}
-            <p class="error">
-                Please correct these errors.
-            </p>
-        #{/ifErrors}
-
-        <p>
-            #{field 'type'}
-            <label>Type:</label>
-            <span class="radio-button"><input type="radio" value="${service.type.PROVIDES}" name="${field.name}" id="type-provides" /> <span>Provide</span></span>
-            <span class="radio-button"><input type="radio" value="${service.type.REQUESTS}" name="${field.name}" id="type-request" /> <span>Request</span></span>
-            #{/field}
+        <p class="error hidden">
         </p>
-
-        <p>
-            #{field 'title'}
-            <label>Title:</label>
-            <input id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.title}" />
-            #{/field}
-        </p>
-        
         <p>
             #{field 'taskId'}
             <label>Task:</label>
             <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
-            	#{list tasks, as:'t'}
+                #{list tasks, as:'t'}
 	               	<option value="${t.id}" />${t.name}
-            	#{/list}
+                #{/list}
             </select>
             #{/field}
         </p>
-        
+        <p>
+            #{field 'type'}
+            <label>Type:</label>
+            <span class="radio-button"><input type="radio" value="${service.type.REQUESTS}" checked name="${field.name}" id="type-request" /> <span>Request</span></span>
+            <span class="radio-button"><input type="radio" value="${service.type.PROVIDES}" name="${field.name}" id="type-provides" /> <span>Provide</span></span>
+            #{/field}
+        </p>
+        <p>
+            #{field 'startDate'}
+            <label>Start Date:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass} datepicker" value="${service.getFormattedStartDate()}" />
+            #{/field}
+        </p>
+        <p>
+            #{field 'endDate'}
+            <label>End Date:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass} datepicker" value="${service.getFormattedEndDate()}" />
+            #{/field}
+        </p>
+        <p>
+            #{field 'title'}
+            <label>Title:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.title}" />
+            #{/field}
+        </p>
+        <p>
+            #{field 'location'}
+            <label>Location:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
+            #{/field}
+        </p>	
         <p>
             #{field 'description'}
             <label>Description:</label>
             <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${service.description}</textarea>
             #{/field}
         </p>
-        
         <p>
-            <input type="submit" value="Continue &rarr;">
+            <input type="button" value="Continue &rarr;" id="submit-btn">
         </p>
+        #{if serviceId}
+            <input type="hidden" value="${serviceId}" name="serviceId" id="serviceId" />
+        #{/if}
     #{/form}
 </div>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
-        $("span.radio-button span").bind("click", function() {
-           $(this).parent().find("input[type=radio]").click();
+        $("input[type=text].datepicker").datepicker({dateFormat: "dd.mm.yy"});
+
+        $("input[type=button]#submit-btn").bind("click", function() {
+            //Check empty values, show an error if there are any empty values...
+            var form = $("form");
+            var errors = false;
+            form.find("textarea#description, input#location, input#title").each(function(item, key) {
+                var errorDiv = $("p.error").addClass("hidden").html("");
+                errors = false;
+                if (!$(this).val()) {
+                    errorDiv.html("This field cannot be empty");
+                    errorDiv.removeClass("hidden");
+                    $(this).focus();
+                    errors = true;
+                    return false;
+                }
+            });
+            if (!errors) {
+                form.submit();
+            }
         });
+        #{if serviceId}
+            $("input[type=button].back-btn").bind("click", function() {
+                document.location = '@{Services.detail}/${serviceId}';
+            });
+            $("input[type=radio][name=type][value=${service.type}]").attr("checked", "");
+        #{/if}
     });
 </script>

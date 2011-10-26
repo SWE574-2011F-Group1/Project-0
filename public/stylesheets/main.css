@@ -1,11 +1,17 @@
 .clearfix {clear:both;}
 
-div.info span.item {font-weight: bold; color: #67A927;}
-div.info span.item span.value {padding-right: 80px; color: black; font-weight: normal;}
+form p label {width:100px; float: left;}
+form input[type=text]:not(.datepicker), form textarea {width: 300px;}
+form textarea {height: 100px;}
+
+div.info span.item {font-weight: bold; color: #67A927; width:200px; float: left; display: block;}
+div.info span.item.date {width:300px}
+div.info span.item span.value {color: black; font-weight: normal;}
 div.desc {background-color: white; margin-top: 10px; padding: 15px;}
 
 div#serviceDetail input.apply-btn {float: right;}
-div#serviceDetail input.apply-btn.top {margin-top: 20px;}
+div#serviceDetail input.apply-btn.bot {margin-top: 20px;}
+div#serviceDetail div.desc {border-top-right-radius: 5px; border-bottom-left-radius:5px;}
 
 div.service-list-item {background-color: white; padding: 5px; border-top-right-radius: 5px; border-bottom-left-radius:5px; margin-bottom: 10px;}
 div.service-list-item a {color: #67A927;}
@@ -14,6 +20,10 @@ div.service-list-item a {color: #67A927;}
 #crudHeader div.navigation a {color: gold; text-decoration: underline;}
 #crudHeader div.navigation a:hover {text-decoration: none;}
 span.radio-button {cursor: pointer;}
+
+p.error {margin:5px; padding: 5px; background-color: red; color: white; font-weight: bold;}
+
+.hidden {display: none;}
 
 /* Default Layout is here, everything else below is copied and pasted */
 
