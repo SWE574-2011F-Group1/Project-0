@@ -1,6 +1,7 @@
 package jobs;
 
 import models.*;
+import play.Logger;
 import play.jobs.*;
 
 import play.test.*;

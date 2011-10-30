@@ -23,25 +23,31 @@ public class SUser extends CommentableModel {
     
     public String password;
     
+    public String fbId;
+    
     public boolean isAdmin;
     
     public long getAbsoluteSocialPoint() {
         return providerPoint + requesterPoint;
     }
-    
+
     public SUser(String name, String email) {
         this.email = email;
         this.name = name;
     }
-    
+
     public static SUser connect(String email, String password) {
         return find("byEmailAndPassword", email, password).first();
     }
-    
+
     public static SUser findByEmail(String email) {
-    	return find("byEmail", email).first();
+        return find("byEmail", email).first();
     }
-    
+
+    public static SUser findByFbId(String fbId) {
+        return find("byFbId", fbId).first();
+    }
+
     public String toString() {
     	return this.name;
     }

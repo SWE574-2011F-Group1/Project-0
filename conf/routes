@@ -10,6 +10,7 @@ GET     /foo                                    admin.Foo.index
 *       /services/detail/?                      Services.list
 *       /services/edit/{serviceId}              Services.edit
 *       /services/edit/?                        Services.list
+*       /fbLogin/?                              BaseController.fbLogin
 
 *       /                                       module:secure
 
