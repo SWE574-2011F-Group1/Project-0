@@ -59,8 +59,15 @@ public class Services extends BaseController {
 
     public static void list() {
         //TODO: Pagination...
-        Collection<Service> services = Service.findAll();
-        Collection<Task> tasks = Task.findAll();
+        Collection<Service> services = null;
+        Logger.info("fooo: %s", params.get("task"));
+        if (params._contains("task") && null != params.get("task") && !params.get("task").equals("")) {
+            Logger.info("hede ho o");
+            services = Service.findByTask(Long.valueOf(params.get("task")));
+        } else {
+            services = Service.findAll();
+        }
+        Collection<Task> tasks = Task.findWithWeights();
         render(services, tasks);
     }
 

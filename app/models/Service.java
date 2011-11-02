@@ -63,5 +63,9 @@ public class Service extends CommentableModel {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         return null != d ? sdf.format(d) : "";
     }
+    
+    public static List<Service> findByTask(long taskId) {
+        return find("byTask.id", taskId).fetch();
+    }
 }
 

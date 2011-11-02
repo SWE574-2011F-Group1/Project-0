@@ -1,13 +1,17 @@
 #{extends 'main.html' /}
 #{set title:'Services List' /}
 
+<div class="sidebar">
+    <div id="task-cloud" class="cloud"></div>
+</div>
+
 <div class="filter">
     <span class="">
         Task:
         <span class="options">
             <select id="filterTask" name="filterTask">
                 #{list tasks, as:'t'}
-                       <option value="${t.id}" />${t.name}
+                    <option value="${t.id}" />${t.name}
                 #{/list}
             </select>
         </span>
@@ -24,6 +28,16 @@
     <input type="button" value="Filter!" name="filter-btn" id="filter-btn" style="position: relative; bottom:1px;" />
     <hr />
 </div>
+
+<script type="text/javascript" charset="utf-8">
+    $("document").ready(function() {
+       var words = new Array();
+       #{list tasks, as:'t'}
+           words.push({text:"${t.name}", url:"@{Services.list}?task=${t.id}", weight: ${t.weight}})
+       #{/list}
+       $("div#task-cloud").jQCloud(words);
+    });
+</script>
 
 #{list services, as:'s'}
     <div class="service-list-item">

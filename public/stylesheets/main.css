@@ -28,6 +28,9 @@ p.error {margin:5px; padding: 5px; background-color: red; color: white; font-wei
 
 .fb-login-btn {cursor: pointer; background-image: url("../images/fb-login-btn.png"); width: 87px; height:21px;}
 
+.sidebar {position: absolute; right: 0px; height: 500px; width: 250px;}
+.cloud {height: 500px; width: 250px;}
+
 /* Default Layout is here, everything else below is copied and pasted */
 
 html {
