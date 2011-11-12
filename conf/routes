@@ -11,6 +11,8 @@ GET     /foo                                    admin.Foo.index
 *       /services/edit/{serviceId}              Services.edit
 *       /services/edit/?                        Services.list
 *       /fbLogin/?                              BaseController.fbLogin
+*       /services/search                        Services.search
+*       /services/ajaxDeneme                    Services.ajaxDeneme
 
 *       /                                       module:secure
 

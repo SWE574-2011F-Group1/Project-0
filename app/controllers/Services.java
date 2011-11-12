@@ -76,4 +76,138 @@ public class Services extends BaseController {
         boolean showEditBtn = Auth.connected().equals(service.boss.email);
         render(service, showEditBtn);
     }
+    public static void search(int searchDone,String title, int serviceType, 
+			String description, long taskId, String location, 
+			String startDate, String endDate, int maxBasePoint,String tags) {
+		Date sd, ed;
+		// Map<String,String> errors=new HashMap<String,String>();
+		String error = "";
+		ServiceSearchCriteria sc = new ServiceSearchCriteria();
+
+		if (searchDone == 1) {
+			sc.setDescription(description.trim());
+			sc.setEndDate(endDate);
+			sc.setLocation(location.trim());
+			sc.setServiceType(serviceType);
+			sc.setStartDate(startDate);
+			sc.setTitle(title.trim());
+			sc.setTaskId(taskId);
+			sc.setMaxBasePoint(maxBasePoint);
+			sc.setTags(tags.trim());
+		} else if (searchDone == 2) {
+			System.out.println("title=" + title);
+			sc.setTitle(title.trim());
+		}
+
+		if (searchDone == 1 && !startDate.equals("") && !endDate.equals("")) {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+			try {
+				sd = sdf.parse(startDate);
+				ed = sdf.parse(endDate);
+				if (sd.after(ed)) {
+					// errors.put("endDate","endDate must be after start date");
+					error = "End date must be after start date";
+					searchDone = 0;
+				}
+			} catch (ParseException e) {
+				// FIXME: Find out what to do if this occurs...
+			}
+
+		}
+
+		if (searchDone == 0) {
+			Collection<Task> tasks = Task.findAll();
+			List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
+			serviceTypes.add(ServiceType.REQUESTS);
+			serviceTypes.add(ServiceType.PROVIDES);
+			render(error, serviceTypes, tasks, sc);
+		} else if (searchDone == 1) {
+			searchList(sc, false);
+		} else {
+			searchList(sc, true);
+		}
+	}
+
+	public static void searchList(ServiceSearchCriteria sc, boolean quickSearch) {
+
+		Collection<Service> services = null;
+		if (!quickSearch) {
+			services = Service.find(prepareQueryForServiceSearch(sc), null)
+					.fetch();
+		} else {
+			services = Service.find(
+					prepareQueryForQuickServiceSearch(sc.getTitle()), null)
+					.fetch();
+		}
+		Collection<Task> tasks = Task.findAll();
+		render(services, tasks);
+	}
+
+	private static String prepareQueryForQuickServiceSearch(String title) {
+		String sql = "select s from Service s, Task t where s.task=t";
+		sql += " and s.title LIKE '%" + title + "%'";
+		return sql;
+	}
+
+	private static String prepareQueryForServiceSearch(ServiceSearchCriteria sc) {
+		String sql = "select s from Service s, Task t where s.task=t";
+
+		if (sc.getTaskId() != -1) {
+			Task task = Task.findById(sc.getTaskId());
+			sql += " and s.task=" + task.id;
+		}
+
+		if (!sc.getTitle().equals("")) {
+			sql += " and s.title LIKE '%" + sc.getTitle() + "%'";
+		}
+
+		if (!sc.getDescription().equals("")) {
+			sql += " and s.description LIKE '%" + sc.getDescription() + "%'";
+		}
+
+		if (!sc.getDescription().equals("")) {
+			sql += " and s.description LIKE '%" + sc.getDescription() + "%'";
+		}
+
+		if (sc.getMaxBasePoint() != -1) {
+			sql += " and t.point<=" + sc.getMaxBasePoint();
+		}
+
+		if (!sc.getLocation().equals("")) {
+			sql += " and s.location LIKE '%" + sc.getLocation() + "%'";
+		}
+
+		if (sc.getServiceType() != -1) {
+			sql += " and s.type=" + sc.getServiceType();
+		}
+		if (!sc.getStartDate().equals("")) {
+			String sd = "";
+			StringTokenizer st = new StringTokenizer(sc.getStartDate(), ".");
+			String d = st.nextToken();
+			String m = st.nextToken();
+			String y = st.nextToken();
+			sd = y + "-" + m + "-" + d;
+			sql += " and s.startDate>='" + sd + "'";
+		}
+		if (!sc.getEndDate().equals("")) {
+			String ed = "";
+			StringTokenizer st = new StringTokenizer(sc.getEndDate(), ".");
+			String d = st.nextToken();
+			String m = st.nextToken();
+			String y = st.nextToken();
+			ed = y + "-" + m + "-" + d;
+			sql += " and s.endDate<='" + ed + "'";
+		}
+
+		return sql;
+	}
+
+	public static void ajaxDeneme() {
+
+		String suggestword = params.get("suggestword");
+		String query = "select s.name from SUser s where s.name like '"
+				+ suggestword + "%'";
+		List<SUser> users = SUser.find(query).fetch();
+		renderJSON(users);
+	}
 }

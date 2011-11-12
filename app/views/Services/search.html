@@ -1,0 +1,131 @@
+#{extends 'main.html' /}
+#{set title:'Search Service' /}
+
+<div>
+     #{if error}
+         <p class="error">
+             ${error}
+         </p>
+     #{/if}
+    #{form @search()}
+        <input type="hidden" name="searchDone" value="1"/>
+        <table>
+            <tr>
+                <th>Task:</th>
+                <td>
+                    #{field 'taskId'}
+                    <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
+                        <option value="-1" />ALL
+                        #{list tasks, as:'t'}
+                            #{if t.id==sc.taskId}
+                                 <option value="${t.id}" selected/>${t.name}
+                             #{/if}
+                             #{else}
+                                 <option value="${t.id}" />${t.name}
+                             #{/else}
+                        #{/list}
+                    </select>
+                    #{/field}
+                </td>
+            </tr>
+            <tr>   
+                <th>Service type:</th>
+                <td>
+                    #{field 'serviceType'}
+                    <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
+                        <option value="-1" />ALL
+                        #{list serviceTypes, as:'type'}
+                            #{if type.ordinal==sc.serviceType}
+                                 <option value="${type.ordinal}" selected/>${type}
+                             #{/if}
+                             #{else}
+                                 <option value="${type.ordinal}" />${type}
+                             #{/else}
+                        #{/list}
+                              
+                    </select>
+                    #{/field}
+                </td>
+            </tr>
+            <tr>   
+                <th>Title:</th>
+                <td>
+                    #{field 'title'}
+                        <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${sc.title}" />
+                    #{/field}
+                </td>
+            </tr>
+            <tr>   
+                <th>Description:</th>
+                <td>
+                    #{field 'description'}
+                        <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${sc.description}" />
+                    #{/field}
+                </td>
+            </tr>
+            <tr>   
+                <th>Location:</th>
+                <td>
+                    #{field 'location'}
+                        <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${sc.location}" />
+                    #{/field}
+                </td>
+            </tr>
+            <tr>   
+                <th>Max Base Point:</th>
+                <td>
+                    #{field 'maxBasePoint'}
+                        <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
+                            #{list items:100..0, as:'i'}
+                                   <option value="${i}" />${i}
+                            #{/list}
+                        </select>
+                    #{/field}
+                </td>
+            </tr>
+            <tr>   
+                <th>Date Interval:</th>
+                #{if error}
+                     <td bgcolor="RED">
+                 #{/if}
+                 #{else}
+                     <td>
+                 #{/else}
+                    #{field 'startDate'}
+                        <input type="text" id="${field.name}" name="${field.name}" readonly="readonly" class="${field.errorClass} datepicker" value="${sc.startDate}" />
+                    #{/field}
+                   
+                    #{field 'endDate'}
+                        <input type="text" id="${field.name}" name="${field.name}" readonly="readonly" class="${field.errorClass} datepicker" value="${sc.endDate}" />
+                    #{/field}
+                </td>
+            </tr>
+            <tr>   
+                <th>Tags:</th>
+                <td>
+                    #{field 'tags'}
+                        <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${sc.tags}" />
+                    #{/field}
+                </td>
+            </tr>
+            <tr>   
+                <td colspan="2" align="right">
+                    <input type="submit" value="Search &rarr;" id="submit-btn">
+                </td>
+            </tr>
+        </table>
+    #{/form}
+   
+    <INPUT type="text" size="50" id="text1" onkeyup="doSuggest(this.value,this.id);" />
+<br/>
+<div id = "theResults" style =
+"width:22em;border:1px black solid;padding-left:2px;padding-right:2px; visibility: hidden">
+</div>
+
+
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+        $("input[type=text].datepicker").datepicker({dateFormat: "dd.mm.yy"});
+    });
+</script> 

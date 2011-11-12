@@ -1,0 +1,66 @@
+#{extends 'main.html' /}
+#{set title:'Service Search Results' /}
+
+<div class="filter">
+    <span class="">
+        Task:
+        <span class="options">
+            <select id="filterTask" name="filterTask">
+                #{list tasks, as:'t'}
+                       <option value="${t.id}" />${t.name}
+                #{/list}
+            </select>
+        </span>
+    </span>
+    |
+    <span class="">
+        Type:
+        <span class="options">
+            <span class="radio-button"><input type="radio" value="provides" name="foo" id="type-provides" /> <span>Provide</span></span>
+            <span class="radio-button"><input type="radio" value="requests" name="foo" id="type-request" /> <span>Request</span></span>
+        </span>
+    </span>
+    |
+    <input type="button" value="Filter!" name="filter-btn" id="filter-btn" style="position: relative; bottom:1px;" />
+    <hr />
+</div>
+
+#{list services, as:'s'}
+    <div class="service-list-item">
+        <a href="@{Services.detail}/${s.id}">${s.title}</a>
+        <div class="info">
+            <span class="item">
+                Task: <span class="value">${s.task}</span>
+            </span>
+            <span class="item">
+                Type: <span class="value">${s.type}</span>
+            </span>
+            <span class="item">
+                Owner: <span class="value">${s.boss}</span>
+            </span>
+            <span class="item">
+                Location: <span class="value">${s.location}</span>
+            </span>
+            #{if s?.startDate}
+                <span class="item date">
+                    Date Interval:
+                    <span class="value">
+                        ${s.getFormattedStartDate()}
+                        #{if s?.endDate}
+                        - ${s.getFormattedEndDate()}
+                        #{/if}
+                    </span>
+                </span>
+            #{/if}
+        </div>
+            <div class="clearfix"></div>
+    </div>
+#{/list}
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+        $("#filter-btn").bind("click", function() {
+            alert("Filtered!");
+        });
+    });
+</script>
