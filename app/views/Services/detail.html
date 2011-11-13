@@ -29,14 +29,21 @@
         <div class="clearfix"></div>
     </div>
     <input type="button" value="I made a mistake!" class="edit-btn" />
-    <input type="button" value="Apply Now!" class="apply-btn" />
+    <input type="button" value="Apply Now!" class="apply-btn right" />
+    <input type="button" value="Send Message!" class="pm-btn right" />
     <div class="clearfix"></div>
     <div class="desc">
         ${service.description}
     </div>
-    <input type="button" value="Apply Now!" class="apply-btn bot" />
+    <div class="bot">
+        <input type="button" value="Apply Now!" class="apply-btn right" />
+        <input type="button" value="Send Message!" class="pm-btn right" />
+    </div>
 </div>
 <script>
+    $("input[type=button].pm-btn").bind("click", function() {
+        document.location = '@{UserMessages.compose}?serviceId=${service.id}';
+    });
     $("input[type=button].apply-btn").bind("click", function() {
         alert("You have applied for it...");
     });

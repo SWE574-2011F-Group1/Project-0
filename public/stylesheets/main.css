@@ -12,12 +12,11 @@ div.info span.item.date {width:300px}
 div.info span.item span.value {color: black; font-weight: normal;}
 div.desc {background-color: white; margin-top: 10px; padding: 15px;}
 
-div#serviceDetail input.apply-btn {float: right;}
-div#serviceDetail input.apply-btn.bot {margin-top: 20px;}
+div#serviceDetail div.bot {margin-top: 20px;}
 div#serviceDetail div.desc {border-top-right-radius: 5px; border-bottom-left-radius:5px;}
 
-div.service-list-item {background-color: white; padding: 5px; border-top-right-radius: 5px; border-bottom-left-radius:5px; margin-bottom: 10px;}
-div.service-list-item a {color: #67A927;}
+div.list-item {background-color: white; padding: 5px; border-top-right-radius: 5px; border-bottom-left-radius:5px; margin-bottom: 10px;}
+div.list-item a {color: #67A927;}
 
 #crudHeader div.navigation {float: right; color: gold;}
 #crudHeader div.navigation a {color: gold; text-decoration: underline;}
