@@ -20,6 +20,7 @@
 	               	<option value="${t.id}" />${t.name}
                 #{/list}
             </select>
+            <span class="tip">This service is related with what? You shall gain points based on this option.</span>
             #{/field}
         </p>
         <p>
@@ -27,35 +28,41 @@
             <label>Type:</label>
             <span class="radio-button"><input type="radio" value="${service.type.REQUESTS}" checked name="${field.name}" id="type-request" /> <span>Request</span></span>
             <span class="radio-button"><input type="radio" value="${service.type.PROVIDES}" name="${field.name}" id="type-provides" /> <span>Provide</span></span>
+            <span class="tip">So you actually need something as a requester or do you provide a service to others?</span>
             #{/field}
         </p>
         <p>
             #{field 'startDate'}
             <label>Start Date:</label>
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass} datepicker" value="${service.getFormattedStartDate()}" />
+            <span class="tip">Do you have an availability date for this service?</span>
             #{/field}
         </p>
         <p>
             #{field 'endDate'}
             <label>End Date:</label>
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass} datepicker" value="${service.getFormattedEndDate()}" />
+            <span class="tip">Perhaps this service has a deadline?</span>
             #{/field}
         </p>
         <p>
             #{field 'title'}
             <label>Title:</label>
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.title}" />
+            <span class="tip">What do you call for this service? Something that will define your service uniquely. People should remember it too!</span>
             #{/field}
         </p>
         <p>
             #{field 'location'}
             <label>Location:</label>
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
+            <span class="tip">Well, if you are in Istanbul, someone in New York may not help you! Best tell it!</span>
             #{/field}
         </p>	
         <p>
             #{field 'description'}
-            <label>Description:</label>
+            <label>Description:</label><br />
+            <span class="tip">Give a little bit more detail about your need or service. Something that will define the boundaries of it etc.</span>
             <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${service.description}</textarea>
             #{/field}
         </p>
