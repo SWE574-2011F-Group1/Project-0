@@ -66,6 +66,16 @@
                     </span>
                 </span>
             #{/if}
+            #{if s.stags!=null}
+	            <span class="item">
+	                Tags: <span class="value">
+	                 #{list s.stags, as:'tag'}
+	               		${tag.text}
+	               		${tag_isLast ? '' : ','}
+                	#{/list}
+                	</span>
+	            </span>
+            #{/if}
         </div>
             <div class="clearfix"></div>
     </div>

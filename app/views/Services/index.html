@@ -67,6 +67,17 @@
             #{/field}
         </p>
         <p>
+            #{field 'tags'}
+            <label>Tags:</label>
+            #{if service.stags!=null}
+            	<input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.stags}" />
+           	#{/if}
+           	#{else}
+                <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
+           	#{/else}
+           	#{/field}
+        </p>
+        <p>
             <input type="button" value="Continue &rarr;" id="submit-btn">
         </p>
         #{if serviceId}

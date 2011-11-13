@@ -28,6 +28,9 @@ public class Service extends CommentableModel {
     @NotEmpty
     public String location;
     
+    @OneToMany
+    public Set<STag> stags;
+    
     public Date startDate;
     
     public Date endDate;

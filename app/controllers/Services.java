@@ -31,7 +31,8 @@ public class Services extends BaseController {
         renderTemplate("Services/index.html", service, tasks, serviceId);
     }
 
-    public static void save(String title, ServiceType type, String description, long taskId, String location, String startDate, String endDate) {
+    public static void save(String title, ServiceType type, String description, long taskId, 
+    		String location, String startDate, String endDate,String tags) {
         Service service;
         if (params._contains("serviceId")) {
             service = Service.findById(Long.parseLong(params.get("serviceId")));
@@ -51,12 +52,25 @@ public class Services extends BaseController {
         }
         SUser u = SUser.findByEmail(Secure.Security.connected());
         service.boss = u;
+        if(!tags.trim().equals("")){
+        	StringTokenizer st=new StringTokenizer(tags,",");
+        	Set<STag> sTags=new HashSet<STag>();
+        	while(st.hasMoreTokens()){
+        		STag t=new STag(st.nextToken().trim());
+        		t=t.save();
+        		sTags.add(t);
+        	}
+        	service.stags=sTags;
+        }
+        
         Task task = Task.findById(taskId);
         service.task = task;
+        
+        
+        service.em().clear();
         service.save();
         detail(service.id);
     }
-
     public static void list() {
         //TODO: Pagination...
         Collection<Service> services = null;
@@ -149,7 +163,7 @@ public class Services extends BaseController {
 	}
 
 	private static String prepareQueryForServiceSearch(ServiceSearchCriteria sc) {
-		String sql = "select s from Service s, Task t where s.task=t";
+		String sql = "select s from Service s, Task t, STag st where s.task=t";
 
 		if (sc.getTaskId() != -1) {
 			Task task = Task.findById(sc.getTaskId());
@@ -179,6 +193,10 @@ public class Services extends BaseController {
 		if (sc.getServiceType() != -1) {
 			sql += " and s.type=" + sc.getServiceType();
 		}
+		/*if (!sc.getTags().equals("")) {
+			
+			sql += " and st.text LIKE '" + sc.getTags()+;
+		}*/
 		if (!sc.getStartDate().equals("")) {
 			String sd = "";
 			StringTokenizer st = new StringTokenizer(sc.getStartDate(), ".");

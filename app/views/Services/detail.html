@@ -26,6 +26,16 @@
                 </span>
             </span>
         #{/if}
+         #{if service.stags!=null}
+	            <span class="item">
+	                Tags: <span class="value">
+	                 #{list service.stags, as:'tag'}
+	               		${tag.text}
+	               		${tag_isLast ? '' : ','}
+                	#{/list}
+                	</span>
+	            </span>
+            #{/if}
         <div class="clearfix"></div>
     </div>
     <input type="button" value="I made a mistake!" class="edit-btn" />
