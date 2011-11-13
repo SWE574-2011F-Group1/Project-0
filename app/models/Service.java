@@ -67,5 +67,16 @@ public class Service extends CommentableModel {
     public static List<Service> findByTask(long taskId) {
         return find("byTask.id", taskId).fetch();
     }
+    
+    public static List<Service> findByUserAndStatus(long userId, int type) {
+    	ArrayList l = new ArrayList();
+    	l.add(ServiceStatus.DRAFT);
+    	l.add(ServiceStatus.FINISHED);
+    	Logger.info("St: " + ServiceType.REQUESTS);
+        return find("select s from Service s where s.id = " + userId + " and " +
+        		"s.status not in (?, ?) and " +
+        		"s.type = ? ", ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.REQUESTS).fetch(); 
+        
+    }
 }
 

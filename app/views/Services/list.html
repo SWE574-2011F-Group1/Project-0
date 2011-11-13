@@ -38,7 +38,9 @@
        $("div#task-cloud").jQCloud(words);
     });
 </script>
-
+#{if services.size() < 1}
+	Servis bulunamadı.
+#{/if}
 #{list services, as:'s'}
     <div class="service-list-item">
         <a href="@{Services.detail}/${s.id}">${s.title}</a>

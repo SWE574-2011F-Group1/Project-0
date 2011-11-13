@@ -43,7 +43,7 @@
                 <a href="@{Services.list}">Services</a> |
                 <a href="@{Services.search}">Detailed Search</a> |
                 <a href="">Notifications (1)</a> |
-                <a href="/">Profile</a> |
+                <a href="@{Profile.profile}">Profile</a> |
                 #{secure.check 'admin'}
                     <a href="/admin">Admin</a> |
                 #{/secure.check}

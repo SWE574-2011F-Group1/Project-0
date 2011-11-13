@@ -57,15 +57,23 @@ public class Services extends BaseController {
         detail(service.id);
     }
 
-    public static void list() {
+    public static void list(long uid, int st) {
         //TODO: Pagination...
         Collection<Service> services = null;
         Logger.info("fooo: %s", params.get("task"));
         if (params._contains("task") && null != params.get("task") && !params.get("task").equals("")) {
             Logger.info("hede ho o");
             services = Service.findByTask(Long.valueOf(params.get("task")));
-        } else {
-            services = Service.findAll();
+        }  else if (params._contains("uid")) {
+        	services = Service.findByUserAndStatus(uid, st);
+        	if (services.isEmpty()) {
+        		
+        	}
+        
+        }else {
+   
+        		services = Service.findAll();
+        	
         }
         Collection<Task> tasks = Task.findWithWeights();
         render(services, tasks);
@@ -76,6 +84,7 @@ public class Services extends BaseController {
         boolean showEditBtn = Auth.connected().equals(service.boss.email);
         render(service, showEditBtn);
     }
+    
     public static void search(int searchDone,String title, int serviceType, 
 			String description, long taskId, String location, 
 			String startDate, String endDate, int maxBasePoint,String tags) {

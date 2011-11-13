@@ -1,0 +1,27 @@
+#{extends 'main.html' /}
+#{set title:'User Profile' /}
+
+
+<div>
+
+	<a href="@{Services.list}/1/${User.id}">Active Service Requests</a>
+
+	<p>
+		<label>Username / Email:</label> 
+		${User.name}
+	</p>
+	<p>
+		<label>Provider Point:</label> 
+		${User.providerPoint}
+	</p>
+	<p>
+		<label>Requestor Point:</label> 
+		${User.requesterPoint}
+	</p>
+	<p>
+		<label>Social Point:</label>
+		${User.getAbsoluteSocialPoint()}
+	</p>
+	
+</div>			        		
+
