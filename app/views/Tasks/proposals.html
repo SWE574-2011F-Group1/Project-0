@@ -1,0 +1,23 @@
+#{extends 'main.html' /}
+#{set title: 'Task Proposals' /}
+
+
+#{list tasks, as:'t'}
+    <div class="list-item">
+        <div class="info">
+            <span class="item">
+                Title: <span class="value">${t.name}</span>
+            </span>
+            <span class="item">
+                Point: <span class="value">${t.point}</span>
+            </span>
+            <span class="item">
+                Suggested By: <span class="value">${t.suggestedBy}</span>
+            </span>
+        </div>
+        <div class="desc">
+            Voting options shall come here...
+        </div>
+        <div class="clearfix"></div>
+    </div>
+#{/list}

@@ -11,12 +11,25 @@ SUser(admin):
 Task(t1):
   name: Dishwashing
   point: 1
+  status: ACTIVE
 Task(t2):
   name: Gardening
   point: 1
+  status: ACTIVE
 Task(t3):
   name: Driving
   point: 0.5
+  status: ACTIVE
+Task(t4):
+  name: Tale Telling
+  point: 1
+  status: PENDING
+  suggestedBy: admin
+Task(t5):
+  name: Computer Fixing
+  point: 1
+  status: PENDING
+  suggestedBy: admin
 Reward(r1):
   name: Tipped
 Reward(r2):

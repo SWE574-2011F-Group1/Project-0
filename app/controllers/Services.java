@@ -17,7 +17,7 @@ public class Services extends BaseController {
         Service service = new Service();
         //Set something to type to prevent null pointer exception...
         service.type = ServiceType.REQUESTS;
-        Collection<Task> tasks = Task.findAll();
+        Collection<Task> tasks = Task.findAllActive();
         render(service, tasks);
     }
 
@@ -27,7 +27,7 @@ public class Services extends BaseController {
             //Redirect unauthorized ones... Cakaaaaaallllll...
             detail(serviceId);
         }
-        Collection<Task> tasks = Task.findAll();
+        Collection<Task> tasks = Task.findAllActive();
         renderTemplate("Services/index.html", service, tasks, serviceId);
     }
 
@@ -60,7 +60,6 @@ public class Services extends BaseController {
     public static void list() {
         //TODO: Pagination...
         Collection<Service> services = null;
-        Logger.info("fooo: %s", params.get("task"));
         if (params._contains("task") && null != params.get("task") && !params.get("task").equals("")) {
             Logger.info("hede ho o");
             services = Service.findByTask(Long.valueOf(params.get("task")));
@@ -116,7 +115,7 @@ public class Services extends BaseController {
 		}
 
 		if (searchDone == 0) {
-			Collection<Task> tasks = Task.findAll();
+			Collection<Task> tasks = Task.findAllActive();
 			List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
 			serviceTypes.add(ServiceType.REQUESTS);
 			serviceTypes.add(ServiceType.PROVIDES);
@@ -139,7 +138,7 @@ public class Services extends BaseController {
 					prepareQueryForQuickServiceSearch(sc.getTitle()), null)
 					.fetch();
 		}
-		Collection<Task> tasks = Task.findAll();
+		Collection<Task> tasks = Task.findAllActive();
 		render(services, tasks);
 	}
 

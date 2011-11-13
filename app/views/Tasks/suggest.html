@@ -1,0 +1,65 @@
+#{extends 'main.html' /}
+#{set title: 'Propose A Task' /}
+
+<div>
+    Before you propose a task, consider checking out the <a href="@{Tasks.proposals}">proposals page</a>! Perhaps someone else has already seen the lack of it and acted before you! 
+</div>
+
+<div id="newService">
+    #{form @sendModeration(), id:'propose-task'}
+        <p class="error hidden">
+        </p>
+        <p>
+            #{field 'name'}
+            <label>Name:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${task?.name}" />
+            <span class="tip">Something to define the task. One word is best, three is too much. More then three perhaps it's not a task...</span>
+            #{/field}
+        </p>
+        <p>
+            #{field 'point'}
+            <label>Point:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${task?.point}" />
+            <span class="tip">Use dot as a delimiter for decimal values like: 0.3 or 1.7</span>
+            #{/field}
+        </p>	
+        <p>
+            <input type="button" value="Continue &rarr;" id="submit-btn">
+        </p>
+        #{if taskId}
+            <input type="hidden" value="${taskId}" name="taskId" id="taskId" />
+        #{/if}
+    #{/form}
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+        //FIXME: Burasi copy paste olmayaydi iyiydi...
+        $("input[type=button]#submit-btn").bind("click", function() {
+            //Check empty values, show an error if there are any empty values...
+            var form = $("form#propose-task");
+            var errorDiv = $("p.error").addClass("hidden").html("");
+            var errors = false;
+            form.find("input#name, input#point").each(function() {
+                errors = false;
+                if (!$(this).val()) {
+                    errorDiv.html("This field cannot be empty");
+                    errorDiv.removeClass("hidden");
+                    $(this).focus();
+                    errors = true;
+                    return false;
+                }
+            });
+            //Now check if the point input is a numeric value or not.
+            var pointField = form.find("input#point");
+            if (!isNumber(pointField.val())) {
+                errors = true;
+                errorDiv.html("This field must be a numeric value");
+                errorDiv.removeClass("hidden");
+                pointField.focus();
+            }
+            if (!errors) {
+                form.submit();
+            }
+        });
+    });
+</script>

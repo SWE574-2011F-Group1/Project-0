@@ -13,6 +13,7 @@
         <script src="@{'/public/javascripts/jquery-1.6.2.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         <script src="@{'/public/javascripts/jquery-ui-1.8.16.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         <script src="@{'/public/javascripts/jqcloud-0.2.4.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+        <script src="@{'/public/javascripts/commons.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         #{get 'moreScripts' /}
     </head>
     <body>
@@ -43,6 +44,8 @@
                 <a href="@{Services.list}">Services</a> |
                 <a href="@{Services.search}">Detailed Search</a> |
                 <a href="@{UserMessages.index}">Messages</a> |
+                <a href="@{Tasks.suggest}">Propose A Task</a> |
+                <a href="@{Tasks.proposals}">Task Proposals</a> |
                 <a href="/">Profile</a> |
                 #{secure.check 'admin'}
                     <a href="/admin">Admin</a> |

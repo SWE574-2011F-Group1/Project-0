@@ -23,6 +23,8 @@ div.list-item a {color: #67A927;}
 #crudHeader div.navigation a:hover {text-decoration: none;}
 span.radio-button {cursor: pointer;}
 
+span.tip {font-size: 10px; font-style: italic; display: block; color: gray;}
+
 p.error {margin:5px; padding: 5px; background-color: red; color: white; font-weight: bold;}
 
 .fb-login-btn {cursor: pointer; background-image: url("../images/fb-login-btn.png"); width: 87px; height:21px;}
