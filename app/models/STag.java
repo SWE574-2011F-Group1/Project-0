@@ -10,15 +10,10 @@ import play.data.validation.Required;
 import play.db.jpa.Model;
 
 @Entity
-public class STag extends Model{
+public class STag extends Model {
 
 	@Required
 	public String text;
-	
-	/*@ManyToOne(fetch = FetchType.LAZY,
-	           cascade = { CascadeType.PERSIST,
-            CascadeType.MERGE })
-	public Task task;*/
 	
 	@ManyToOne
 	public Service service;
@@ -26,5 +21,4 @@ public class STag extends Model{
 	public STag(String text) {
         this.text = text;
     }
-	
 }
