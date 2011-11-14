@@ -34,8 +34,10 @@ public class Services extends BaseController {
     public static void save(String title, ServiceType type, String description, long taskId, 
     		String location, String startDate, String endDate,String tags) {
         Service service;
+        Set<STag> deletedTags=null;
         if (params._contains("serviceId")) {
             service = Service.findById(Long.parseLong(params.get("serviceId")));
+            deletedTags=service.stags;
         } else {
             service = new Service();
         }
@@ -67,9 +69,14 @@ public class Services extends BaseController {
         
         Task task = Task.findById(taskId);
         service.task = task;
-        
 
         service.save();
+        
+        if(deletedTags!=null){
+        	for (STag tag: deletedTags) {
+				tag.delete();
+			}
+        }
         detail(service.id);
     }
     public static void list() {
@@ -82,6 +89,13 @@ public class Services extends BaseController {
             services = Service.findAll();
         }
         Collection<Task> tasks = Task.findWithWeights();
+        
+        Collection<STag> tags = STag.findAll();
+        
+        for (STag sTag : tags) {
+			System.out.println("tag-service="+sTag.text+"-"+sTag.service);
+		}
+        
         render(services, tasks);
     }
 
