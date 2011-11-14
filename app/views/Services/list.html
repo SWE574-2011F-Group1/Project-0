@@ -69,9 +69,8 @@
             #{if s.stags!=null}
 	            <span class="item">
 	                Tags: <span class="value">
-	                 #{list s.stags, as:'tag'}
-	               		${tag.text}
-	               		${tag_isLast ? '' : ','}
+	                #{list s.stags, as:'tag'}
+	               		${tag.text}${tag_isLast ? '' : ','}
                 	#{/list}
                 	</span>
 	            </span>
