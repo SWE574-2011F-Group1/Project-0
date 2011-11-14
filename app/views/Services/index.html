@@ -59,13 +59,6 @@
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
             <span class="tip">Well, if you are in Istanbul, someone in New York may not help you! Best tell it!</span>
             #{/field}
-        </p>	
-        <p>
-            #{field 'description'}
-            <label>Description:</label><br />
-            <span class="tip">Give a little bit more detail about your need or service. Something that will define the boundaries of it etc.</span>
-            <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${service.description}</textarea>
-            #{/field}
         </p>
         <p>
             #{field 'tags'}
@@ -80,6 +73,14 @@
                 <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
            	#{/else}
            	#{/field}
+           	<span class="tip">Add tags seperated by a comma to allow people to search your services easily</span>
+        </p>	
+        <p>
+            #{field 'description'}
+            <label>Description:</label><br />
+            <span class="tip">Give a little bit more detail about your need or service. Something that will define the boundaries of it etc.</span>
+            <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${service.description}</textarea>
+            #{/field}
         </p>
         <p>
             <input type="button" value="Continue &rarr;" id="submit-btn">

@@ -4,6 +4,7 @@
 .hidden {display: none;}
 
 form p label {width:100px; float: left;}
+form.search p label {width:120px; float: left;}
 form input[type=text]:not(.datepicker), form textarea {width: 300px;}
 form textarea {height: 100px;}
 
