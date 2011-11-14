@@ -163,7 +163,7 @@ public class Services extends BaseController {
 	}
 
 	private static String prepareQueryForServiceSearch(ServiceSearchCriteria sc) {
-		String sql = "select s from Service s, Task t, STag st where s.task=t";
+		String sql = "select s from Service s, Task t where s.task=t";
 
 		if (sc.getTaskId() != -1) {
 			Task task = Task.findById(sc.getTaskId());
