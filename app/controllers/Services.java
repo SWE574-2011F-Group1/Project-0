@@ -61,8 +61,8 @@ public class Services extends BaseController {
         	Set<STag> sTags = new HashSet<STag>();
         	while (st.hasMoreTokens()){
         		STag t = new STag(st.nextToken().trim());
-        		//t = t.save();
         		sTags.add(t);
+        		t.service=service;
         	}
         	service.stags = sTags;
         }
@@ -90,11 +90,6 @@ public class Services extends BaseController {
         }
         Collection<Task> tasks = Task.findWithWeights();
         
-        Collection<STag> tags = STag.findAll();
-        
-        for (STag sTag : tags) {
-			System.out.println("tag-service="+sTag.text+"-"+sTag.service);
-		}
         
         render(services, tasks);
     }
@@ -178,7 +173,14 @@ public class Services extends BaseController {
 	}
 
 	private static String prepareQueryForServiceSearch(ServiceSearchCriteria sc) {
-		String sql = "select s from Service s, Task t where s.task=t";
+		String sql = "select distinct s from Service s, Task t ";
+		
+		if (!sc.getTags().trim().equals("")) {
+			sql+=",STag st where s.task=t and st.service=s";
+		}
+		else{
+			sql+="where s.task=t";
+		}
 
 		if (sc.getTaskId() != -1) {
 			Task task = Task.findById(sc.getTaskId());
@@ -208,10 +210,17 @@ public class Services extends BaseController {
 		if (sc.getServiceType() != -1) {
 			sql += " and s.type=" + sc.getServiceType();
 		}
-		/*if (!sc.getTags().equals("")) {
-			
-			sql += " and st.text LIKE '" + sc.getTags()+;
-		}*/
+		if (!sc.getTags().trim().equals("")) {
+			StringTokenizer st=new StringTokenizer(sc.getTags().trim()," ");
+			sql += " and (";
+			while(st.hasMoreTokens()){
+				sql+=" st.text LIKE '" + st.nextToken()+"%'";
+				if(st.hasMoreTokens()){
+					sql+=" or";
+				}
+			}
+			sql += ")";
+		}
 		if (!sc.getStartDate().equals("")) {
 			String sd = "";
 			StringTokenizer st = new StringTokenizer(sc.getStartDate(), ".");
