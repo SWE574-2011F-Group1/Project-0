@@ -28,7 +28,7 @@ public class Service extends CommentableModel {
     @NotEmpty
     public String location;
     
-    @OneToMany
+    @OneToMany(cascade=CascadeType.ALL)
     public Set<STag> stags;
     
     public Date startDate;

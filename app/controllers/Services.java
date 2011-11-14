@@ -53,12 +53,13 @@ public class Services extends BaseController {
         SUser u = SUser.findByEmail(Secure.Security.connected());
         service.boss = u;
         service.stags = new HashSet<STag>();
+        
         if (!tags.trim().equals("")) {
         	StringTokenizer st = new StringTokenizer(tags,",");
         	Set<STag> sTags = new HashSet<STag>();
         	while (st.hasMoreTokens()){
         		STag t = new STag(st.nextToken().trim());
-        		t = t.save();
+        		//t = t.save();
         		sTags.add(t);
         	}
         	service.stags = sTags;
@@ -67,8 +68,7 @@ public class Services extends BaseController {
         Task task = Task.findById(taskId);
         service.task = task;
         
-        
-        service.em().clear();
+
         service.save();
         detail(service.id);
     }
