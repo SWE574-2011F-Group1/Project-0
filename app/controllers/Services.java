@@ -52,15 +52,16 @@ public class Services extends BaseController {
         }
         SUser u = SUser.findByEmail(Secure.Security.connected());
         service.boss = u;
-        if(!tags.trim().equals("")){
-        	StringTokenizer st=new StringTokenizer(tags,",");
-        	Set<STag> sTags=new HashSet<STag>();
-        	while(st.hasMoreTokens()){
-        		STag t=new STag(st.nextToken().trim());
-        		t=t.save();
+        service.stags = new HashSet<STag>();
+        if (!tags.trim().equals("")) {
+        	StringTokenizer st = new StringTokenizer(tags,",");
+        	Set<STag> sTags = new HashSet<STag>();
+        	while (st.hasMoreTokens()){
+        		STag t = new STag(st.nextToken().trim());
+        		t = t.save();
         		sTags.add(t);
         	}
-        	service.stags=sTags;
+        	service.stags = sTags;
         }
         
         Task task = Task.findById(taskId);

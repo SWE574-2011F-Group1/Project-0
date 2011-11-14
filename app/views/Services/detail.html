@@ -30,8 +30,7 @@
 	            <span class="item">
 	                Tags: <span class="value">
 	                 #{list service.stags, as:'tag'}
-	               		${tag.text}
-	               		${tag_isLast ? '' : ','}
+	               		${tag.text}${tag_isLast ? '' : ','}
                 	#{/list}
                 	</span>
 	            </span>
