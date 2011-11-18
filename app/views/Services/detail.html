@@ -70,10 +70,24 @@
     	<span class="item">
             Applicants:<br/>
              #{list service.applicants, as:'applicant'}
-	               <span class="value">${applicant.name}</span><br/>
+	               <span class="value">${applicant.name}</span>
+	               #{if applicant.email.equals(userEmail)}
+	               	(You)
+	               #{/if}
+	               <br/>
              #{/list}
         </span>
+        <span >
+	    	#{if isAppliedBefore}
+	        	#{form @cancelApply(),, id:'cancel-application'}
+	        		<input type="hidden" name="serviceId" value="${service.id}"/>
+	        		<input type="hidden" name="email" value="${userEmail}"/>
+	    			<input type="submit" value="Cancel Application" class="cancel-apply-btn right" />
+	    		#{/form}
+	        #{/if}
+       </span>
     </div>
+    
 </div>
 <script>
     $("input[type=button].pm-btn").bind("click", function() {
@@ -85,4 +99,11 @@
     $("input[type=button].edit-btn").bind("click", function() {
         document.location = '@{Services.edit}/${service.id}';
     })
+     $("form#cancel-application").bind("submit", function() {
+    	 var agree=confirm("Are you sure you wish to cancel your application?");
+		if (agree)
+			return true ;
+		else
+			return false ;
+	});
 </script>

@@ -203,18 +203,37 @@ public class Services extends BaseController {
 	        
 	        detail(service.id);
 	}
+	public static void cancelApply(long serviceId,String email) throws Exception {
+        Service service = Service.findById(serviceId);
+        SUser user=SUser.findByEmail(email);
+        List<SUser> applicants=service.applicants;
+        int index=findUserIndex(applicants, user);
+        if(index!=-1){
+	       applicants.remove(index);
+	        service.save();
+        }
+        else{
+        	//NOT APPLIED BEFORE
+        	//System.out.println("Not Applied before");
+        }
+	                
+        detail(service.id);
+}
 	private static boolean isApplied(List<SUser> applicants,SUser user){
-		boolean result=false;
-		
+
+		int index=findUserIndex(applicants, user);
+		return index!=-1;
+	}
+	private static int findUserIndex(List<SUser> applicants,SUser user){
+		int result=-1;
 		if(applicants!=null){
-			for(int i=0;i<applicants.size() && !result;i++){
+			for(int i=0;i<applicants.size() && result==-1;i++){
 				SUser applicant=applicants.get(i);
 				if(applicant.id==user.id){
-					result=true;
+					result=i;
 				}
 			}
 		}
-		
 		return result;
 	}
 	private static String prepareQueryForQuickServiceSearch(String title) {

@@ -14,6 +14,7 @@ GET     /foo                                    admin.Foo.index
 *       /services/search                        Services.search
 *       /services/ajaxDeneme                    Services.ajaxDeneme
 *       /services/apply		                    Services.apply
+*       /services/cancelApply		            Services.cancelApply
 
 *       /                                       module:secure
 
