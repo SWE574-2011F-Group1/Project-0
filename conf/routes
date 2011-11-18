@@ -15,6 +15,10 @@ GET     /foo                                    admin.Foo.index
 *       /services/ajaxDeneme                    Services.ajaxDeneme
 *       /services/apply		                    Services.apply
 *       /services/cancelApply		            Services.cancelApply
+*       /services/startApproval		            Services.startApproval
+*       /services/processStartApproval	        Services.processStartApproval
+*       /services/employeeApproval	        	Services.employeeApproval
+*       /services/processEmployeeApproval	    Services.processEmployeeApproval
 
 *       /                                       module:secure
 

@@ -31,6 +31,12 @@ public class SUser extends CommentableModel {
     @ManyToMany(mappedBy="applicants")
     public List<Service> appliedServices;
     
+    @OneToMany
+    public List<Service> servicesAsEmployee;
+    
+    @OneToMany
+    public List<Service> servicesAsBoss;
+    
     public long getAbsoluteSocialPoint() {
         return providerPoint + requesterPoint;
     }
