@@ -45,6 +45,12 @@ public class Service extends CommentableModel {
     @ManyToOne
     public SUser employee;
     
+    @ManyToMany(cascade=CascadeType.ALL)
+    public List<SUser> applicants;
+    
+    /*@ManyToMany(cascade=CascadeType.ALL)
+    public List<SUser> employees;*/
+    
     @Required
     public ServiceStatus status;
     

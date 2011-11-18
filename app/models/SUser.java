@@ -4,6 +4,7 @@ import play.*;
 import play.db.jpa.*;
 
 import javax.persistence.*;
+
 import java.util.*;
 
 import play.data.validation.*;
@@ -26,6 +27,9 @@ public class SUser extends CommentableModel {
     public String fbId;
     
     public boolean isAdmin;
+    
+    @ManyToMany(mappedBy="applicants")
+    public List<Service> appliedServices;
     
     public long getAbsoluteSocialPoint() {
         return providerPoint + requesterPoint;

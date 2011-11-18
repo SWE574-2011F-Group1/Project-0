@@ -37,16 +37,42 @@
             #{/if}
         <div class="clearfix"></div>
     </div>
-    <input type="button" value="I made a mistake!" class="edit-btn" />
-    <input type="button" value="Apply Now!" class="apply-btn right" />
-    <input type="button" value="Send Message!" class="pm-btn right" />
+    #{if isBossUser}
+    	<input type="button" value="I made a mistake!" class="edit-btn" />
+    #{/if}
+    #{if !isBossUser && !isAppliedBefore}
+    	#{form @apply(),}
+        		<input type="hidden" name="serviceId" value="${service.id}"/>
+        		<input type="hidden" name="email" value="${userEmail}"/>
+    			<input type="submit" value="Apply Now!" class="apply-btn right" />
+    	#{/form}
+    #{/if}
+    #{if !isBossUser}
+    	<input type="button" value="Send Message!" class="pm-btn right" />
+    #{/if}	
     <div class="clearfix"></div>
     <div class="desc">
         ${service.description}
     </div>
     <div class="bot">
-        <input type="button" value="Apply Now!" class="apply-btn right" />
-        <input type="button" value="Send Message!" class="pm-btn right" />
+        #{if !isBossUser && !isAppliedBefore}
+        	#{form @apply(),}
+        		<input type="hidden" name="serviceId" value="${service.id}"/>
+        		<input type="hidden" name="email" value="${userEmail}"/>
+    			<input type="submit" value="Apply Now!" class="apply-btn right" />
+    		#{/form}
+   		#{/if}
+    	#{if !isBossUser}
+    		<input type="button" value="Send Message!" class="pm-btn right" />
+   		#{/if}	
+    </div>
+    <div class="info">
+    	<span class="item">
+            Applicants:<br/>
+             #{list service.applicants, as:'applicant'}
+	               <span class="value">${applicant.name}</span><br/>
+             #{/list}
+        </span>
     </div>
 </div>
 <script>

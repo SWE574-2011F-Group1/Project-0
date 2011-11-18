@@ -70,6 +70,7 @@ public class Services extends BaseController {
         Task task = Task.findById(taskId);
         service.task = task;
 
+        service.status=ServiceStatus.PUBLISHED;
         service.save();
         
         if(deletedTags!=null){
@@ -96,8 +97,23 @@ public class Services extends BaseController {
 
     public static void detail(long serviceId) {
         Service service = Service.findById(serviceId);
-        boolean showEditBtn = Auth.connected().equals(service.boss.email);
-        render(service, showEditBtn);
+        boolean isBossUser = Auth.connected().equals(service.boss.email);
+        String userEmail=Auth.connected();
+        boolean isAppliedBefore=false;
+        if(!isBossUser){
+        	isAppliedBefore=isApplied(service.applicants,SUser.findByEmail(userEmail));
+        }
+        /*List<SUser> applicants=service.applicants;
+        if(applicants!=null){
+        	for (SUser sUser : applicants) {
+				System.out.println("user="+sUser.name);
+			}
+        }
+        else{
+        	System.out.println("no applicants");
+        }*/
+        
+        render(service, isBossUser,userEmail,isAppliedBefore);
     }
     public static void search(int searchDone,String title, int serviceType, 
 			String description, long taskId, String location, 
@@ -166,6 +182,41 @@ public class Services extends BaseController {
 		render(services, tasks);
 	}
 
+	public static void apply(long serviceId,String email) throws Exception {
+	        Service service = Service.findById(serviceId);
+	        SUser user=SUser.findByEmail(email);
+	        List<SUser> applicants=service.applicants;
+	        boolean isBossUser = service.boss.email.equals(email);
+	        if(!isBossUser && !isApplied(applicants, user)){
+		        if(applicants==null){
+		        	applicants=new ArrayList<SUser>();
+		        }
+		        applicants.add(user);
+		        service.save();
+	        }
+	        else{
+	        	//APPLIED BEFORE
+	        	//System.out.println("Applied before");
+	        }
+		        
+	        //System.out.println("serviceId user:"+serviceId +" "+user.name);
+	        
+	        detail(service.id);
+	}
+	private static boolean isApplied(List<SUser> applicants,SUser user){
+		boolean result=false;
+		
+		if(applicants!=null){
+			for(int i=0;i<applicants.size() && !result;i++){
+				SUser applicant=applicants.get(i);
+				if(applicant.id==user.id){
+					result=true;
+				}
+			}
+		}
+		
+		return result;
+	}
 	private static String prepareQueryForQuickServiceSearch(String title) {
 		String sql = "select s from Service s, Task t where s.task=t";
 		sql += " and s.title LIKE '%" + title + "%'";

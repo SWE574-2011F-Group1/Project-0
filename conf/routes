@@ -13,6 +13,7 @@ GET     /foo                                    admin.Foo.index
 *       /fbLogin/?                              BaseController.fbLogin
 *       /services/search                        Services.search
 *       /services/ajaxDeneme                    Services.ajaxDeneme
+*       /services/apply		                    Services.apply
 
 *       /                                       module:secure
 
