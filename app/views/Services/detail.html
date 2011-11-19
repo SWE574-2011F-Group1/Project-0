@@ -107,7 +107,7 @@
 	         </span>
 	     </div>
     #{/if}
-    #{if service.applicants!=null && service.applicants.size()>0}
+    #{if service.status==models.ServiceStatus.PUBLISHED && service.applicants!=null && service.applicants.size()>0}
 	    <div class="info">
 	    	<p class="error hidden" id="startApprovalError">
        			Check applicant before start approval.
@@ -138,7 +138,7 @@
 		        #{/else}
 	        </span>
 	        <span >
-		    	#{if isAppliedBefore}
+		    	#{if isAppliedBefore && service.status==models.ServiceStatus.PUBLISHED}
 		        	#{form @cancelApply(), id:'cancel-application'}
 		        		<input type="hidden" name="serviceId" value="${service.id}"/>
 		        		<input type="hidden" name="email" value="${userEmail}"/>

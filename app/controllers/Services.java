@@ -260,9 +260,9 @@ public class Services extends BaseController {
         List<SUser> applicants=service.applicants;
         boolean isBossUser = Auth.connected().equals(service.boss.email);
         int index=findUserIndex(applicants, user);
-        if(isBossUser && index!=-1){
+        if(isBossUser && index!=-1 && service.status==ServiceStatus.PUBLISHED){
 
-            System.out.println("Process approval service="+service.id+ " "+user.name);
+            //System.out.println("Process approval service="+service.id+ " "+user.name);
             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
             try {
             	service.actualDate= sdf.parse(actualDate);
@@ -294,7 +294,7 @@ public class Services extends BaseController {
         List<SUser> applicants=service.applicants;
         //boolean isBossUser = Auth.connected().equals(service.boss.email);
         int index=findUserIndex(applicants, user);
-        if(approval==1 && index!=-1){
+        if(approval==1 && index!=-1 && service.status==ServiceStatus.WAITING_EMPLOYEE_APPROVAL){
         	service.status=ServiceStatus.IN_PROGRESS;
         	service.applicants=null;
 			service.save();
