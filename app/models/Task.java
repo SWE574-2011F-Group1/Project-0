@@ -16,7 +16,12 @@ public class Task extends Model {
     @Transient
     public long weight;
     
-    public Task(String name, int point) {
+    public TaskStatus status;
+    
+    @ManyToOne
+    public SUser suggestedBy;
+    
+    public Task(String name, float point) {
         this.name = name;
         this.point = point;
     }
@@ -26,7 +31,7 @@ public class Task extends Model {
     }
     
     public static List<Task> findWithWeights() {
-        Iterator i = find("select t, (select count(s) from Service s where s.task = t) from Task t").fetch().iterator();
+        Iterator i = find("select t, (select count(s) from Service s where s.task = t) from Task t WHERE t.status = ?", TaskStatus.ACTIVE).fetch().iterator();
         List<Task> tasks = new ArrayList<Task>();
         while (i.hasNext()) {
             Object[] o = (Object[]) i.next();
@@ -34,7 +39,18 @@ public class Task extends Model {
             t.weight = Long.valueOf((Long) o[1]);
             tasks.add(t);
         }
-        Logger.info("%s", tasks);
         return tasks;
+    }
+    
+    public static List<Task> findProposed() {
+        return findByStatus(TaskStatus.PENDING);
+    }
+    
+    public static List<Task> findAllActive() {
+        return findByStatus(TaskStatus.ACTIVE);
+    }
+    
+    private static List<Task> findByStatus(TaskStatus st) {
+        return find("byStatus", st).fetch();
     }
 }

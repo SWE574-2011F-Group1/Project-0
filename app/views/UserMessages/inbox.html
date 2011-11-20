@@ -1,0 +1,21 @@
+#{extends 'main.html' /}
+#{set title:'Inbox' /}
+
+
+#{list pms, as:'m'}
+<div class="list-item">
+    <a href="@{UserMessages.detail}/${m.id}"></a>
+    <div class="info">
+        <span class="item">
+            Sender: <span class="value">${m.sender}</span>
+        </span>
+        <span class="item">
+            Time: <span class="value">${m.getFormattedSentTime()}</span>
+        </span>
+    </div>
+    <div class="clearfix"></div>
+    <div class="desc">
+        ${m.message}
+    </div>
+</div>
+#{/list}

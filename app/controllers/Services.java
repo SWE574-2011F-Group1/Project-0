@@ -17,7 +17,7 @@ public class Services extends BaseController {
         Service service = new Service();
         //Set something to type to prevent null pointer exception...
         service.type = ServiceType.REQUESTS;
-        Collection<Task> tasks = Task.findAll();
+        Collection<Task> tasks = Task.findAllActive();
         render(service, tasks);
     }
 
@@ -27,14 +27,17 @@ public class Services extends BaseController {
             //Redirect unauthorized ones... Cakaaaaaallllll...
             detail(serviceId);
         }
-        Collection<Task> tasks = Task.findAll();
+        Collection<Task> tasks = Task.findAllActive();
         renderTemplate("Services/index.html", service, tasks, serviceId);
     }
 
-    public static void save(String title, ServiceType type, String description, long taskId, String location, String startDate, String endDate) {
+    public static void save(String title, ServiceType type, String description, long taskId, 
+    		String location, String startDate, String endDate,String tags) {
         Service service;
+        Set<STag> deletedTags=null;
         if (params._contains("serviceId")) {
             service = Service.findById(Long.parseLong(params.get("serviceId")));
+            deletedTags=service.stags;
         } else {
             service = new Service();
         }
@@ -51,16 +54,37 @@ public class Services extends BaseController {
         }
         SUser u = SUser.findByEmail(Secure.Security.connected());
         service.boss = u;
+        service.stags = new HashSet<STag>();
+        
+        if (!tags.trim().equals("")) {
+        	StringTokenizer st = new StringTokenizer(tags,",");
+        	Set<STag> sTags = new HashSet<STag>();
+        	while (st.hasMoreTokens()){
+        		STag t = new STag(st.nextToken().trim());
+        		sTags.add(t);
+        		t.service=service;
+        	}
+        	service.stags = sTags;
+        }
+        
         Task task = Task.findById(taskId);
         service.task = task;
+
         service.save();
+        
+        if(deletedTags!=null){
+        	for (STag tag: deletedTags) {
+				tag.delete();
+			}
+        }
+        
         detail(service.id);
     }
+
 
     public static void list(long uid, int st) {
         //TODO: Pagination...
         Collection<Service> services = null;
-        Logger.info("fooo: %s", params.get("task"));
         if (params._contains("task") && null != params.get("task") && !params.get("task").equals("")) {
             Logger.info("hede ho o");
             services = Service.findByTask(Long.valueOf(params.get("task")));
@@ -69,11 +93,8 @@ public class Services extends BaseController {
         	if (services.isEmpty()) {
         		
         	}
-        
         }else {
-   
-        		services = Service.findAll();
-        	
+        	services = Service.findAll();
         }
         Collection<Task> tasks = Task.findWithWeights();
         render(services, tasks);
@@ -125,7 +146,7 @@ public class Services extends BaseController {
 		}
 
 		if (searchDone == 0) {
-			Collection<Task> tasks = Task.findAll();
+			Collection<Task> tasks = Task.findAllActive();
 			List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
 			serviceTypes.add(ServiceType.REQUESTS);
 			serviceTypes.add(ServiceType.PROVIDES);
@@ -148,7 +169,7 @@ public class Services extends BaseController {
 					prepareQueryForQuickServiceSearch(sc.getTitle()), null)
 					.fetch();
 		}
-		Collection<Task> tasks = Task.findAll();
+		Collection<Task> tasks = Task.findAllActive();
 		render(services, tasks);
 	}
 
@@ -159,7 +180,14 @@ public class Services extends BaseController {
 	}
 
 	private static String prepareQueryForServiceSearch(ServiceSearchCriteria sc) {
-		String sql = "select s from Service s, Task t where s.task=t";
+		String sql = "select distinct s from Service s, Task t ";
+		
+		if (!sc.getTags().trim().equals("")) {
+			sql+=",STag st where s.task=t and st.service=s";
+		}
+		else{
+			sql+="where s.task=t";
+		}
 
 		if (sc.getTaskId() != -1) {
 			Task task = Task.findById(sc.getTaskId());
@@ -188,6 +216,17 @@ public class Services extends BaseController {
 
 		if (sc.getServiceType() != -1) {
 			sql += " and s.type=" + sc.getServiceType();
+		}
+		if (!sc.getTags().trim().equals("")) {
+			StringTokenizer st=new StringTokenizer(sc.getTags().trim()," ");
+			sql += " and (";
+			while(st.hasMoreTokens()){
+				sql+=" st.text LIKE '" + st.nextToken()+"%'";
+				if(st.hasMoreTokens()){
+					sql+=" or";
+				}
+			}
+			sql += ")";
 		}
 		if (!sc.getStartDate().equals("")) {
 			String sd = "";

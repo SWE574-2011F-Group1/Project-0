@@ -12,16 +12,15 @@ import controllers.Secure.Security;
 
 public class Profile extends BaseController {
 
-    public static void profile() {
-    	SUser User = SUser.findByEmail(Security.connected());
-        render(User);
+    public static void profile(long uid) {
+    	SUser User;
+    	if (!params._contains("uid")) {
+	    	User = SUser.findByEmail(Security.connected());
+	        render(User);
+    	} else {
+        	User = SUser.findById(uid);
+        	render(User);
+    	}
     }
-    
-    public static void display(long uid)
-    {
-    	SUser User = SUser.findById(uid);
-    	render(User);
-    }
-    
 }
 

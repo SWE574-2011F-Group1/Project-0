@@ -42,7 +42,7 @@
 	Servis bulunamadı.
 #{/if}
 #{list services, as:'s'}
-    <div class="service-list-item">
+    <div class="list-item">
         <a href="@{Services.detail}/${s.id}">${s.title}</a>
         <div class="info">
             <span class="item">
@@ -52,7 +52,7 @@
                 Type: <span class="value">${s.type}</span>
             </span>
             <span class="item">
-                Owner: <span class="value">${s.boss}</span>
+                Owner: <span class="value"><a href="@{Profile.profile}/${s.boss.id}">${s.boss}</a></span>
             </span>
             <span class="item">
                 Location: <span class="value">${s.location}</span>
@@ -67,6 +67,15 @@
                         #{/if}
                     </span>
                 </span>
+            #{/if}
+            #{if s.stags!=null}
+	            <span class="item">
+	                Tags: <span class="value">
+	                #{list s.stags, as:'tag'}
+	               		${tag.text}${tag_isLast ? '' : ','}
+                	#{/list}
+                	</span>
+	            </span>
             #{/if}
         </div>
             <div class="clearfix"></div>

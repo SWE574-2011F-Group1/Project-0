@@ -1,4 +1,5 @@
 #{extends 'main.html' /}
+#{set tagString:'' /}
 
 #{if serviceId}
     <input type="button" class="back-btn" value="&larr; Nope, my bad!" />
@@ -9,7 +10,7 @@
 #{/else}
 
 <div id="newService">
-    #{form @save()}
+    #{form @save(), id:'add-service'}
         <p class="error hidden">
         </p>
         <p>
@@ -20,6 +21,7 @@
 	               	<option value="${t.id}" />${t.name}
                 #{/list}
             </select>
+            <span class="tip">This service is related with what? You shall gain points based on this option.</span>
             #{/field}
         </p>
         <p>
@@ -27,35 +29,56 @@
             <label>Type:</label>
             <span class="radio-button"><input type="radio" value="${service.type.REQUESTS}" checked name="${field.name}" id="type-request" /> <span>Request</span></span>
             <span class="radio-button"><input type="radio" value="${service.type.PROVIDES}" name="${field.name}" id="type-provides" /> <span>Provide</span></span>
+            <span class="tip">So you actually need something as a requester or do you provide a service to others?</span>
             #{/field}
         </p>
         <p>
             #{field 'startDate'}
             <label>Start Date:</label>
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass} datepicker" value="${service.getFormattedStartDate()}" />
+            <span class="tip">Do you have an availability date for this service?</span>
             #{/field}
         </p>
         <p>
             #{field 'endDate'}
             <label>End Date:</label>
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass} datepicker" value="${service.getFormattedEndDate()}" />
+            <span class="tip">Perhaps this service has a deadline?</span>
             #{/field}
         </p>
         <p>
             #{field 'title'}
             <label>Title:</label>
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.title}" />
+            <span class="tip">What do you call for this service? Something that will define your service uniquely. People should remember it too!</span>
             #{/field}
         </p>
         <p>
             #{field 'location'}
             <label>Location:</label>
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
+            <span class="tip">Well, if you are in Istanbul, someone in New York may not help you! Best tell it!</span>
             #{/field}
+        </p>
+        <p>
+            #{field 'tags'}
+            <label>Tags:</label>
+            #{if service.stags!=null}
+                #{list service.stags, as:'tag'}
+                    #{set tagString: tagString + tag.text + (tag_isLast ? '' : ', ') /}
+            	#{/list}
+            	<input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${tagString}" />
+           	#{/if}
+           	#{else}
+                <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
+           	#{/else}
+           	#{/field}
+           	<span class="tip">Add tags seperated by a comma to allow people to search your services easily</span>
         </p>	
         <p>
             #{field 'description'}
-            <label>Description:</label>
+            <label>Description:</label><br />
+            <span class="tip">Give a little bit more detail about your need or service. Something that will define the boundaries of it etc.</span>
             <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${service.description}</textarea>
             #{/field}
         </p>
@@ -73,7 +96,7 @@
 
         $("input[type=button]#submit-btn").bind("click", function() {
             //Check empty values, show an error if there are any empty values...
-            var form = $("form");
+            var form = $("form#add-service");
             var errors = false;
             form.find("textarea#description, input#location, input#title").each(function(item, key) {
                 var errorDiv = $("p.error").addClass("hidden").html("");
