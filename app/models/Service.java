@@ -35,15 +35,24 @@ public class Service extends CommentableModel {
     
     public Date endDate;
     
+    public Date actualDate;
+    
     @Required
     @ManyToOne
     public Task task;
     
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     public SUser boss;
     
-    @ManyToOne
+    @ManyToOne(cascade=CascadeType.ALL)
     public SUser employee;
+    
+    @ManyToMany(cascade=CascadeType.ALL)
+    public List<SUser> applicants;
+    
+    /*@ManyToMany(cascade=CascadeType.ALL)
+    public List<SUser> employees;*/
+        
     
     @Required
     public ServiceStatus status;
@@ -60,6 +69,10 @@ public class Service extends CommentableModel {
     
     public String getFormattedEndDate() {
     	return formatDate(this.endDate);
+    }
+    
+    public String getFormattedActualDate() {
+    	return formatDate(this.actualDate);
     }
     
     private String formatDate(Date d) {

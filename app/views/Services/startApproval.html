@@ -1,0 +1,85 @@
+#{extends 'main.html' /}
+#{set tagString:'' /}
+#{set title:'Start Service Approval' /}
+
+
+        
+        
+        <div class="info">
+           <span class="item">
+	            Service Name: <span class="value">${service.title}</span>
+	        </span>
+	        <span class="item">
+	            Task: <span class="value">${service.task}</span>
+	        </span>
+	        <span class="item">
+	            Type: <span class="value">${service.type}</span>
+	        </span>
+	        #{if service?.startDate}
+	            <span class="item date">
+	                Date Interval:
+	                <span class="value">
+	                    ${service.getFormattedStartDate()}
+	                    #{if service?.endDate}
+	                    - ${service.getFormattedEndDate()}
+	                    #{/if}
+	                </span>
+	            </span>
+	        #{/if}
+	        <span class="item">
+	            Employee: <span class="value">${user.name}</span>
+	        </span>
+	        <div class="clearfix"></div>
+	    </div>
+        
+  <div id="newService">
+  
+  	<p class="error hidden">
+    </p>
+    #{form @processStartApproval(), id:'start-approval'}      
+        <input type="hidden" value="${service.id}" name="serviceId" id="serviceId" />
+         <input type="hidden" value="${user.id}" name="applicantId" id="applicantId" />
+        <p>
+            #{field 'actualDate'}
+            <label>Actual Date:</label>
+            <input type="text" id="${field.name}" name="${field.name}" readonly="readonly"  class="${field.errorClass} datepicker" value="${service.getFormattedActualDate()}" />
+            <span class="tip">What is the actual date for the service?</span>
+            #{/field}
+        </p>
+        <p>
+            #{field 'location'}
+            <label>Location:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
+            <span class="tip">Well, if you are in Istanbul, someone in New York may not help you! Best tell it!</span>
+            #{/field}
+        </p>
+        <p>
+            <input type="button" value="Send For Approval &rarr;" id="submit-btn">
+        </p>
+    #{/form}
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+        $("input[type=text].datepicker").datepicker({dateFormat: "dd.mm.yy"});
+
+        $("input[type=button]#submit-btn").bind("click", function() {
+            //Check empty values, show an error if there are any empty values...
+            var form = $("form#start-approval");
+            var errors = false;
+            form.find("input#location, input#actualDate").each(function(item, key) {
+                var errorDiv = $("p.error").addClass("hidden").html("");
+                errors = false;
+                if (!$(this).val()) {
+                    errorDiv.html("This field cannot be empty");
+                    errorDiv.removeClass("hidden");
+                    $(this).focus();
+                    errors = true;
+                    return false;
+                }
+            });
+            if (!errors) {
+                form.submit();
+            }
+        });
+    });
+</script>

@@ -70,6 +70,7 @@ public class Services extends BaseController {
         Task task = Task.findById(taskId);
         service.task = task;
 
+        service.status=ServiceStatus.PUBLISHED;
         service.save();
         
         if(deletedTags!=null){
@@ -102,8 +103,39 @@ public class Services extends BaseController {
 
     public static void detail(long serviceId) {
         Service service = Service.findById(serviceId);
-        boolean showEditBtn = Auth.connected().equals(service.boss.email);
-        render(service, showEditBtn);
+        boolean isBossUser = Auth.connected().equals(service.boss.email);
+        String userEmail=Auth.connected();
+        boolean isAppliedBefore=false;
+        SUser currentUser=SUser.findByEmail(Auth.connected());
+        if(!isBossUser){
+        	isAppliedBefore=isApplied(service.applicants,SUser.findByEmail(userEmail));
+        }
+        /*List<SUser> applicants=service.applicants;
+        if(applicants!=null){
+        	for (SUser sUser : applicants) {
+				System.out.println("user="+sUser.name);
+			}
+        }
+        else{
+        	System.out.println("no applicants");
+        }*/
+        
+       /* if(service.employee!=null){
+        	System.out.println("employee="+service.employee.name);
+        	if(service.employee.appliedServices==null){
+        		System.out.println("applied services null");
+        	}
+        	else{
+        		System.out.println("applied services size="+service.employee.appliedServices.size());
+        		for (Service s : service.employee.appliedServices) {
+					System.out.println("applied service="+s.title);
+				}
+        	}
+        }
+        else{
+        	System.out.println("Emplyee is null");
+        }*/
+        render(service, isBossUser,userEmail,isAppliedBefore,currentUser);
     }
     
     public static void search(int searchDone,String title, int serviceType, 
@@ -125,7 +157,7 @@ public class Services extends BaseController {
 			sc.setMaxBasePoint(maxBasePoint);
 			sc.setTags(tags.trim());
 		} else if (searchDone == 2) {
-			System.out.println("title=" + title);
+			//System.out.println("title=" + title);
 			sc.setTitle(title.trim());
 		}
 
@@ -173,6 +205,162 @@ public class Services extends BaseController {
 		render(services, tasks);
 	}
 
+	public static void apply(long serviceId,String email) throws Exception {
+	        Service service = Service.findById(serviceId);
+	        SUser user=SUser.findByEmail(email);
+	        List<SUser> applicants=service.applicants;
+	        boolean isBossUser = service.boss.email.equals(email);
+	        if(service.status==ServiceStatus.PUBLISHED && !isBossUser && !isApplied(applicants, user)){
+		        if(applicants==null){
+		        	applicants=new ArrayList<SUser>();
+		        }
+		        applicants.add(user);
+		        service.save();
+	        }
+	        else{
+	        	//APPLIED BEFORE
+	        }
+		        
+	        
+	        detail(service.id);
+	}
+	public static void cancelApply(long serviceId,String email) throws Exception {
+        Service service = Service.findById(serviceId);
+        SUser user=SUser.findByEmail(email);
+        List<SUser> applicants=service.applicants;
+        int index=findUserIndex(applicants, user);
+        if(index!=-1){
+	       applicants.remove(index);
+	        service.save();
+        }
+        else{
+        	//NOT APPLIED BEFORE
+        	
+        }
+	                
+        detail(service.id);
+	}
+	public static void startApproval(long serviceId,String email) throws Exception {
+		
+        Service service = Service.findById(serviceId);
+        SUser user=SUser.findByEmail(email);
+        List<SUser> applicants=service.applicants;
+        boolean isBossUser = Auth.connected().equals(service.boss.email);
+        int index=findUserIndex(applicants, user);
+        if(isBossUser && index!=-1){
+	      
+            //System.out.println("Start approval service="+service.id+ " "+user.name);
+            
+            render(service,user);
+        }
+        else{
+        	//NOT APPLIED BEFORE
+        	
+        }
+
+	}
+	public static void processStartApproval(long serviceId,long applicantId, 
+											String actualDate,String location) throws Exception {
+		
+        Service service = Service.findById(serviceId);
+        SUser user=SUser.findById(applicantId);
+        List<SUser> applicants=service.applicants;
+        boolean isBossUser = Auth.connected().equals(service.boss.email);
+        int index=findUserIndex(applicants, user);
+        if(isBossUser && index!=-1 && service.status==ServiceStatus.PUBLISHED){
+
+            //System.out.println("Process approval service="+service.id+ " "+user.name);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+            try {
+            	service.actualDate= sdf.parse(actualDate);
+            } catch (ParseException e) {
+                //FIXME: Find out what to do if this occurs...
+            }
+            service.location=location;
+            service.status=ServiceStatus.WAITING_EMPLOYEE_APPROVAL;
+            service.employee=user;
+            service.save();
+            
+            detail(serviceId);
+        }
+        else{
+        	//NOT APPLIED BEFORE
+        	
+        }
+	      
+	}
+	
+	public static void employeeApproval(long serviceId,long applicantId){
+		Service service = Service.findById(serviceId);
+        SUser user=SUser.findById(applicantId);
+		render(service,user);
+	}
+	public static void processEmployeeApproval(long serviceId,long applicantId,int approval){
+		Service service = Service.findById(serviceId);
+        SUser user=SUser.findById(applicantId);
+        List<SUser> applicants=service.applicants;
+        //boolean isBossUser = Auth.connected().equals(service.boss.email);
+        int index=findUserIndex(applicants, user);
+        if(approval==1 && index!=-1 && service.status==ServiceStatus.WAITING_EMPLOYEE_APPROVAL){
+        	service.status=ServiceStatus.IN_PROGRESS;
+        	service.applicants=null;
+			service.save();
+			
+			List<Service> servicesAsEmployee=user.servicesAsEmployee;
+			if(servicesAsEmployee!=null){
+				servicesAsEmployee=new ArrayList<Service>();
+			}
+			servicesAsEmployee.add(service);
+			user.save();
+        }
+		if(approval!=1 && index!=-1){
+			service.status=ServiceStatus.PUBLISHED;
+			service.employee=null;
+			service.save();
+			
+			int serviceIndex=findServiceIndex(user.appliedServices, service);
+			if(serviceIndex!=-1){
+				user.appliedServices.remove(serviceIndex);
+				user.save();
+			}
+		}
+		else{
+			//NOT AN APPLICANT
+		}
+		
+		detail(serviceId);
+		
+	}
+	
+	private static boolean isApplied(List<SUser> applicants,SUser user){
+
+		int index=findUserIndex(applicants, user);
+		return index!=-1;
+	}
+	private static int findUserIndex(List<SUser> applicants,SUser user){
+		int result=-1;
+		if(applicants!=null){
+			for(int i=0;i<applicants.size() && result==-1;i++){
+				SUser applicant=applicants.get(i);
+				if(applicant.id==user.id){
+					result=i;
+				}
+			}
+		}
+		return result;
+	}
+	private static int findServiceIndex(List<Service> services,Service service){
+		int result=-1;
+		if(services!=null){
+			for(int i=0;i<services.size() && result==-1;i++){
+				Service s=services.get(i);
+				if(s.id==service.id){
+					result=i;
+				}
+			}
+		}
+		return result;
+	}
 	private static String prepareQueryForQuickServiceSearch(String title) {
 		String sql = "select s from Service s, Task t where s.task=t";
 		sql += " and s.title LIKE '%" + title + "%'";
