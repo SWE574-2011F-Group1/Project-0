@@ -117,7 +117,7 @@
 	            #{if isBossUser && service.applicants!=null && service.applicants.size()>0}
 	        		#{form @startApproval(),id:'start-Approval'}
 			             #{list service.applicants, as:'applicant'}
-				               <input type="checkbox" id="startApprovalEmail" name="email" value="${applicant.email}"/>
+				               <input type="radio" id="startApprovalEmail" name="email" value="${applicant.email}"/>
 				               <span class="value">${applicant.name}</span>
 				               #{if applicant.email.equals(userEmail)}
 				               	(You)
@@ -181,7 +181,7 @@
 			return false ;
 	});
     $("input[type=button].start-approval-btn").bind("click", function() {
-    	var email=$("input[type=checkbox]#startApprovalEmail:checked").val();
+    	var email=$("input[type=radio]#startApprovalEmail:checked").val();
     	if(email){
     		$("form#start-Approval").submit();
     	}
