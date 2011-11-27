@@ -17,10 +17,12 @@
             #{field 'taskId'}
             <label>Task:</label>
             <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
+                <option value="" />-
                 #{list tasks, as:'t'}
 	               	<option value="${t.id}" />${t.name}
                 #{/list}
             </select>
+            <span class="tip right proposal">Not Found What You're looking for? Check the <a href="@{Tasks.proposals}">proposals!</a></span>
             <span class="tip">This service is related with what? You shall gain points based on this option.</span>
             #{/field}
         </p>
@@ -58,6 +60,7 @@
             <label>Location:</label>
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
             <span class="tip">Well, if you are in Istanbul, someone in New York may not help you! Best tell it!</span>
+
             #{/field}
         </p>
         <p>
@@ -98,17 +101,18 @@
             //Check empty values, show an error if there are any empty values...
             var form = $("form#add-service");
             var errors = false;
-            form.find("textarea#description, input#location, input#title").each(function(item, key) {
-                var errorDiv = $("p.error").addClass("hidden").html("");
-                errors = false;
+            var errorDiv = $("p.error").addClass("hidden").html("");
+            $("span.error").remove();
+            $(".error-field").removeClass("error-field");
+            form.find("select#taskId, textarea#description, input#location, input#title").each(function(item, key) {
                 if (!$(this).val()) {
-                    errorDiv.html("This field cannot be empty");
-                    errorDiv.removeClass("hidden");
-                    $(this).focus();
                     errors = true;
-                    return false;
+                    $(this).addClass("error-field");
+                    $(this).parent().prepend($("<span>").addClass("error").html("This field cannot be empty!"));
                 }
             });
+            errorDiv.html("Please Correct the errors below");
+            errorDiv.removeClass("hidden");
             if (!errors) {
                 form.submit();
             }

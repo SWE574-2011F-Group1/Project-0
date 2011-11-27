@@ -41,6 +41,7 @@ public class BaseController extends Controller {
             User fbUser = fb.fetchObject("me", User.class);
             Logger.info("Facebook User:" + fbUser);
             SUser sesUser = SUser.findByFbId(fbUser.getId());
+            Logger.info("returned user %s", sesUser);
             if (sesUser == null) {
                 Logger.info("Such a user does not exists. Create/Register one...");
                 //Register a new...
@@ -49,7 +50,8 @@ public class BaseController extends Controller {
                 sesUser.fbId = fbUser.getId();
                 sesUser.save();
             }
-            Auth.fbLogin(token, sesUser);
+            session.put("username", sesUser.email);
+            session.put("fbToken", token);
         } else {
             redirect("/");
         }

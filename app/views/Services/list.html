@@ -1,33 +1,16 @@
 #{extends 'main.html' /}
-#{set title:'Services List' /}
+#{set title:'Browse Services' /}
 
 <div class="sidebar">
+    <h3>Popular Tasks</h3>
     <div id="task-cloud" class="cloud"></div>
 </div>
 
-<div class="filter">
-    <span class="">
-        Task:
-        <span class="options">
-            <select id="filterTask" name="filterTask">
-                #{list tasks, as:'t'}
-                    <option value="${t.id}" />${t.name}
-                #{/list}
-            </select>
-        </span>
+
+    <span>
+        Are you looking for something?
     </span>
-    |
-    <span class="">
-        Type:
-        <span class="options">
-            <span class="radio-button"><input type="radio" value="provides" name="foo" id="type-provides" /> <span>Provide</span></span>
-            <span class="radio-button"><input type="radio" value="requests" name="foo" id="type-request" /> <span>Request</span></span>
-        </span>
-    </span>
-    |
-    <input type="button" value="Filter!" name="filter-btn" id="filter-btn" style="position: relative; bottom:1px;" />
     <hr />
-</div>
 
 <script type="text/javascript" charset="utf-8">
     $("document").ready(function() {
