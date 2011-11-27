@@ -1,0 +1,75 @@
+#{extends 'main.html' /}
+#{set title: 'Compose' /}
+#{set submenuView: 'messages' /}
+#{set additionalTip: '' /}
+    
+#{form @send(), id:'compose-message'}
+    <p class="error hidden">
+    </p>
+    #{if service != null}
+        <p>
+            <label>Recipient:</label> <a href="@{Profile.profile}/${service.boss.id}">${service.boss}</a>
+        </p>
+        <p>
+            <label>Service:</label> <a href="@{Services.detail}/${service.id}">${service.title}</a>
+        </p>
+        <input type="hidden" value="${service.id}" name="serviceId" id="serviceId" />
+        #{set additionalTip: 'Recipient will see the related task on this message, don\'t worry about it...' /}
+    #{/if}
+    #{else}
+        <p>
+            #{field 'recipientId'}
+            <label>Recipient:</label>
+            <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
+                #{list users, as:'u'}
+                    <option value="${u.id}" />${u}
+                #{/list}
+            </select>
+            <span class="tip">Who do you want to send the message</span>
+            #{/field}
+        </p>
+    #{/else}
+    <p>
+        #{field 'subject'}
+        <label>Subject:</label>
+        <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
+        <span class="tip">A summary of what you want to say. ${additionalTip}</span>
+        #{/field}
+    </p>	
+    <p>
+        #{field 'message'}
+        <label>Message:</label><br />
+        <span class="tip">Tell about your intentions, dates available to you, or ask for more detail or communication info.</span>
+        <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}"></textarea>
+        #{/field}
+    </p>
+    <p>
+        <input type="button" value="Send It!" id="submit-btn">
+    </p>
+#{/form}
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+        $("input[type=button]#submit-btn").bind("click", function() {
+            //Check empty values, show an error if there are any empty values...
+            var form = $("form#compose-message");
+            var errors = false;
+            var errorDiv = $("p.error").addClass("hidden").html("");
+            $("span.error").remove();
+            $(".error-field").removeClass("error-field");
+            form.find("textarea#message, input#subject").each(function(item, key) {
+                if (!$(this).val()) {
+                    errors = true;
+                    $(this).addClass("error-field");
+                    $(this).parent().prepend($("<span>").addClass("error").html("This field cannot be empty!"));
+                }
+            });
+            if (!errors) {
+                form.submit();
+            } else {
+                errorDiv.html("Please Correct the errors below");
+                errorDiv.removeClass("hidden");
+            }
+        });
+    });
+</script>

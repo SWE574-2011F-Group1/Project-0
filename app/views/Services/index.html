@@ -112,10 +112,11 @@
                     $(this).parent().prepend($("<span>").addClass("error").html("This field cannot be empty!"));
                 }
             });
-            errorDiv.html("Please Correct the errors below");
-            errorDiv.removeClass("hidden");
             if (!errors) {
                 form.submit();
+            } else {
+                errorDiv.html("Please Correct the errors below");
+                errorDiv.removeClass("hidden");
             }
         });
         #{if serviceId}
