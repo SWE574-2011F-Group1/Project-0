@@ -104,12 +104,23 @@
 	    <div class="info">
     	    <span class="item">
     	        Employee:
-    	        <span class="value">
-    	            ${service.employee.name}
-    	            #{if service.employee.email.equals(userEmail)}
-                       	(You) 
-                    #{/if}
-    	        </span>
+    	        <ul>
+    	       		<li>
+		    	        <span class="value">
+		    	            <a href="/profile/${service.employee.id}">${service.employee.name}</a>
+		    	            #{if service.employee.email.equals(userEmail)}
+		                       	(You) 
+		                    #{/if}
+		    	        </span>
+		    	        <br/>
+			        	<span class="value">Provider Point:${service.employee.providerPoint}</span>
+			       		<br/>
+			        	<span class="value">Requester Point:${service.employee.requesterPoint}</span>
+			        
+			        	<br/>
+			        	<br/>
+			        </li>	
+	        	</ul>
     	    </span>
 	     </div>
 	     <div class="clearfix"></div>
@@ -128,10 +139,17 @@
 			             #{list service.applicants, as:'applicant'}
                             <li>
 				             <input type="radio" id="startApprovalEmail" name="email" value="${applicant.email}"/>
-				             <span class="value">${applicant.name}</span>
+				             <span class="value"><a href="/profile/${applicant.id}">${applicant.name}</a></span>
 				             #{if applicant.email.equals(userEmail)}
 				                (You)
 				             #{/if}
+				             	<br/>
+					        	<span class="value">Provider Point:${applicant.providerPoint}</span>
+					       		<br/>
+					        	<span class="value">Requester Point:${applicant.requesterPoint}</span>
+					        
+					        	<br/>
+					        	<br/>
 				            </li>
 			             #{/list}
 			             <input type="hidden" name="serviceId" value="${service.id}" />
@@ -142,10 +160,17 @@
 		            <ul>
 		        	#{list service.applicants, as:'applicant'}
 		        	    <li>
-                        <span class="value">${applicant.name}</span>
-				        #{if applicant.email.equals(userEmail)}
-				            <a class="cancelBtn cancel-link" href="@{Services.cancelApply}?serviceId=${service.id}&email=${userEmail}">Cancel My Application</a>
-				        #{/if}
+	                        <span class="value"><a href="/profile/${applicant.id}">${applicant.name}</a></span>
+					         #{if applicant.email.equals(userEmail)}
+					            <a class="cancelBtn cancel-link" href="@{Services.cancelApply}?serviceId=${service.id}&email=${userEmail}">Cancel My Application</a>
+					        #{/if}
+					        <br/>
+					        <span class="value">Provider Point:${applicant.providerPoint}</span>
+					        <br/>
+					        <span class="value">Requester Point:${applicant.requesterPoint}</span>
+					        
+					        <br/>
+					        <br/>
 				        </li>
 			        #{/list}
 		            </ul>
