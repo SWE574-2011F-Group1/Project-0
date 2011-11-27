@@ -19,8 +19,7 @@ public class UserMessages extends BaseController {
         SUser r = SUser.findByEmail(Secure.Security.connected());
         List<UserMessage> pms = UserMessage.findByRecipient(r);
         boolean inboxView = true;
-        String message = flash.get("message");
-        render(pms, inboxView, message);
+        render(pms, inboxView);
     }
     
     public static void markAsRead() {
