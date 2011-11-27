@@ -1,0 +1,60 @@
+#{list services, as:'s'}
+    <div class="list-item" id="list-item">
+        <a href="@{Services.detail}/${s.id}">${s.title}</a>
+        <div class="info">
+            <span class="item">
+                Task: <span class="value">${s.task}</span>
+            </span>
+            <span class="item">
+                Type: <span class="value">${s.type}</span>
+            </span>
+            <span class="item">
+                Owner: <span class="value"><a style="color:black;" href="@{Profile.profile}/${s.boss.id}">${s.boss}</a></span>
+            </span>
+            <span class="item">
+                Location: <span class="value">${s.location}</span>
+            </span>
+            #{if s?.startDate}
+                <span class="item date">
+                    Date Interval:
+                    <span class="value">
+                        ${s.getFormattedStartDate()}
+                        #{if s?.endDate}
+                        - ${s.getFormattedEndDate()}
+                        #{/if}
+                    </span>
+                </span>
+            #{/if}
+            #{if s.stags!=null}
+	            <span class="item">
+	                Tags: <span class="value">
+	                #{list s.stags, as:'tag'}
+	               		${tag.text}${tag_isLast ? '' : ','}
+                	#{/list}
+                	</span>
+	            </span>
+            #{/if}
+            <span class="item">
+            	Status:
+           		<span class="value status">
+           			#{if s.status==models.ServiceStatus.PUBLISHED}
+		        		PUBLISHED
+		       		#{/if}
+			 		#{elseif s.status==models.ServiceStatus.WAITING_EMPLOYEE_APPROVAL}
+			 			WAITING EMPLOYEE APPROVAL
+			 		#{/elseif}
+			 		#{elseif s.status==models.ServiceStatus.IN_PROGRESS}
+		                IN PROGRESS
+			 		#{/elseif}
+			 		#{elseif s.status==models.ServiceStatus.WAITING_EMPLOYEE_FINISH}
+		                WAITING EMPLOYEE FINISH
+			 		#{/elseif}
+			 		#{elseif s.status==models.ServiceStatus.FINISHED}
+		                FINISHED
+			 		#{/elseif}
+           		</span>
+            </span>
+        </div>
+            <div class="clearfix"></div>
+    </div>
+#{/list}

@@ -23,6 +23,7 @@ GET     /foo                                    admin.Foo.index
 *       /services/processStartApproval	        Services.processStartApproval
 *       /services/employeeApproval	        	Services.employeeApproval
 *       /services/processEmployeeApproval	    Services.processEmployeeApproval
+*       /services/listPage                      Services.listPage 
 
 
 *       /                                       module:secure

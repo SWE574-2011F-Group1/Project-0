@@ -15,6 +15,9 @@ import models.*;
 @With(Secure.class)
 @Check("user")
 public class Services extends BaseController {
+	
+	public static int serviceNumberPerPage=5;
+
 
     public static void index() {
         Service service = new Service();
@@ -88,7 +91,8 @@ public class Services extends BaseController {
 
     public static void list(long uid, int st) {
         //TODO: Pagination...
-        Collection<Service> services = null;
+    	
+        List<Service> services = null;
         if (params._contains("task") && null != params.get("task") && !params.get("task").equals("")) {
             Logger.info("hede ho o");
             services = Service.findByTask(Long.valueOf(params.get("task")));
@@ -101,7 +105,27 @@ public class Services extends BaseController {
         	services = Service.findAll();
         }
         Collection<Task> tasks = Task.findWithWeights();
-        render(services, tasks);
+     
+        int maxPageNumber=0;
+        if(services!=null){
+        	maxPageNumber=services.size()/serviceNumberPerPage;
+        	if(services.size()%serviceNumberPerPage>0)
+        		maxPageNumber++;
+        }
+        if(maxPageNumber!=0){
+        	services=getServicesForPage(services, 1);
+        }
+        //session.put("username", sesUser.email);
+        
+        render(services, tasks,maxPageNumber);
+    }
+    
+    private static List<Service> getServicesForPage(List<Service> services,int page){
+    	int lastindex=page*serviceNumberPerPage;
+    	if(lastindex>services.size()){
+    		lastindex=services.size();
+    	}
+    	return services.subList((page-1)*serviceNumberPerPage, lastindex);
     }
 
     public static void detail(long serviceId) {
@@ -462,4 +486,27 @@ public static void cancelApply(long serviceId,String email) throws Exception {
 		List<SUser> users = SUser.find(query).fetch();
 		renderJSON(users);
 	}
+	public static void listPage() {
+	 	int page=1;	
+    	if(params.get("page")!=null){
+    		page=Integer.parseInt(params.get("page"));
+    	}
+    	
+    	List<Service> services = null;
+       
+        services = Service.findAll();
+       
+        Collection<Task> tasks = Task.findWithWeights();
+        
+        int maxPageNumber=0;
+        if(services!=null){
+        	maxPageNumber=services.size()/serviceNumberPerPage;
+        	maxPageNumber+=services.size()%serviceNumberPerPage;
+        }
+        if(maxPageNumber!=0){
+        	services=getServicesForPage(services, page);
+        }
+        
+        render(services, tasks);
+ }
 }
