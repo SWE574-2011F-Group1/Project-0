@@ -15,44 +15,153 @@
         <span class="item">
             Location: <span class="value">${service.location}</span>
         </span>
-        #{if service?.startDate}
-            <span class="item date">
-                Date Interval:
-                <span class="value">
-                    ${service.getFormattedStartDate()}
-                    #{if service?.endDate}
-                    - ${service.getFormattedEndDate()}
-                    #{/if}
-                </span>
-            </span>
-        #{/if}
-        #{if service.stags!=null}
-	        <span class="item">
-	            Tags: <span class="value">
-	                #{list service.stags, as:'tag'}
-	                    ${tag.text}${tag_isLast ? '' : ','}
-                    #{/list}
-                </span>
-	        </span>
-        #{/if}
+          <span class="item">
+            Status:
+        	#{if service.status==models.ServiceStatus.PUBLISHED}
+        		<span class="value" style="color:red">PUBLISHED</span>
+       		#{/if}
+	 		#{elseif service.status==models.ServiceStatus.WAITING_EMPLOYEE_APPROVAL}
+	 			<span class="value" style="color:red">WAITING EMPLOYEE APPROVAL</span>
+	 		#{/elseif}
+	 		#{elseif service.status==models.ServiceStatus.IN_PROGRESS}
+	 			<span class="value" style="color:red">IN PROGRESS</span>
+	 		#{/elseif}
+	 		#{elseif service.status==models.ServiceStatus.WAITING_EMPLOYEE_FINISH}
+	 			<span class="value" style="color:red">WAITING EMPLOYEE FINISH</span>
+	 		#{/elseif}
+	 		#{elseif service.status==models.ServiceStatus.FINISHED}
+	 			<span class="value" style="color:red">FINISHED</span>
+	 		#{/elseif}
+	 	</span>
+	 	#{if service.status==models.ServiceStatus.PUBLISHED}
+	        #{if service?.startDate}
+	            <span class="item date">
+	                Date Interval:
+	                <span class="value">
+	                    ${service.getFormattedStartDate()}
+	                    #{if service?.endDate}
+	                    - ${service.getFormattedEndDate()}
+	                    #{/if}
+	                </span>
+	            </span>
+	        #{/if}
+	     #{/if}
+	     #{else}
+	     	 <span class="item date">
+	                Actual Date:
+	                <span class="value">
+	                    ${service.getFormattedActualDate()}
+	                </span>
+	            </span>
+	     #{/else}
+         #{if service.stags!=null}
+	            <span class="item">
+	                Tags: <span class="value">
+	                 #{list service.stags, as:'tag'}
+	               		${tag.text}${tag_isLast ? '' : ','}
+                	#{/list}
+                	</span>
+	            </span>
+            #{/if}
         <div class="clearfix"></div>
     </div>
-    #{if ownedPost}
-        <input type="button" value="I made a mistake!" class="edit-btn" />
+    #{if isBossUser && service.status==models.ServiceStatus.PUBLISHED}
+    	<input type="button" value="I made a mistake!" class="edit-btn" />
     #{/if}
-    #{else}
-        <input type="button" value="Apply Now!" class="apply-btn right" />
-        <input type="button" value="Send Message!" class="pm-btn right" />
-    #{/else}
+    #{if service.status==models.ServiceStatus.PUBLISHED && !isBossUser && !isAppliedBefore}
+    	#{form @apply(),}
+        		<input type="hidden" name="serviceId" value="${service.id}"/>
+        		<input type="hidden" name="email" value="${userEmail}"/>
+    			<input type="submit" value="Apply Now!" class="apply-btn right" />
+    	#{/form}
+    #{/if}
+    #{if !isBossUser}
+    	<input type="button" value="Send Message!" class="pm-btn right" />
+    #{/if}	
     <div class="clearfix"></div>
     <div class="desc">
         ${service.description}
     </div>
     #{if !ownedPost}
     <div class="bot">
-        <input type="button" value="Apply Now!" class="apply-btn right" />
-        <input type="button" value="Send Message!" class="pm-btn right" />
+        #{if service.status==models.ServiceStatus.PUBLISHED && !isBossUser && !isAppliedBefore}
+        	#{form @apply(),}
+        		<input type="hidden" name="serviceId" value="${service.id}"/>
+        		<input type="hidden" name="email" value="${userEmail}"/>
+    			<input type="submit" value="Apply Now!" class="apply-btn right" />
+    		#{/form}
+   		#{/if}
+    	#{if !isBossUser}
+    		<input type="button" value="Send Message!" class="pm-btn right" />
+   		#{/if}	
     </div>
+    #{if service.status!=models.ServiceStatus.PUBLISHED && service.employee!=null}
+	     <div class="info">
+	     	<span class="item">
+	            Employee:<br/>
+	            <span class="value">
+	           		${service.employee.name}
+	            </span>
+               #{if service.employee.email.equals(userEmail)}
+               	(You) 
+               #{/if}         
+	         </span>
+	     </div>
+    #{/if}
+    #{if service.status==models.ServiceStatus.PUBLISHED && service.applicants!=null && service.applicants.size()>0}
+	    <div class="info">
+	    	<p class="error hidden" id="startApprovalError">
+       			Check applicant before start approval.
+       		</p>
+	    	<span class="item">
+	            Applicants:<br/>
+	            #{if isBossUser && service.applicants!=null && service.applicants.size()>0}
+	        		#{form @startApproval(),id:'start-Approval'}
+			             #{list service.applicants, as:'applicant'}
+				               <input type="radio" id="startApprovalEmail" name="email" value="${applicant.email}"/>
+				               <span class="value">${applicant.name}</span>
+				               #{if applicant.email.equals(userEmail)}
+				               	(You)
+				               #{/if}
+				               <br/>
+			             #{/list}
+			             <input type="hidden" name="serviceId" value="${service.id}"/>
+		             #{/form}
+		        #{/if}
+		        #{else}
+		        	#{list service.applicants, as:'applicant'}
+				               <span class="value">${applicant.name}</span>
+				               #{if applicant.email.equals(userEmail)}
+				               	(You)
+				               #{/if}
+				               <br/>
+			        #{/list}
+		        #{/else}
+	        </span>
+	        <span >
+		    	#{if isAppliedBefore && service.status==models.ServiceStatus.PUBLISHED}
+		        	#{form @cancelApply(), id:'cancel-application'}
+		        		<input type="hidden" name="serviceId" value="${service.id}"/>
+		        		<input type="hidden" name="email" value="${userEmail}"/>
+		    			<input type="submit" value="Cancel Application" class="cancel-apply-btn right" />
+		    		#{/form}
+		        #{/if}
+	       </span>
+	    </div>
+    #{/if}
+    #{if service.status==models.ServiceStatus.PUBLISHED && isBossUser && service.applicants!=null && service.applicants.size()>0}
+	    <div>
+	    		<input type="button" value="Start Approval" class="start-approval-btn right" />
+	    </div>
+    #{/if}
+    #{if service.status==models.ServiceStatus.WAITING_EMPLOYEE_APPROVAL && service.employee!=null && service.employee.id==currentUser.id}
+	    <div>
+	    	#{form @employeeApproval(),}
+	    		<input type="hidden" value="${service.id}" name="serviceId" id="serviceId" />
+       			<input type="hidden" value="${currentUser.id}" name="applicantId" id="applicantId" />
+	    		<input type="submit" value="Process Approval" class="employee-approval-btn right" />
+	    	#{/form}
+	    </div>
     #{/if}
 </div>
 <script>
@@ -65,4 +174,20 @@
     $("input[type=button].edit-btn").bind("click", function() {
         document.location = '@{Services.edit}/${service.id}';
     })
+     $("form#cancel-application").bind("submit", function() {
+    	 var agree=confirm("Are you sure you wish to cancel your application?");
+		if (agree)
+			return true ;
+		else
+			return false ;
+	});
+    $("input[type=button].start-approval-btn").bind("click", function() {
+    	var email=$("input[type=radio]#startApprovalEmail:checked").val();
+    	if(email){
+    		$("form#start-Approval").submit();
+    	}
+    	else{
+    		$("p#startApprovalError").removeClass("error hidden").addClass("error");
+    	}
+    });
 </script>

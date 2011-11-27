@@ -1,0 +1,40 @@
+#{extends 'main.html' /}
+#{set tagString:'' /}
+#{set title:'Employee Service Approval' /}
+
+	#{form @processEmployeeApproval(), id:'process-employee-approval'}
+		<input type="hidden" value="${service.id}" name="serviceId" id="serviceId" />
+        <input type="hidden" value="${user.id}" name="applicantId" id="applicantId" />
+        <input type="hidden" value="" name="approval" id="approval" />
+        <div class="info">
+           <span class="item">
+	            Service Name: <span class="value">${service.title}</span>
+	        </span>
+	        <span class="item">
+	            Task: <span class="value">${service.task}</span>
+	        </span>
+	        <span class="item">
+	            Type: <span class="value">${service.type}</span>
+	        </span>
+	        <span class="item">
+	            Location: <span class="value">${service.location}</span>
+	        </span>
+	        <span class="item">
+	            Actual Date: <span class="value">${service.getFormattedActualDate()}</span>
+	        </span>
+	        <span class="item">
+	            Employee: <span class="value">${user.name}</span>
+	        </span>
+	        <div class="clearfix"></div>
+	        <p>
+            	<input type="button" onclick="setApproval(0);" value="Don't Approve &rarr;" id="dont-apply-btn">
+            	<input type="button" onclick="setApproval(1);" value="Approve &rarr;" id="dont-apply-btn">
+       	 	</p>
+	    </div>
+  #{/form}  
+<script type="text/javascript" charset="utf-8">
+   function setApproval(approval){
+	   $('input[type=hidden]#approval').val(approval);
+	   $("form#process-employee-approval").submit();
+   }
+</script>

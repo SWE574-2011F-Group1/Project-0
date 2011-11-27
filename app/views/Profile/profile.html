@@ -1,0 +1,49 @@
+#{extends 'main.html' /}
+#{set title:'User Profile' /}
+
+
+<div>
+
+	<a href="@{Services.list}/${User.id}/1">Active Service Requests</a>
+	 | 
+	<a href="@{Services.list}/${User.id}/2">Active Service Offers</a>
+	 |
+	<a href="@{Services.list}/${User.id}/3">Planned Service Req/Offers</a>
+	 |
+	<a href="@{Services.list}/${User.id}/4">Done Service Req/Offers</a>
+	
+	<p>
+		<label>Name:</label> 
+		${User.name}
+	</p>
+	<p>
+		<label>Email:</label> 
+		${User.email}
+	</p>
+	<p>
+		<label>Provider Point:</label> 
+		${User.providerPoint}
+	</p>
+	<p>
+		<label>Requestor Point:</label> 
+		${User.requesterPoint}
+	</p>
+	<p>
+		<label>Social Point:</label>
+		${User.getAbsoluteSocialPoint()}
+	</p>
+	
+	<a href="@{Services.list}/${User.id}">Bookmark</a>
+		
+	<a href="@{Services.list}/${User.id}">Remove Bookmark</a>
+	
+	<h2>Comments</h2>
+	<div class="list-item">
+	<a href="">Anıl</a><em>  wrote on 11.11.2011 11:11:11</em>
+		<div class="info">
+			Service Monster!
+		</div>
+	</div>
+	
+</div>			        		
+

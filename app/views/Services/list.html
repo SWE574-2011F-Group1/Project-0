@@ -21,7 +21,9 @@
        $("div#task-cloud").jQCloud(words);
     });
 </script>
-
+#{if services.size() < 1}
+	Servis bulunamadı.
+#{/if}
 #{list services, as:'s'}
     <div class="list-item">
         <a href="@{Services.detail}/${s.id}">${s.title}</a>
@@ -33,7 +35,7 @@
                 Type: <span class="value">${s.type}</span>
             </span>
             <span class="item">
-                Owner: <span class="value">${s.boss}</span>
+                Owner: <span class="value"><a href="@{Profile.profile}/${s.boss.id}">${s.boss}</a></span>
             </span>
             <span class="item">
                 Location: <span class="value">${s.location}</span>
