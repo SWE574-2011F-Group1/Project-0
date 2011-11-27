@@ -7,11 +7,6 @@
 #{/else}
 #{set submenuView: 'messages' /}
 
-#{if message != null}
-    <div class="flash-message">
-        ${message}
-    </div>
-#{/if}
 #{list pms, as:'m'}
 <div class="list-item">
     <a href="@{UserMessages.detail}/${m.id}"></a>

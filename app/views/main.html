@@ -81,6 +81,11 @@
             <div id="pageContent">
                 <div class="wikistyle">
                     <h1>#{get 'title' /}</h1>
+                    #{if message != null}
+                        <div class="flash-message">
+                            ${message}
+                        </div>
+                    #{/if}
                     #{doLayout /}
                 </div>
             </div>
