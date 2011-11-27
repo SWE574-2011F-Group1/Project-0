@@ -62,11 +62,11 @@ public class SUser extends CommentableModel {
     	return this.name;
     }
     
-    //not commit
-    public boolean getIsAdmin()
-    {
-    	return this.isAdmin;
-    }
-    //end of not commit
+//    //not commit
+//    public boolean getIsAdmin()
+//    {
+//    	return this.isAdmin;
+//    }
+//    //end of not commit
 }
 
