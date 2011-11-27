@@ -199,7 +199,36 @@ public class Services extends BaseController {
 	        
 	        detail(service.id);
 	}
-	public static void cancelApply(long serviceId,String email) throws Exception {
+	public static void bossClose(long serviceId,String email) throws Exception {
+        Service service = Service.findById(serviceId);
+        SUser user=SUser.findByEmail(email);
+        boolean isBossUser = service.boss.email.equals(email);
+      
+         if(service.status==ServiceStatus.IN_PROGRESS && isBossUser ){
+	     
+	        service.status=ServiceStatus.WAITING_EMPLOYEE_FINISH;
+	        service.save();
+	      
+        }
+      
+        detail(service.id);
+}
+	public static void employeeClose(long serviceId,String email) throws Exception {
+        Service service = Service.findById(serviceId);
+        SUser user=SUser.findByEmail(email);
+
+        if(service.status==ServiceStatus.WAITING_EMPLOYEE_FINISH && service.employee.id==user.id){
+	      
+	        service.status=ServiceStatus.FINISHED;
+	        service.employee.providerPoint+=service.task.point;
+	        service.boss.requesterPoint+=service.task.point;
+	        service.save();
+        }
+ 
+        detail(service.id);
+}
+
+public static void cancelApply(long serviceId,String email) throws Exception {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
         List<SUser> applicants=service.applicants;
