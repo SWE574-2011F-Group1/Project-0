@@ -75,6 +75,20 @@
     			<input type="submit" value="Apply Now!" class="apply-btn right" />
     	#{/form}
     #{/if}
+    #{if service.status==models.ServiceStatus.IN_PROGRESS && isBossUser}
+    	#{form @bossClose(),}
+        		<input type="hidden" name="serviceId" value="${service.id}"/>
+        		<input type="hidden" name="email" value="${userEmail}"/>
+    			<input type="submit" value="Close" class="close-btn right" />
+    	#{/form}
+    #{/if}
+     #{if service.status==models.ServiceStatus.WAITING_EMPLOYEE_FINISH && service.employee.id==currentUser.id}
+    	#{form @employeeClose(),}
+        		<input type="hidden" name="serviceId" value="${service.id}"/>
+        		<input type="hidden" name="email" value="${userEmail}"/>
+    			<input type="submit" value="Close" class="close-btn right" />
+    	#{/form}
+    #{/if}
     #{if !isBossUser}
     	<input type="button" value="Send Message!" class="pm-btn right" />
     #{/if}	
