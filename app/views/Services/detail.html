@@ -78,20 +78,6 @@
     			<input type="submit" value="Apply Now!" class="apply-btn right" />
     	#{/form}
     #{/if}
-    #{if service.status==models.ServiceStatus.IN_PROGRESS && isBossUser}
-    	#{form @bossClose(),}
-        		<input type="hidden" name="serviceId" value="${service.id}"/>
-        		<input type="hidden" name="email" value="${userEmail}"/>
-    			<input type="submit" value="Close" class="close-btn right" />
-    	#{/form}
-    #{/if}
-     #{if service.status==models.ServiceStatus.WAITING_EMPLOYEE_FINISH && service.employee.id==currentUser.id}
-    	#{form @employeeClose(),}
-        		<input type="hidden" name="serviceId" value="${service.id}"/>
-        		<input type="hidden" name="email" value="${userEmail}"/>
-    			<input type="submit" value="Close" class="close-btn right" />
-    	#{/form}
-    #{/if}
     #{if !isBossUser}
     	<input type="button" value="Send Message!" class="pm-btn right" />
     #{/if}	
@@ -192,7 +178,6 @@
 	    	#{/form}
 	    </div>
     #{/if}
-    </div>
     <div class="bot buttons">
         #{if service.status==models.ServiceStatus.PUBLISHED && !isBossUser && !isAppliedBefore}
         	#{form @apply(),}
@@ -201,6 +186,29 @@
     			<input type="submit" value="Apply Now!" class="apply-btn right" />
     		#{/form}
    		#{/if}
+    </div>
+    <div class="clearfix"></div>
+    #{if service.status==models.ServiceStatus.IN_PROGRESS && isBossUser}
+    	#{form @bossClose(),} 
+    			<br>
+        		<input type="hidden" name="serviceId" value="${service.id}"/>
+        		<input type="hidden" name="email" value="${userEmail}"/>
+        		<input type="hidden" name="employeeEmail" value="${service.employee.email}"/>
+        		<label>Comment:</label><br> 
+        		<textarea rows="5" cols="5" name = "bossComment"></textarea>
+    			<input type="submit" value="Close" class="close-btn right" />
+    	#{/form} 
+    #{/if}
+    #{if service.status==models.ServiceStatus.WAITING_EMPLOYEE_FINISH && service.employee.id==currentUser.id}
+    	#{form @employeeClose(),}
+        		<input type="hidden" name="serviceId" value="${service.id}"/>
+        		<input type="hidden" name="email" value="${userEmail}"/>
+        		<input type="hidden" name="bossEmail" value="${service.boss.email}"/>
+        		<label>Comment:</label><br> 
+        		<textarea rows="5" cols="5" name = "employeeComment"></textarea>
+    			<input type="submit" value="Close" class="close-btn right" />
+    	#{/form}
+    #{/if}
     </div>
 </div>
 <script>

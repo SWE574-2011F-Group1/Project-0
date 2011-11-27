@@ -61,5 +61,12 @@ public class SUser extends CommentableModel {
     public String toString() {
     	return this.name;
     }
+    
+//    //not commit
+//    public boolean getIsAdmin()
+//    {
+//    	return this.isAdmin;
+//    }
+//    //end of not commit
 }
 

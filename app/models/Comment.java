@@ -1,9 +1,15 @@
 package models;
 
 import play.*;
+import play.data.binding.types.DateTimeBinder;
 import play.db.jpa.*;
 
 import javax.persistence.*;
+
+import org.joda.time.DateTime;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Entity
@@ -12,6 +18,9 @@ public class Comment extends Model {
     @ManyToOne
     public SUser commenter;
     
+    @ManyToOne
+    public SUser owner;
+    
     @Lob
     public String comment;
     
@@ -19,10 +28,19 @@ public class Comment extends Model {
     
     public int unhelpfulCount;
     
+    public String commentDateWithTime;
     
-    public Comment(SUser u, String comment) {
+    public Date commentDate;
+    
+    public Comment(SUser u, SUser owner, String comment) {
         this.commenter = u;
+        this.owner = owner;
         this.comment = comment;
+    }
+    
+    public static List<Comment> findByUserId(long userId){
+    	//List<Comment> services = new ArrayList<Comment>();
+    	return find("select c from Comment c where c.owner.id = ?", userId).fetch();
     }
 }
 
