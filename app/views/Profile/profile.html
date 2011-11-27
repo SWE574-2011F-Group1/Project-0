@@ -38,12 +38,14 @@
 	<a href="@{Services.list}/${User.id}">Remove Bookmark</a>
 	
 	<h2>Comments</h2>
+#{list comments, as:'c'}
 	<div class="list-item">
-	<a href="">Anıl</a><em>  wrote on 11.11.2011 11:11:11</em>
+	<a href="@{Profile.profile}/${c.commenter.id}">${c.commenter.name}</a><em>  wrote on ${c.commentDateWithTime}</em>
 		<div class="info">
-			Service Monster!
+			${c.comment}
 		</div>
 	</div>
+#{/list}
 	
 </div>			        		
 

@@ -1,5 +1,6 @@
 #{extends 'main.html' /}
 #{set title:'Browse Services' /}
+#{set submenuView: 'services' /}
 
 <div class="sidebar">
     <h3>Popular Tasks</h3>
@@ -24,51 +25,95 @@
 #{if services.size() < 1}
 	Servis bulunamadı.
 #{/if}
-#{list services, as:'s'}
-    <div class="list-item">
-        <a href="@{Services.detail}/${s.id}">${s.title}</a>
-        <div class="info">
-            <span class="item">
-                Task: <span class="value">${s.task}</span>
-            </span>
-            <span class="item">
-                Type: <span class="value">${s.type}</span>
-            </span>
-            <span class="item">
-                Owner: <span class="value"><a href="@{Profile.profile}/${s.boss.id}">${s.boss}</a></span>
-            </span>
-            <span class="item">
-                Location: <span class="value">${s.location}</span>
-            </span>
-            #{if s?.startDate}
-                <span class="item date">
-                    Date Interval:
-                    <span class="value">
-                        ${s.getFormattedStartDate()}
-                        #{if s?.endDate}
-                        - ${s.getFormattedEndDate()}
-                        #{/if}
-                    </span>
-                </span>
-            #{/if}
-            #{if s.stags!=null}
-	            <span class="item">
-	                Tags: <span class="value">
-	                #{list s.stags, as:'tag'}
-	               		${tag.text}${tag_isLast ? '' : ','}
-                	#{/list}
-                	</span>
-	            </span>
-            #{/if}
-        </div>
-            <div class="clearfix"></div>
-    </div>
-#{/list}
-
+#{else}
+<div id="container">
+ 
+<div class="search-background">
+			<label><img src="loader.gif" alt="" /></label></div>
+</div>
+	#{if maxPageNumber>1}
+	 	<div id="paging_button1">
+	 		Jump to page:
+	 		<select>
+	 			#{list items:1..maxPageNumber, as:'i'}
+	 				<option value="${i}">${i}</option>
+	 			#{/list}
+	 		</select>
+		</div>
+	#{/if}
+	<br/>
+ <div id="content">
+ </div>
+	#{if maxPageNumber>1}
+	 	<div id="paging_button2">
+			Jump to page:
+	 		<select>
+	 			#{list items:1..maxPageNumber, as:'i'}
+	 				<option value="${i}">${i}</option>
+	 			#{/list}
+	 		</select>
+		</div>
+	#{/if}
+</div>
+#{/else}
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function() {
         $("#filter-btn").bind("click", function() {
             alert("Filtered!");
         });
     });
+    
+    $(document).ready(function(){
+    	 
+    	function showLoader(){
+     
+    		$('.search-background').fadeIn(200);
+    	}
+     
+    	function hideLoader(){
+     
+    		$('.search-background').fadeOut(200);
+    	};
+     
+    	$("#paging_button li").click(function(){
+     
+    		showLoader();
+     
+    		$("#paging_button li").css({'background-color' : ''});
+    		$(this).css({'background-color' : '#006699'});
+     
+    		$("#content").load("/services/listPage?page=" + this.id, hideLoader);
+     
+    		return false;
+    	});
+     
+    	
+    	$("#paging_button1 select").change(function(){
+    	     
+    		showLoader();
+     
+    		$("#paging_button2 select").val(this.value);
+    		$("#content").load("/services/listPage?page=" + this.value, hideLoader);
+     
+    		return false;
+    	});
+    	$("#paging_button2 select").change(function(){
+   	     
+    		showLoader();
+     
+    		$("#paging_button1 select").val(this.value);
+    		$("#content").load("/services/listPage?page=" + this.value, hideLoader);
+     
+    		return false;
+    	});
+    	
+    	showLoader();
+    	page=$("#paging_button1 select").val();
+    	if(page==null){
+    		page=1;
+    	}
+    	$("#content").load("/services/listPage?page="+page, hideLoader);
+     
+    });
+
 </script>

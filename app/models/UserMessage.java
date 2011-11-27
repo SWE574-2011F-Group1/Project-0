@@ -20,16 +20,32 @@ public class UserMessage extends Model {
     @Required
     public SUser sender;
     
+    @Required
+    public String subject;
+    
+    @ManyToOne
+    public Service service;
+    
     @Lob
     @Required
     public String message;
     
+    @Temporal(TemporalType.TIMESTAMP)
     public Date sentTime;
     
+    @Temporal(TemporalType.TIMESTAMP)
     public Date readTime;
     
     public static List<UserMessage> findByRecipient(SUser r) {
-        return find("byRecipient", r).fetch();
+        return findByXOrdered(r, "recipient");
+    }
+    
+    public static List<UserMessage> findBySender(SUser r) {
+        return findByXOrdered(r, "sender");
+    }
+    
+    private static List<UserMessage> findByXOrdered(SUser u, String findType) {
+        return find("select m from UserMessage m where " + findType + " = ? order by readTime asc, sentTime desc", u).fetch();
     }
     
     public String getFormattedSentTime() {
@@ -47,6 +63,11 @@ public class UserMessage extends Model {
     
     public String toString() {
         return "{Message: {sender: '" + sender + "', recipient: '" + recipient + "', message: '" + message +"'}}";
+    }
+    
+    public void markRead() {
+        this.readTime = new Date();
+        this.save();
     }
 }
 

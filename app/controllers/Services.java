@@ -3,15 +3,21 @@ package controllers;
 import play.*;
 import play.mvc.*;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import org.joda.time.DateTime;
 
 import models.*;
 
 @With(Secure.class)
 @Check("user")
 public class Services extends BaseController {
+	
+	public static int serviceNumberPerPage=5;
+
 
     public static void index() {
         Service service = new Service();
@@ -85,7 +91,8 @@ public class Services extends BaseController {
 
     public static void list(long uid, int st) {
         //TODO: Pagination...
-        Collection<Service> services = null;
+    	
+        List<Service> services = null;
         if (params._contains("task") && null != params.get("task") && !params.get("task").equals("")) {
             Logger.info("hede ho o");
             services = Service.findByTask(Long.valueOf(params.get("task")));
@@ -98,7 +105,27 @@ public class Services extends BaseController {
         	services = Service.findAll();
         }
         Collection<Task> tasks = Task.findWithWeights();
-        render(services, tasks);
+     
+        int maxPageNumber=0;
+        if(services!=null){
+        	maxPageNumber=services.size()/serviceNumberPerPage;
+        	if(services.size()%serviceNumberPerPage>0)
+        		maxPageNumber++;
+        }
+        if(maxPageNumber!=0){
+        	services=getServicesForPage(services, 1);
+        }
+        //session.put("username", sesUser.email);
+        
+        render(services, tasks,maxPageNumber);
+    }
+    
+    private static List<Service> getServicesForPage(List<Service> services,int page){
+    	int lastindex=page*serviceNumberPerPage;
+    	if(lastindex>services.size()){
+    		lastindex=services.size();
+    	}
+    	return services.subList((page-1)*serviceNumberPerPage, lastindex);
     }
 
     public static void detail(long serviceId) {
@@ -110,31 +137,6 @@ public class Services extends BaseController {
         if(!isBossUser){
         	isAppliedBefore=isApplied(service.applicants,SUser.findByEmail(userEmail));
         }
-        /*List<SUser> applicants=service.applicants;
-        if(applicants!=null){
-        	for (SUser sUser : applicants) {
-				System.out.println("user="+sUser.name);
-			}
-        }
-        else{
-        	System.out.println("no applicants");
-        }*/
-        
-       /* if(service.employee!=null){
-        	System.out.println("employee="+service.employee.name);
-        	if(service.employee.appliedServices==null){
-        		System.out.println("applied services null");
-        	}
-        	else{
-        		System.out.println("applied services size="+service.employee.appliedServices.size());
-        		for (Service s : service.employee.appliedServices) {
-					System.out.println("applied service="+s.title);
-				}
-        	}
-        }
-        else{
-        	System.out.println("Emplyee is null");
-        }*/
         render(service, isBossUser,userEmail,isAppliedBefore,currentUser);
     }
     
@@ -224,21 +226,32 @@ public class Services extends BaseController {
 	        
 	        detail(service.id);
 	}
-	public static void bossClose(long serviceId,String email) throws Exception {
+	public static void bossClose(long serviceId,String email, String bossComment, String employeeEmail) throws Exception {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
         boolean isBossUser = service.boss.email.equals(email);
-      
+        Logger.info("employeeEmail:" + employeeEmail);
          if(service.status==ServiceStatus.IN_PROGRESS && isBossUser ){
 	     
 	        service.status=ServiceStatus.WAITING_EMPLOYEE_FINISH;
 	        service.save();
 	      
         }
-      
+        Comment comment = new Comment(user, SUser.findByEmail(employeeEmail), bossComment);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
+        Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
+        try {
+        	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
+        } catch (ParseException e) {
+            //FIXME: Find out what to do if this occurs...
+        }    
+        comment.commentDateWithTime = formatterTime.format(calendar.getTime());
+        comment.save();
         detail(service.id);
 }
-	public static void employeeClose(long serviceId,String email) throws Exception {
+	public static void employeeClose(long serviceId,String email, String employeeComment, String bossEmail) throws Exception {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
 
@@ -249,7 +262,18 @@ public class Services extends BaseController {
 	        service.boss.requesterPoint+=service.task.point;
 	        service.save();
         }
- 
+        Comment comment = new Comment(user, SUser.findByEmail(bossEmail), employeeComment);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
+        Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
+        try {
+        	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
+        } catch (ParseException e) {
+            //FIXME: Find out what to do if this occurs...
+        }    
+        comment.commentDateWithTime = formatterTime.format(calendar.getTime());
+        comment.save();
         detail(service.id);
 }
 
@@ -276,29 +300,21 @@ public class Services extends BaseController {
         List<SUser> applicants=service.applicants;
         boolean isBossUser = Auth.connected().equals(service.boss.email);
         int index=findUserIndex(applicants, user);
-        if(isBossUser && index!=-1){
-	      
-            //System.out.println("Start approval service="+service.id+ " "+user.name);
-            
+        if (isBossUser && index!=-1) {
             render(service,user);
+        } else {
+        	//NOT APPLIED BEFORE	
         }
-        else{
-        	//NOT APPLIED BEFORE
-        	
-        }
-
 	}
+	
 	public static void processStartApproval(long serviceId,long applicantId, 
-											String actualDate,String location) throws Exception {
-		
+											String actualDate,String location) throws Exception {	
         Service service = Service.findById(serviceId);
         SUser user=SUser.findById(applicantId);
         List<SUser> applicants=service.applicants;
         boolean isBossUser = Auth.connected().equals(service.boss.email);
         int index=findUserIndex(applicants, user);
-        if(isBossUser && index!=-1 && service.status==ServiceStatus.PUBLISHED){
-
-            //System.out.println("Process approval service="+service.id+ " "+user.name);
+        if (isBossUser && index!=-1 && service.status==ServiceStatus.PUBLISHED) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
             try {
             	service.actualDate= sdf.parse(actualDate);
@@ -311,10 +327,8 @@ public class Services extends BaseController {
             service.save();
             
             detail(serviceId);
-        }
-        else{
+        } else {
         	//NOT APPLIED BEFORE
-        	
         }
 	      
 	}
@@ -329,7 +343,7 @@ public class Services extends BaseController {
         SUser user=SUser.findById(applicantId);
         List<SUser> applicants=service.applicants;
         //boolean isBossUser = Auth.connected().equals(service.boss.email);
-        int index=findUserIndex(applicants, user);
+        int index = findUserIndex(applicants, user);
         if(approval==1 && index!=-1 && service.status==ServiceStatus.WAITING_EMPLOYEE_APPROVAL){
         	service.status=ServiceStatus.IN_PROGRESS;
         	service.applicants=null;
@@ -342,49 +356,46 @@ public class Services extends BaseController {
 			servicesAsEmployee.add(service);
 			user.save();
         }
-		if(approval!=1 && index!=-1){
-			service.status=ServiceStatus.PUBLISHED;
-			service.employee=null;
+		if (approval != 1 && index != -1) {
+			service.status = ServiceStatus.PUBLISHED;
+			service.employee = null;
 			service.save();
 			
-			int serviceIndex=findServiceIndex(user.appliedServices, service);
-			if(serviceIndex!=-1){
+			int serviceIndex = findServiceIndex(user.appliedServices, service);
+			if (serviceIndex != -1) {
 				user.appliedServices.remove(serviceIndex);
 				user.save();
 			}
-		}
-		else{
+		} else {
 			//NOT AN APPLICANT
 		}
-		
 		detail(serviceId);
 		
 	}
 	
 	private static boolean isApplied(List<SUser> applicants,SUser user){
-
-		int index=findUserIndex(applicants, user);
-		return index!=-1;
+		int index = findUserIndex(applicants, user);
+		return index != -1;
 	}
 	private static int findUserIndex(List<SUser> applicants,SUser user){
 		int result=-1;
-		if(applicants!=null){
-			for(int i=0;i<applicants.size() && result==-1;i++){
-				SUser applicant=applicants.get(i);
-				if(applicant.id==user.id){
-					result=i;
+		if (applicants != null) {
+			for (int i = 0; i < applicants.size() && result == -1; i++) {
+				SUser applicant = applicants.get(i);
+				if (applicant.id == user.id) {
+					result = i;
 				}
 			}
 		}
 		return result;
 	}
 	private static int findServiceIndex(List<Service> services,Service service){
-		int result=-1;
-		if(services!=null){
-			for(int i=0;i<services.size() && result==-1;i++){
-				Service s=services.get(i);
-				if(s.id==service.id){
-					result=i;
+		int result = -1;
+		if (services != null) {
+			for (int i=0; i < services.size() && result == -1; i++) {
+				Service s = services.get(i);
+				if (s.id == service.id) {
+					result = i;
 				}
 			}
 		}
@@ -475,4 +486,27 @@ public class Services extends BaseController {
 		List<SUser> users = SUser.find(query).fetch();
 		renderJSON(users);
 	}
+	public static void listPage() {
+	 	int page=1;	
+    	if(params.get("page")!=null){
+    		page=Integer.parseInt(params.get("page"));
+    	}
+    	
+    	List<Service> services = null;
+       
+        services = Service.findAll();
+       
+        Collection<Task> tasks = Task.findWithWeights();
+        
+        int maxPageNumber=0;
+        if(services!=null){
+        	maxPageNumber=services.size()/serviceNumberPerPage;
+        	maxPageNumber+=services.size()%serviceNumberPerPage;
+        }
+        if(maxPageNumber!=0){
+        	services=getServicesForPage(services, page);
+        }
+        
+        render(services, tasks);
+ }
 }

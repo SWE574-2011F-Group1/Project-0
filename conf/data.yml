@@ -38,3 +38,14 @@ Reward(r3):
   name: Bought Dinner  
 Settings(s1):
   voteCountThreshold: 2
+UserMessage(um1):
+  recipient: admin
+  sender: roy
+  message: Hello World!
+  sentTime: 2011-11-27 13:26:32
+UserMessage(um1):
+  recipient: admin
+  sender: roy
+  message: Hello World2!
+  sentTime: 2011-11-26 13:26:32
+  readTime: 2011-11-26 14:26:32

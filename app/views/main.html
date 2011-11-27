@@ -5,6 +5,7 @@
         <title>#{get 'title' /}</title>
         <meta charset="UTF-8">
        	<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/main.css'}">
+       	<link rel="stylesheet" media="screen" href="@{'/public/stylesheets/paging.css'}">
         <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/smoothness/jquery-ui-1.8.16.custom.css'}">
         <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/jqcloud.css'}">
         #{get 'moreStyles' /}
@@ -29,7 +30,7 @@
         </script>
         <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"></script>
         <div id="header">
-            <div style="float: right; margin-right: 10px;">
+            <div id="search-bar">
                 #{form @Services.search()}
 					<input type="hidden" name="searchDone" value="2"/>
 		            #{field 'title'}
@@ -38,18 +39,30 @@
                 	<input type="submit" name="search" value="Search Services" id="search">
                 #{/form}
             </div>
+            <div id="menu">
             #{if loggedIn}
-                Welcome ${user_name} |
-                <a href="/">My Profile</a> |
-                <a href="@{Services.index}">Services</a> |
-                <a href="@{Services.index}">Add Service</a> |
-                <a href="@{Services.list}">Services</a> |
-                <a href="@{Services.search}">Detailed Search</a> |
-                <a href="">Notifications (1)</a> |
-                <a href="@{Profile.profile}">Profile</a> |
-                <a href="@{UserMessages.index}">Messages</a> |
-                <a href="@{Tasks.suggest}">Propose A Task</a> |
-                <a href="@{Tasks.proposals}">Task Proposals</a> |
+                Olá, ${user_name}! |
+                <a href="@{Profile.profile}">My Profile</a> |
+                #{list menuItems, as:'m'}
+                    #{if submenuView == m.toLowerCase()}
+                        <span class="selected">
+                    #{/if}
+                    <a href="
+                    *{Burasi biraz pis oldu...}*
+                    #{if m.toLowerCase() == "tasks"}
+                        @{Tasks.proposals}
+                    #{/if}
+                    #{elseif m.toLowerCase() == "messages"}
+                        @{UserMessages.index}
+                    #{/elseif}
+                    #{else}
+                        @{Services.list}
+                    #{/else}
+                    ">${m}</a></span> |
+                    #{if submenuView == m.toLowerCase()}
+                        </span>
+                    #{/if}
+                #{/list}
                 #{secure.check 'admin'}
                     <a href="/admin">Admin</a> |
                 #{/secure.check}
@@ -58,11 +71,22 @@
             #{else}
                 <div class="fb-login-btn"></div>
             #{/else}
+            </div>
+            <div id="submenu">
+                #{if submenuView != null}
+                    #{include 'submenu/' + submenuView + '.html' /}
+                #{/if}
+            </div>
         </div>
         <div class="wrapper">
             <div id="pageContent">
                 <div class="wikistyle">
                     <h1>#{get 'title' /}</h1>
+                    #{if message != null}
+                        <div class="flash-message">
+                            ${message}
+                        </div>
+                    #{/if}
                     #{doLayout /}
                 </div>
             </div>
@@ -87,7 +111,7 @@
                             console.log('User cancelled login or did not fully authorize.');
                         }
                     }, {perms: 'email'});
-                })
+                });
             });
         </script>
     </body>

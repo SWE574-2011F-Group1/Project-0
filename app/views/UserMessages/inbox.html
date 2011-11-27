@@ -1,17 +1,42 @@
 #{extends 'main.html' /}
-#{set title:'Inbox' /}
-
+#{if inboxView}
+    #{set title:'Inbox' /}
+#{/if}
+#{else}
+    #{set title:'Outbox' /}
+#{/else}
+#{set submenuView: 'messages' /}
 
 #{list pms, as:'m'}
 <div class="list-item">
     <a href="@{UserMessages.detail}/${m.id}"></a>
     <div class="info">
         <span class="item">
-            Sender: <span class="value">${m.sender}</span>
+            Sent Time: <span class="value">${m.getFormattedSentTime()}</span>
         </span>
         <span class="item">
-            Time: <span class="value">${m.getFormattedSentTime()}</span>
+            Read Time: <span class="value">${m.getFormattedReadTime()}</span>
         </span>
+        <span class="item">
+            #{if inboxView}
+                Sender: <span class="value"><a href="@{Profile.profile}/${m.sender.id}">${m.sender}</a></span>
+            #{/if}
+            #{else}
+                Recipient: <span class="value"><a href="@{Profile.profile}/${m.recipient.id}">${m.recipient}</a></span>
+            #{/else}
+        </span>
+        #{if m.service != null}
+            <span class="item">
+                Related Service: <span class="value"><a href="@{Services.detail}/${m.service.id}">${m.service.title}</a></span>
+            </span>
+        #{/if}
+        <div class="clearfix"></div>
+        <span class="item">
+            Subject: <span class="value">${m.subject}</span>
+        </span>
+        #{if inboxView && m.readTime == null}
+            <input type="button" class="right mark-read-btn" value="Mark As Read" data-message-id="${m.id}" />
+        #{/if}
     </div>
     <div class="clearfix"></div>
     <div class="desc">
@@ -19,3 +44,10 @@
     </div>
 </div>
 #{/list}
+<script type="text/javascript" charset="utf-8">
+    $("document").ready(function() {
+        $("input.mark-read-btn").bind("click", function() {
+            document.location = "@{UserMessages.markAsRead}?messageId=" + $(this).data("message-id");
+        });
+    });
+</script>
