@@ -1,0 +1,75 @@
+#container {
+	padding:12px;
+	text-align: center;
+	text-decoration: none;
+	width: 510px;
+	overflow:hidden;
+	margin-top:10px;
+}
+.shopp
+{ 
+	border:solid #ccc 1px; 
+	padding:8px;position:relative; 
+	opacity:0;
+	-webkit-border-radius: 8px;
+	-moz-border-radius: 8px; font-size:12px;
+	background:url(remove.png) center right no-repeat 5px;
+	border-radius: 8px; 
+	font-family:"LubalGraphBdBTBold",Tahoma; 
+	margin-bottom:3px;
+	text-align:justify;
+	width:500px;
+	height:0px;
+}
+	
+#container .shopp{
+	color:#000066;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	padding:5px 5px 12px 5px;
+	text-align:justify;
+	margin-bottom:11px;
+		}
+		
+.search-background {
+	display: none;
+	font-size: 13px;
+	font-weight: bold;
+	height:160px;
+	position: absolute;
+	padding-top:140px;
+	text-align: center;
+	opacity:0.5;filter: alpha(opacity=50) ;
+	text-decoration: none;
+	width: 520px;
+	color:#FFFFFF;
+	text-shadow: #fff 0px 0px 20px;
+	}
+	
+search-background label{	
+
+	border:solid #66FF00 1px;
+}	
+
+#paging_button ul{ width: 510px; padding:0px; margin:8px; }
+
+#paging_button ul li { 
+
+	-moz-border-radius: 3px 3px 3px 3px;
+    background: none repeat scroll 0 0 #000000;
+    color: #FFFFFF;
+    float: left;
+    font-family: helvetica,arial,sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0 2px 0px;
+    padding: 10px 10px;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: none;
+	list-style-type:none; 
+    width: 20px;cursor:pointer;
+	}
+	
+#paging_button ul li:hover{background:#006699;}
+li:hover{ color: #CC0000; cursor: pointer; }
