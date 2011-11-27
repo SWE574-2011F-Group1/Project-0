@@ -27,10 +27,13 @@ span.radio-button {cursor: pointer;}
 span.tip {font-size: 10px; font-style: italic; display: block; color: gray;}
 
 p.error {margin:5px; padding: 5px; background-color: red; color: white; font-weight: bold;}
+.error-field {border: 1px solid red;}
+span.error {float:right; position: relative; left: 2px; color: red;}
 
 .fb-login-btn {cursor: pointer; background-image: url("../images/fb-login-btn.png"); width: 87px; height:21px;}
 
 .sidebar {position: absolute; right: 0px; height: 500px; width: 250px;}
+.sidebar h3 {text-align:center;}
 .cloud {height: 500px; width: 250px;}
 
 /* Default Layout is here, everything else below is copied and pasted */

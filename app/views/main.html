@@ -40,13 +40,15 @@
             </div>
             #{if loggedIn}
                 Welcome ${user_name} |
+                <a href="/">My Profile</a> |
+                <a href="@{Services.index}">Services</a> |
                 <a href="@{Services.index}">Add Service</a> |
                 <a href="@{Services.list}">Services</a> |
                 <a href="@{Services.search}">Detailed Search</a> |
                 <a href="@{UserMessages.index}">Messages</a> |
                 <a href="@{Tasks.suggest}">Propose A Task</a> |
                 <a href="@{Tasks.proposals}">Task Proposals</a> |
-                <a href="/">Profile</a> |
+
                 #{secure.check 'admin'}
                     <a href="/admin">Admin</a> |
                 #{/secure.check}

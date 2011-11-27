@@ -87,8 +87,8 @@ public class Services extends BaseController {
 
     public static void detail(long serviceId) {
         Service service = Service.findById(serviceId);
-        boolean showEditBtn = Auth.connected().equals(service.boss.email);
-        render(service, showEditBtn);
+        boolean ownedPost = Auth.connected().equals(service.boss.email);
+        render(service, ownedPost);
     }
     public static void search(int searchDone,String title, int serviceType, 
 			String description, long taskId, String location, 
