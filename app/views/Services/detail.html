@@ -1,5 +1,6 @@
 #{extends 'main.html' /}
 #{set title: service.title /}
+#{set submenuView: 'services' /}
 
 <div id="serviceDetail">
     <div class="info">
@@ -17,21 +18,23 @@
         </span>
           <span class="item">
             Status:
+            <span class="value status">
         	#{if service.status==models.ServiceStatus.PUBLISHED}
-        		<span class="value" style="color:red">PUBLISHED</span>
+        		PUBLISHED
        		#{/if}
 	 		#{elseif service.status==models.ServiceStatus.WAITING_EMPLOYEE_APPROVAL}
-	 			<span class="value" style="color:red">WAITING EMPLOYEE APPROVAL</span>
+	 			WAITING EMPLOYEE APPROVAL
 	 		#{/elseif}
 	 		#{elseif service.status==models.ServiceStatus.IN_PROGRESS}
-	 			<span class="value" style="color:red">IN PROGRESS</span>
+                IN PROGRESS
 	 		#{/elseif}
 	 		#{elseif service.status==models.ServiceStatus.WAITING_EMPLOYEE_FINISH}
-	 			<span class="value" style="color:red">WAITING EMPLOYEE FINISH</span>
+                WAITING EMPLOYEE FINISH
 	 		#{/elseif}
 	 		#{elseif service.status==models.ServiceStatus.FINISHED}
-	 			<span class="value" style="color:red">FINISHED</span>
+                FINISHED
 	 		#{/elseif}
+	 		</span>
 	 	</span>
 	 	#{if service.status==models.ServiceStatus.PUBLISHED}
 	        #{if service?.startDate}
@@ -82,7 +85,76 @@
     <div class="desc">
         ${service.description}
     </div>
-    <div class="bot">
+    <div class="applicant-details bot">
+    #{if service.status!=models.ServiceStatus.PUBLISHED && service.employee!=null}
+	    <div class="info">
+    	    <span class="item">
+    	        Employee:
+    	        <span class="value">
+    	            ${service.employee.name}
+    	            #{if service.employee.email.equals(userEmail)}
+                       	(You) 
+                    #{/if}
+    	        </span>
+    	    </span>
+	     </div>
+	     <div class="clearfix"></div>
+    #{/if}
+    #{if service.status==models.ServiceStatus.PUBLISHED && service.applicants!=null && service.applicants.size()>0}
+	    <div class="info">
+	    	<p class="error hidden" id="startApprovalError">
+       			Check applicant before start approval.
+       		</p>
+	    	<div class="info">
+	            <span class="item">Applicants: </span>
+	            <br/>
+	            #{if isBossUser && service.applicants!=null && service.applicants.size()>0}
+	            	<ul>
+	        		#{form @startApproval(),id:'start-Approval'}
+			             #{list service.applicants, as:'applicant'}
+                            <li>
+				             <input type="radio" id="startApprovalEmail" name="email" value="${applicant.email}"/>
+				             <span class="value">${applicant.name}</span>
+				             #{if applicant.email.equals(userEmail)}
+				                (You)
+				             #{/if}
+				            </li>
+			             #{/list}
+			             <input type="hidden" name="serviceId" value="${service.id}" />
+		             #{/form}
+		             </ul>
+		        #{/if}
+		        #{else}
+		            <ul>
+		        	#{list service.applicants, as:'applicant'}
+		        	    <li>
+                        <span class="value">${applicant.name}</span>
+				        #{if applicant.email.equals(userEmail)}
+				            <a class="cancelBtn cancel-link" href="@{Services.cancelApply}?serviceId=${service.id}&email=${userEmail}">Cancel My Application</a>
+				        #{/if}
+				        </li>
+			        #{/list}
+		            </ul>
+		        #{/else}
+	        </div>
+	    </div>
+    #{/if}
+    #{if service.status==models.ServiceStatus.PUBLISHED && isBossUser && service.applicants!=null && service.applicants.size()>0}
+	    <div class="bot">
+	    	<input type="button" value="Start Approval" class="start-approval-btn left" />
+	    </div>
+    #{/if}
+    #{if service.status==models.ServiceStatus.WAITING_EMPLOYEE_APPROVAL && service.employee!=null && service.employee.id==currentUser.id}
+	    <div class="bot buttons">
+	    	#{form @employeeApproval(),}
+	    		<input type="hidden" value="${service.id}" name="serviceId" id="serviceId" />
+       			<input type="hidden" value="${currentUser.id}" name="applicantId" id="applicantId" />
+	    		<input type="submit" value="Process Approval" class="employee-approval-btn left" />
+	    	#{/form}
+	    </div>
+    #{/if}
+    </div>
+    <div class="bot buttons">
         #{if service.status==models.ServiceStatus.PUBLISHED && !isBossUser && !isAppliedBefore}
         	#{form @apply(),}
         		<input type="hidden" name="serviceId" value="${service.id}"/>
@@ -90,78 +162,7 @@
     			<input type="submit" value="Apply Now!" class="apply-btn right" />
     		#{/form}
    		#{/if}
-    	#{if !isBossUser}
-    		<input type="button" value="Send Message!" class="pm-btn right" />
-   		#{/if}	
     </div>
-    #{if service.status!=models.ServiceStatus.PUBLISHED && service.employee!=null}
-	     <div class="info">
-	     	<span class="item">
-	            Employee:<br/>
-	            <span class="value">
-	           		${service.employee.name}
-	            </span>
-               #{if service.employee.email.equals(userEmail)}
-               	(You) 
-               #{/if}         
-	         </span>
-	     </div>
-    #{/if}
-    #{if service.status==models.ServiceStatus.PUBLISHED && service.applicants!=null && service.applicants.size()>0}
-	    <div class="info">
-	    	<p class="error hidden" id="startApprovalError">
-       			Check applicant before start approval.
-       		</p>
-	    	<span class="item">
-	            Applicants:<br/>
-	            #{if isBossUser && service.applicants!=null && service.applicants.size()>0}
-	        		#{form @startApproval(),id:'start-Approval'}
-			             #{list service.applicants, as:'applicant'}
-				               <input type="radio" id="startApprovalEmail" name="email" value="${applicant.email}"/>
-				               <span class="value">${applicant.name}</span>
-				               #{if applicant.email.equals(userEmail)}
-				               	(You)
-				               #{/if}
-				               <br/>
-			             #{/list}
-			             <input type="hidden" name="serviceId" value="${service.id}"/>
-		             #{/form}
-		        #{/if}
-		        #{else}
-		        	#{list service.applicants, as:'applicant'}
-				               <span class="value">${applicant.name}</span>
-				               #{if applicant.email.equals(userEmail)}
-				               	(You)
-				               #{/if}
-				               <br/>
-			        #{/list}
-		        #{/else}
-	        </span>
-	        <span >
-		    	#{if isAppliedBefore && service.status==models.ServiceStatus.PUBLISHED}
-		        	#{form @cancelApply(), id:'cancel-application'}
-		        		<input type="hidden" name="serviceId" value="${service.id}"/>
-		        		<input type="hidden" name="email" value="${userEmail}"/>
-		    			<input type="submit" value="Cancel Application" class="cancel-apply-btn right" />
-		    		#{/form}
-		        #{/if}
-	       </span>
-	    </div>
-    #{/if}
-    #{if service.status==models.ServiceStatus.PUBLISHED && isBossUser && service.applicants!=null && service.applicants.size()>0}
-	    <div>
-	    		<input type="button" value="Start Approval" class="start-approval-btn right" />
-	    </div>
-    #{/if}
-    #{if service.status==models.ServiceStatus.WAITING_EMPLOYEE_APPROVAL && service.employee!=null && service.employee.id==currentUser.id}
-	    <div>
-	    	#{form @employeeApproval(),}
-	    		<input type="hidden" value="${service.id}" name="serviceId" id="serviceId" />
-       			<input type="hidden" value="${currentUser.id}" name="applicantId" id="applicantId" />
-	    		<input type="submit" value="Process Approval" class="employee-approval-btn right" />
-	    	#{/form}
-	    </div>
-    #{/if}
 </div>
 <script>
     $("input[type=button].pm-btn").bind("click", function() {
@@ -173,12 +174,13 @@
     $("input[type=button].edit-btn").bind("click", function() {
         document.location = '@{Services.edit}/${service.id}';
     })
-     $("form#cancel-application").bind("submit", function() {
-    	 var agree=confirm("Are you sure you wish to cancel your application?");
-		if (agree)
-			return true ;
-		else
-			return false ;
+     $("a.cancel-link").bind("click", function() {
+    	 var agree = confirm("Are you sure you wish to cancel your application?");
+		if (agree) {
+			return true;
+		} else {
+			return false;
+		}
 	});
     $("input[type=button].start-approval-btn").bind("click", function() {
     	var email=$("input[type=radio]#startApprovalEmail:checked").val();

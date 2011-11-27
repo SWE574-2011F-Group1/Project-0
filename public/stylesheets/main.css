@@ -8,13 +8,20 @@ form.search p label {width:120px; float: left;}
 form input[type=text]:not(.datepicker), form textarea {width: 300px;}
 form textarea {height: 100px;}
 
-div.info span.item {font-weight: bold; color: #67A927; width:200px; float: left; display: block;}
+div#submenu {background-color: green; color: white; padding: 5px 0 5px 40px; position: relative; top: 30px;}
+div#submenu a {font-style: italic; color: white;}
+
+div.info span.item {font-weight: bold; color: #67A927; width:300px; float: left; display: block;}
 div.info span.item.date {width:300px}
 div.info span.item span.value {color: black; font-weight: normal;}
 div.desc {background-color: white; margin-top: 10px; padding: 15px;}
 
+
 div#serviceDetail div.bot {margin-top: 20px;}
 div#serviceDetail div.desc {border-top-right-radius: 5px; border-bottom-left-radius:5px;}
+div#serviceDetail a.cancelBtn {color: red; font-style: italic;}
+div#serviceDetail ul, div#serviceDetail li {list-style: none; margin: 0px !important;}
+div#serviceDetail .value.status {color: #CF7F26;}
 
 div.list-item {background-color: white; padding: 5px; border-top-right-radius: 5px; border-bottom-left-radius:5px; margin-bottom: 10px;}
 div.list-item a {color: #67A927;}

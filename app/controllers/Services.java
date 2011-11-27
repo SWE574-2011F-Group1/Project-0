@@ -110,31 +110,6 @@ public class Services extends BaseController {
         if(!isBossUser){
         	isAppliedBefore=isApplied(service.applicants,SUser.findByEmail(userEmail));
         }
-        /*List<SUser> applicants=service.applicants;
-        if(applicants!=null){
-        	for (SUser sUser : applicants) {
-				System.out.println("user="+sUser.name);
-			}
-        }
-        else{
-        	System.out.println("no applicants");
-        }*/
-        
-       /* if(service.employee!=null){
-        	System.out.println("employee="+service.employee.name);
-        	if(service.employee.appliedServices==null){
-        		System.out.println("applied services null");
-        	}
-        	else{
-        		System.out.println("applied services size="+service.employee.appliedServices.size());
-        		for (Service s : service.employee.appliedServices) {
-					System.out.println("applied service="+s.title);
-				}
-        	}
-        }
-        else{
-        	System.out.println("Emplyee is null");
-        }*/
         render(service, isBossUser,userEmail,isAppliedBefore,currentUser);
     }
     
@@ -247,29 +222,21 @@ public class Services extends BaseController {
         List<SUser> applicants=service.applicants;
         boolean isBossUser = Auth.connected().equals(service.boss.email);
         int index=findUserIndex(applicants, user);
-        if(isBossUser && index!=-1){
-	      
-            //System.out.println("Start approval service="+service.id+ " "+user.name);
-            
+        if (isBossUser && index!=-1) {
             render(service,user);
+        } else {
+        	//NOT APPLIED BEFORE	
         }
-        else{
-        	//NOT APPLIED BEFORE
-        	
-        }
-
 	}
+	
 	public static void processStartApproval(long serviceId,long applicantId, 
-											String actualDate,String location) throws Exception {
-		
+											String actualDate,String location) throws Exception {	
         Service service = Service.findById(serviceId);
         SUser user=SUser.findById(applicantId);
         List<SUser> applicants=service.applicants;
         boolean isBossUser = Auth.connected().equals(service.boss.email);
         int index=findUserIndex(applicants, user);
-        if(isBossUser && index!=-1 && service.status==ServiceStatus.PUBLISHED){
-
-            //System.out.println("Process approval service="+service.id+ " "+user.name);
+        if (isBossUser && index!=-1 && service.status==ServiceStatus.PUBLISHED) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
             try {
             	service.actualDate= sdf.parse(actualDate);
@@ -282,10 +249,8 @@ public class Services extends BaseController {
             service.save();
             
             detail(serviceId);
-        }
-        else{
+        } else {
         	//NOT APPLIED BEFORE
-        	
         }
 	      
 	}
@@ -300,7 +265,7 @@ public class Services extends BaseController {
         SUser user=SUser.findById(applicantId);
         List<SUser> applicants=service.applicants;
         //boolean isBossUser = Auth.connected().equals(service.boss.email);
-        int index=findUserIndex(applicants, user);
+        int index = findUserIndex(applicants, user);
         if(approval==1 && index!=-1 && service.status==ServiceStatus.WAITING_EMPLOYEE_APPROVAL){
         	service.status=ServiceStatus.IN_PROGRESS;
         	service.applicants=null;
@@ -313,49 +278,46 @@ public class Services extends BaseController {
 			servicesAsEmployee.add(service);
 			user.save();
         }
-		if(approval!=1 && index!=-1){
-			service.status=ServiceStatus.PUBLISHED;
-			service.employee=null;
+		if (approval != 1 && index != -1) {
+			service.status = ServiceStatus.PUBLISHED;
+			service.employee = null;
 			service.save();
 			
-			int serviceIndex=findServiceIndex(user.appliedServices, service);
-			if(serviceIndex!=-1){
+			int serviceIndex = findServiceIndex(user.appliedServices, service);
+			if (serviceIndex != -1) {
 				user.appliedServices.remove(serviceIndex);
 				user.save();
 			}
-		}
-		else{
+		} else {
 			//NOT AN APPLICANT
 		}
-		
 		detail(serviceId);
 		
 	}
 	
 	private static boolean isApplied(List<SUser> applicants,SUser user){
-
-		int index=findUserIndex(applicants, user);
-		return index!=-1;
+		int index = findUserIndex(applicants, user);
+		return index != -1;
 	}
 	private static int findUserIndex(List<SUser> applicants,SUser user){
 		int result=-1;
-		if(applicants!=null){
-			for(int i=0;i<applicants.size() && result==-1;i++){
-				SUser applicant=applicants.get(i);
-				if(applicant.id==user.id){
-					result=i;
+		if (applicants != null) {
+			for (int i = 0; i < applicants.size() && result == -1; i++) {
+				SUser applicant = applicants.get(i);
+				if (applicant.id == user.id) {
+					result = i;
 				}
 			}
 		}
 		return result;
 	}
 	private static int findServiceIndex(List<Service> services,Service service){
-		int result=-1;
-		if(services!=null){
-			for(int i=0;i<services.size() && result==-1;i++){
-				Service s=services.get(i);
-				if(s.id==service.id){
-					result=i;
+		int result = -1;
+		if (services != null) {
+			for (int i=0; i < services.size() && result == -1; i++) {
+				Service s = services.get(i);
+				if (s.id == service.id) {
+					result = i;
 				}
 			}
 		}

@@ -1,29 +1,6 @@
 #{extends 'main.html' /}
 #{set title:'Service Search Results' /}
-
-<div class="filter">
-    <span class="">
-        Task:
-        <span class="options">
-            <select id="filterTask" name="filterTask">
-                #{list tasks, as:'t'}
-                       <option value="${t.id}" />${t.name}
-                #{/list}
-            </select>
-        </span>
-    </span>
-    |
-    <span class="">
-        Type:
-        <span class="options">
-            <span class="radio-button"><input type="radio" value="provides" name="foo" id="type-provides" /> <span>Provide</span></span>
-            <span class="radio-button"><input type="radio" value="requests" name="foo" id="type-request" /> <span>Request</span></span>
-        </span>
-    </span>
-    |
-    <input type="button" value="Filter!" name="filter-btn" id="filter-btn" style="position: relative; bottom:1px;" />
-    <hr />
-</div>
+#{set submenuView: 'services' /}
 
 #{list services, as:'s'}
     <div class="list-item">
