@@ -32,14 +32,6 @@ public class Auth extends Secure.Security {
         return false;
     }
     
-    public static void fbLogin(String token, SUser user) {
-        //He's either just registered or an already existing user...
-        Logger.info("user (" + user.email + ") logged in with token: " + token);
-        //Set the username session in order to comply with security module...
-        session.put("username", user.email);
-        session.put("fbToken", token);
-    }
-    
     static void onDisconnected() {
         //Delete the fbToken...
         session.remove("fbToken");
