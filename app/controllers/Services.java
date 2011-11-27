@@ -3,9 +3,12 @@ package controllers;
 import play.*;
 import play.mvc.*;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import org.joda.time.DateTime;
 
 import models.*;
 
@@ -224,21 +227,32 @@ public class Services extends BaseController {
 	        
 	        detail(service.id);
 	}
-	public static void bossClose(long serviceId,String email) throws Exception {
+	public static void bossClose(long serviceId,String email, String bossComment, String employeeEmail) throws Exception {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
         boolean isBossUser = service.boss.email.equals(email);
-      
+        Logger.info("employeeEmail:" + employeeEmail);
          if(service.status==ServiceStatus.IN_PROGRESS && isBossUser ){
 	     
 	        service.status=ServiceStatus.WAITING_EMPLOYEE_FINISH;
 	        service.save();
 	      
         }
-      
+        Comment comment = new Comment(user, SUser.findByEmail(employeeEmail), bossComment);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
+        Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
+        try {
+        	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
+        } catch (ParseException e) {
+            //FIXME: Find out what to do if this occurs...
+        }    
+        comment.commentDateWithTime = formatterTime.format(calendar.getTime());
+        comment.save();
         detail(service.id);
 }
-	public static void employeeClose(long serviceId,String email) throws Exception {
+	public static void employeeClose(long serviceId,String email, String employeeComment, String bossEmail) throws Exception {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
 
@@ -249,7 +263,18 @@ public class Services extends BaseController {
 	        service.boss.requesterPoint+=service.task.point;
 	        service.save();
         }
- 
+        Comment comment = new Comment(user, SUser.findByEmail(bossEmail), employeeComment);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
+        Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
+        try {
+        	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
+        } catch (ParseException e) {
+            //FIXME: Find out what to do if this occurs...
+        }    
+        comment.commentDateWithTime = formatterTime.format(calendar.getTime());
+        comment.save();
         detail(service.id);
 }
 
