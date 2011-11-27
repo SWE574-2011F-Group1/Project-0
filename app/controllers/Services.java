@@ -253,7 +253,7 @@ public class Services extends BaseController {
         detail(service.id);
 }
 
-public static void cancelApply(long serviceId,String email) throws Exception {
+	public static void cancelApply(long serviceId,String email) throws Exception {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
         List<SUser> applicants=service.applicants;

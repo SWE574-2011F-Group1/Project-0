@@ -5,6 +5,8 @@ import play.db.jpa.*;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.CascadeType;
+
 import java.util.*;
 
 import play.data.validation.*;
@@ -27,6 +29,10 @@ public class SUser extends CommentableModel {
     public String fbId;
     
     public boolean isAdmin;
+    public boolean getIsAdmin()
+    {
+    	return this.isAdmin;
+    }
     
     @ManyToMany(mappedBy="applicants")
     public List<Service> appliedServices;
@@ -36,14 +42,41 @@ public class SUser extends CommentableModel {
     
     @OneToMany
     public List<Service> servicesAsBoss;
+
+    @OneToMany(cascade=javax.persistence.CascadeType.ALL)
+    public List<SUserTaskVote> taskVotes;
     
     public long getAbsoluteSocialPoint() {
         return providerPoint + requesterPoint;
+    }
+    
+    public void upvoteForTask(Task task) {
+    	for(SUserTaskVote taskVote : this.taskVotes)
+    		if (taskVote.votedFor == task) return;
+    	
+    	SUserTaskVote vote = new SUserTaskVote(this, task, true);
+    	//vote.save();
+    	this.taskVotes.add(vote);
+    	task.upvote();
+    	task.save();
+    }
+    
+    public void downvoteForTask(Task task) {
+    	for(SUserTaskVote taskVote : this.taskVotes)
+    		if (taskVote.votedFor == task) return;
+
+    	SUserTaskVote vote = new SUserTaskVote(this, task, false);
+    	//vote.save();
+
+    	this.taskVotes.add(vote);
+    	task.downvote();
+    	task.save();
     }
 
     public SUser(String name, String email) {
         this.email = email;
         this.name = name;
+        this.taskVotes = new ArrayList<SUserTaskVote>();
     }
 
     public static SUser connect(String email, String password) {

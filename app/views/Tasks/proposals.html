@@ -4,7 +4,16 @@
 
 #{list tasks, as:'t'}
     <div class="list-item">
-        <div class="info">
+        <div class="desc" style="display:inline; float: left;">
+        <div>
+            <a href="@{Tasks.upvote}/${t.id}"><img border="0" src="/public/images/up.png"  style="border:0px !important;"/></a>
+            </div>
+            <div class="voteDiff" style="text-align: center; font-size: 14pt;">${t.voteDiff}</div>
+            <div>
+            <a href="@{Tasks.downvote}/${t.id}"><img border="0" src="/public/images/down.png"  style="border:0px !important;"/></a>
+        </div>
+        </div>
+        <div class="info" style="display:inline;">
             <span class="item">
                 Title: <span class="value">${t.name}</span>
             </span>
@@ -14,9 +23,6 @@
             <span class="item">
                 Suggested By: <span class="value">${t.suggestedBy}</span>
             </span>
-        </div>
-        <div class="desc">
-            Voting options shall come here...
         </div>
         <div class="clearfix"></div>
     </div>

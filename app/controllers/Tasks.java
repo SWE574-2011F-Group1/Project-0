@@ -28,5 +28,31 @@ public class Tasks extends BaseController {
     public static void thanks() {
         render();
     }
+    public static void upvote(long id) {
+        Task task = Task.findById(id);
+        SUser user = SUser.findByEmail(Auth.connected()); 
+        user.upvoteForTask(task);
+        user.save();
+        
+        Settings settings = Settings.findById(1L);
+        
+        if(task.voteDiff >= settings.voteCountThreshold)
+        {
+        	task.status = TaskStatus.ACTIVE;
+        	task.save();
+        }
+        
+        proposals();
+    }
+    
+    public static void downvote(long id) {
+        Task task = Task.findById(id);
+        SUser user = SUser.findByEmail(Auth.connected()); 
+        user.downvoteForTask(task);
+        user.save();
+        proposals();
+    }
+    
+    
 }
 

@@ -24,7 +24,6 @@ GET     /foo                                    admin.Foo.index
 *       /services/employeeApproval	        	Services.employeeApproval
 *       /services/processEmployeeApproval	    Services.processEmployeeApproval
 
-
 *       /                                       module:secure
 
 # Import CRUD routes
@@ -38,3 +37,4 @@ GET     /public/                                staticDir:public
 
 # Catch all
 *       /{controller}/{action}                  {controller}.{action}
+*       /{controller}/{action}/{id}                  {controller}.{action}

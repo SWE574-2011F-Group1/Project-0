@@ -18,6 +18,12 @@ public class Task extends Model {
     
     public TaskStatus status;
     
+    public int upvoteCount;
+    
+    public int downvoteCount;
+    
+    public int voteDiff;
+    
     @ManyToOne
     public SUser suggestedBy;
     
@@ -28,6 +34,16 @@ public class Task extends Model {
     
     public String toString() {
     	return this.name + " (" + this.point + ")";
+    }
+    
+    public void upvote() {
+    	this.upvoteCount++;
+    	this.voteDiff++;
+    }
+    
+    public void downvote() {
+    	this.downvoteCount++;
+    	this.voteDiff--;
     }
     
     public static List<Task> findWithWeights() {
