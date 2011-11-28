@@ -8,8 +8,8 @@ GET     /foo                                    admin.Foo.index
 *       /services/?                             Services.list
 *       /services/detail/{serviceId}            Services.detail
 *       /services/detail/?                      Services.list
-*       /services/{uid}/{st}                    Services.list
 *       /services/edit/{serviceId}              Services.edit
+*       /services/{uid}/{st}                    Services.list
 *       /services/edit/?                        Services.list
 *       /fbLogin/?                              BaseController.fbLogin
 *       /services/search                        Services.search
