@@ -48,6 +48,10 @@ public class UserMessage extends Model {
         return find("select m from UserMessage m where " + findType + " = ? order by readTime asc, sentTime desc", u).fetch();
     }
     
+    public static int findUnreadCountByUser(SUser u) {
+        return find("select m from UserMessage m where recipient = ? and readTime is null", u).fetch().size();
+    }
+    
     public String getFormattedSentTime() {
         return formatDate(this.sentTime);
     }
@@ -62,7 +66,7 @@ public class UserMessage extends Model {
     }
     
     public String toString() {
-        return "{Message: {sender: '" + sender + "', recipient: '" + recipient + "', message: '" + message +"'}}";
+        return "{Message: {sender: '" + sender + "', recipient: '" + recipient + "', subject:'" + subject + "', message: '" + message +"'}}";
     }
     
     public void markRead() {

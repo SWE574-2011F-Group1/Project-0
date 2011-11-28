@@ -47,6 +47,16 @@ public class UserMessages extends BaseController {
         
     }
     
+    public static void reply(long messageId) {
+        UserMessage um = UserMessage.findById(messageId);
+        Service service = null;
+        if (um.service != null) {
+            service = um.service;
+        }
+        
+        renderTemplate("UserMessages/compose.html", um, service);
+    }
+    
     public static void compose(long serviceId) {
         Service service = Service.findById(serviceId);
         List<SUser> users = null;
@@ -64,13 +74,16 @@ public class UserMessages extends BaseController {
         um.sender = sender;
         um.sentTime = new Date();
         Service s = Service.findById(serviceId);
+        Logger.info("Found service: %s for sending message", s);
         if (s != null) {
             um.service = s;
             um.recipient = s.boss;
         } else {
             SUser recipient = SUser.findById(recipientId);
             if (recipient == null) {
+                flash.put("message", "You have to select a recipient");
                 compose(0);
+                return;
             }
             um.recipient = recipient;
         }

@@ -83,7 +83,7 @@
     #{/if}	
     <div class="clearfix"></div>
     <div class="desc">
-        ${service.description}
+        ${service.description.nl2br()}
     </div>
     <div class="applicant-details bot">
     #{if service.status!=models.ServiceStatus.PUBLISHED && service.employee!=null}

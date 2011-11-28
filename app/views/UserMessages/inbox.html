@@ -9,7 +9,6 @@
 
 #{list pms, as:'m'}
 <div class="list-item">
-    <a href="@{UserMessages.detail}/${m.id}"></a>
     <div class="info">
         <span class="item">
             Sent Time: <span class="value">${m.getFormattedSentTime()}</span>
@@ -34,13 +33,17 @@
         <span class="item">
             Subject: <span class="value">${m.subject}</span>
         </span>
+        <input type="button" class="right toggle-btn" value="Show" />
         #{if inboxView && m.readTime == null}
             <input type="button" class="right mark-read-btn" value="Mark As Read" data-message-id="${m.id}" />
         #{/if}
+        #{if inboxView}
+            <input type="button" class="right reply-btn" value="Reply" data-message-id="${m.id}" />
+        #{/if}
     </div>
     <div class="clearfix"></div>
-    <div class="desc">
-        ${m.message}
+    <div class="desc hidden">
+        ${m.message.nl2br()}
     </div>
 </div>
 #{/list}
@@ -49,5 +52,17 @@
         $("input.mark-read-btn").bind("click", function() {
             document.location = "@{UserMessages.markAsRead}?messageId=" + $(this).data("message-id");
         });
+        $("input.reply-btn").bind("click", function() {
+            document.location = "@{UserMessages.reply}?messageId=" + $(this).data("message-id");
+        });
+        $("input.toggle-btn").bind("click", function() {
+            var descDiv = $(this).parent().parent().find("div.desc");
+            descDiv.toggle();
+            if (descDiv.is(":visible")) {
+                $(this).val("Hide");
+            } else {
+                $(this).val("Show");
+            }
+        })
     });
 </script>

@@ -9,7 +9,7 @@ form input[type=text]:not(.datepicker), form textarea {width: 300px;}
 form textarea {height: 100px;}
 
 div#menu {background-color: #67A927; padding: 5px;}
-div#menu span.selected {background-color: green; border-top-right-radius: 5px; padding: 2px 10px 7px;}
+div#menu span.selected {background-color: green; border-top-right-radius: 5px; padding: 7px 10px 7px;}
 div#submenu {background-color: green; color: white; padding: 5px 0 5px 40px;}
 div#search-bar {float: right; margin-right: 10px; margin-top: 3px;}
 

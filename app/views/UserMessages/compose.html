@@ -2,6 +2,8 @@
 #{set title: 'Compose' /}
 #{set submenuView: 'messages' /}
 #{set additionalTip: '' /}
+#{set subject: '' /}
+#{set messageContent: '' /}
     
 #{form @send(), id:'compose-message'}
     <p class="error hidden">
@@ -16,6 +18,14 @@
         <input type="hidden" value="${service.id}" name="serviceId" id="serviceId" />
         #{set additionalTip: 'Recipient will see the related task on this message, don\'t worry about it...' /}
     #{/if}
+    #{elseif um != null && service == null}
+        <p>
+            <label>Recipient:</label> <a href="@{Profile.profile}/${um.sender.id}">${um.sender}</a>
+        </p>
+        <input type="hidden" name="recipientId" value="${um.sender.id}" id="recipientId" />
+        #{set subject: 'Re: ' + um.subject /}
+        #{set messageContent: '\n\n--------------\n' + um.message /}
+    #{/elseif}
     #{else}
         <p>
             #{field 'recipientId'}
@@ -32,7 +42,7 @@
     <p>
         #{field 'subject'}
         <label>Subject:</label>
-        <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
+        <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${subject}" />
         <span class="tip">A summary of what you want to say. ${additionalTip}</span>
         #{/field}
     </p>	
@@ -40,7 +50,7 @@
         #{field 'message'}
         <label>Message:</label><br />
         <span class="tip">Tell about your intentions, dates available to you, or ask for more detail or communication info.</span>
-        <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}"></textarea>
+        <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${messageContent}</textarea>
         #{/field}
     </p>
     <p>
