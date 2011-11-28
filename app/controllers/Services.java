@@ -1,13 +1,16 @@
 package controllers;
 
 import play.*;
+import play.cache.Cache;
 import play.mvc.*;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.joda.time.DateTime;
 
 import models.*;
@@ -112,10 +115,17 @@ public class Services extends BaseController {
         	if(services.size()%serviceNumberPerPage>0)
         		maxPageNumber++;
         }
+        
+        List<Service> serializedServices=new ArrayList<Service>();
+        for (Service service : services) {
+        	serializedServices.add(service);
+		}
+        Cache.set("listServices", serializedServices, "30min");
+        
+        
         if(maxPageNumber!=0){
         	services=getServicesForPage(services, 1);
         }
-        //session.put("username", sesUser.email);
         
         render(services, tasks,maxPageNumber);
     }
@@ -203,8 +213,22 @@ public class Services extends BaseController {
 					prepareQueryForQuickServiceSearch(sc.getTitle()), null)
 					.fetch();
 		}
+		
+		int maxPageNumber=0;
+        if(services!=null){
+        	maxPageNumber=services.size()/serviceNumberPerPage;
+        	if(services.size()%serviceNumberPerPage>0)
+        		maxPageNumber++;
+        }
+        
+        List<Service> serializedServices=new ArrayList<Service>();
+        for (Service service : services) {
+        	serializedServices.add(service);
+		}
+        Cache.set("listServices", serializedServices, "30min");
+		
 		Collection<Task> tasks = Task.findAllActive();
-		render(services, tasks);
+		render(services, tasks,maxPageNumber);
 	}
 
 	public static void apply(long serviceId,String email) throws Exception {
@@ -494,7 +518,8 @@ public class Services extends BaseController {
     	
     	List<Service> services = null;
        
-        services = Service.findAll();
+        //services = Service.findAll();
+        services=Cache.get("listServices",List.class);
        
         Collection<Task> tasks = Task.findWithWeights();
         
