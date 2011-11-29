@@ -3,6 +3,8 @@ package controllers;
 import play.*;
 import play.mvc.*;
 
+import com.google.gson.*;
+
 import java.util.*;
 
 import models.*;
@@ -20,6 +22,18 @@ public class UserMessages extends BaseController {
         List<UserMessage> pms = UserMessage.findByRecipient(r);
         boolean inboxView = true;
         render(pms, inboxView);
+    }
+    
+    //FIXME: Bunun yeri bura olmamali sanki...
+    public static void findUsersWith() {
+        String q = params.get("term");
+        if (null == q || q.length() < 3) {
+            renderJSON(new ArrayList<SUser>());
+        } else {
+            List<SUser> users = SUser.findByName(q);
+            //FIXME: burada expose ettigimiz hedeleri degistirmek lazim.
+            renderJSON(users);
+        }
     }
     
     public static void markAsRead() {

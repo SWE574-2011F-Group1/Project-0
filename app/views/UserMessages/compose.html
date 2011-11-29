@@ -2,6 +2,7 @@
 #{set title: 'Compose' /}
 #{set submenuView: 'messages' /}
 #{set additionalTip: '' /}
+#{set descTip: '' /}
 #{set subject: '' /}
 #{set messageContent: '' /}
     
@@ -17,6 +18,7 @@
         </p>
         <input type="hidden" value="${service.id}" name="serviceId" id="serviceId" />
         #{set additionalTip: 'Recipient will see the related task on this message, don\'t worry about it...' /}
+        #{set descTip: 'Tell about your intentions, dates available to you, or ask for more detail or communication info.' /}
     #{/if}
     #{elseif um != null && service == null}
         <p>
@@ -30,12 +32,9 @@
         <p>
             #{field 'recipientId'}
             <label>Recipient:</label>
-            <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
-                #{list users, as:'u'}
-                    <option value="${u.id}" />${u}
-                #{/list}
-            </select>
-            <span class="tip">Who do you want to send the message</span>
+            <input id="recipient-label">
+            <input type="hidden" name="${field.name}" id="${field.name}" />
+            <span class="tip">Start typing the user's name and magic will happen...</span>
             #{/field}
         </p>
     #{/else}
@@ -49,7 +48,7 @@
     <p>
         #{field 'message'}
         <label>Message:</label><br />
-        <span class="tip">Tell about your intentions, dates available to you, or ask for more detail or communication info.</span>
+        <span class="tip">${descTip}</span>
         <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${messageContent}</textarea>
         #{/field}
     </p>
@@ -67,10 +66,14 @@
             var errorDiv = $("p.error").addClass("hidden").html("");
             $("span.error").remove();
             $(".error-field").removeClass("error-field");
-            form.find("textarea#message, input#subject").each(function(item, key) {
+            form.find("textarea#message, input#subject, input#recipientId").each(function(item, key) {
                 if (!$(this).val()) {
                     errors = true;
-                    $(this).addClass("error-field");
+                    if ($(this).attr("id") == "recipientId") {
+                        $("input#recipient-label").addClass("error-field");
+                    } else {
+                       $(this).addClass("error-field");
+                    }
                     $(this).parent().prepend($("<span>").addClass("error").html("This field cannot be empty!"));
                 }
             });
@@ -81,5 +84,20 @@
                 errorDiv.removeClass("hidden");
             }
         });
+        $("#recipient-label").autocomplete({
+    		minLength: 3,
+    		source: '@{UserMessages.findUsersWith}',
+    		select: function(event, ui) {
+    			$("#recipient-label").val(ui.item.name);
+    			$("#recipientId").val(ui.item.id);
+    			return false;
+    		}
+    	})
+    	.data("autocomplete" )._renderItem = function(ul, item) {
+    		return $("<li></li>")
+    			.data("item.autocomplete", item)
+    			.append("<a>" + item.name + "</a>")
+    			.appendTo(ul);
+    	};
     });
 </script>

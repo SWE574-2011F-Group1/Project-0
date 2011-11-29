@@ -90,16 +90,13 @@ public class SUser extends CommentableModel {
     public static SUser findByFbId(String fbId) {
         return find("byFbId", fbId).first();
     }
+    
+    public static List<SUser> findByName(String q) {
+        return find("select u from SUser u where name like ?", "%" + q + "%").fetch();
+    } 
 
     public String toString() {
     	return this.name;
     }
-    
-//    //not commit
-//    public boolean getIsAdmin()
-//    {
-//    	return this.isAdmin;
-//    }
-//    //end of not commit
 }
 
