@@ -28,12 +28,15 @@
             #{/field}
         </p>
         <p>
-            #{field 'type'}
-            <label>Type:</label>
-            <span class="radio-button"><input type="radio" value="${service.type.REQUESTS}" checked name="${field.name}" id="type-request" /> <span>Request</span></span>
-            <span class="radio-button"><input type="radio" value="${service.type.PROVIDES}" name="${field.name}" id="type-provides" /> <span>Provide</span></span>
-            <span class="tip">So you actually need something as a requester or do you provide a service to others?</span>
-            #{/field}
+        	<label>Type:</label>
+        	#{if service.type==models.ServiceType.REQUESTS}
+    			<input type="hidden" name="type" value="${service.type.REQUESTS}"/>
+       			<span style="color:green"><b>Request</b></span>
+       		#{/if}
+	 		#{else}
+	 			<input type="hidden" name="type" value="${service.type.PROVIDES}"/>
+	 			<span style="color:green"><b>Provide</b></span>
+	 		#{/else}
         </p>
         <p>
             #{field 'startDate'}
