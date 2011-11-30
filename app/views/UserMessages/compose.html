@@ -88,15 +88,16 @@
     		minLength: 3,
     		source: '@{UserMessages.findUsersWith}',
     		select: function(event, ui) {
-    			$("#recipient-label").val(ui.item.name);
-    			$("#recipientId").val(ui.item.id);
+    		    console.log(ui.item);
+    			$("#recipient-label").val(ui.item.label);
+    			$("#recipientId").val(ui.item.value);
     			return false;
     		}
     	})
     	.data("autocomplete" )._renderItem = function(ul, item) {
     		return $("<li></li>")
     			.data("item.autocomplete", item)
-    			.append("<a>" + item.name + "</a>")
+    			.append("<a>" + item.label + "</a>")
     			.appendTo(ul);
     	};
     });

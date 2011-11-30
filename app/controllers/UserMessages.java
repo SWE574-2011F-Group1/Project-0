@@ -31,8 +31,14 @@ public class UserMessages extends BaseController {
             renderJSON(new ArrayList<SUser>());
         } else {
             List<SUser> users = SUser.findByName(q);
-            //FIXME: burada expose ettigimiz hedeleri degistirmek lazim.
-            renderJSON(users);
+            ArrayList<HashMap<String, String>> userList = new ArrayList<HashMap<String, String>>();
+            for (SUser u : users) {
+                HashMap<String, String> h = new HashMap<String, String>();
+                h.put("value", u.id + "");
+                h.put("label", u.name);
+                userList.add(h);
+            }
+            renderJSON(userList);
         }
     }
     
