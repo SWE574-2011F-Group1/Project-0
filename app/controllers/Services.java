@@ -45,7 +45,7 @@ public class Services extends BaseController {
     public static void save(String title, ServiceType type, String description, long taskId, 
     		String location, String startDate, String endDate,String tags) {
         Service service;
-        Set<STag> deletedTags=null;
+        Set<STag> deletedTags = null;
         if (params._contains("serviceId")) {
             service = Service.findById(Long.parseLong(params.get("serviceId")));
             deletedTags=service.stags;
@@ -63,8 +63,8 @@ public class Services extends BaseController {
         } catch (ParseException e) {
             //FIXME: Find out what to do if this occurs...
         }
-        SUser u = SUser.findByEmail(Secure.Security.connected());
-        service.boss = u;
+        SUser serviceOwner = SUser.findByEmail(Secure.Security.connected());
+        service.boss = serviceOwner;
         service.stags = new HashSet<STag>();
         
         if (!tags.trim().equals("")) {
@@ -89,6 +89,12 @@ public class Services extends BaseController {
 				tag.delete();
 			}
         }
+        
+        //Create an activy based on this...
+        Activity a = new Activity();
+        a.performer = serviceOwner;
+        a.type = ActivityType.ADDED_SERVICE;
+        a.save();
         
         detail(service.id);
     }

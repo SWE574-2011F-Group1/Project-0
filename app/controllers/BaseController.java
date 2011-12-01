@@ -31,7 +31,7 @@ public class BaseController extends Controller {
                 renderArgs.put("user_name", u.name);
                 renderArgs.put("unreadMsgCount", UserMessage.findUnreadCountByUser(u));
                 renderArgs.put("loggedIn", true);
-                renderArgs.put("menuItems", new String[] {"Services", "Messages", "Tasks"});
+                renderArgs.put("menuItems", new String[] {"Services", "Messages", "Tasks", "Activities"});
                 renderArgs.put("message", flash.get("message"));
             }
         }

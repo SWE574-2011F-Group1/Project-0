@@ -1,0 +1,13 @@
+package models;
+
+public enum ActivityType {
+    ADDED_SERVICE,
+    APPLIED_SERVICE,
+    STARTED_SERVICE,
+    FINISHED_SERVICE,
+    COMMENTED_ON,
+    PROPOSED_TASK,
+    VOTED_ON_TASK,
+    TASK_APPROVED
+}
+

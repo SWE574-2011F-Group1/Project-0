@@ -60,6 +60,9 @@
                             #{set additionalMenuMessage: '(' + unreadMsgCount + ')' /}
                         #{/if}
                     #{/elseif}
+                    #{elseif m.toLowerCase() == "activities"}
+                        @{Activities.index}
+                    #{/elseif}
                     #{else}
                         @{Services.list}
                     #{/else}
@@ -109,7 +112,7 @@
                                     token: response.session.access_token
                                 },
                                 function(data) {
-                                    document.location.href = "/";
+                                    document.location.href = "@{Application.index}";
                                 }
                             );
                         } else {

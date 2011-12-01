@@ -1,0 +1,11 @@
+#{extends 'main.html' /}
+#{set title:'Activities!' /}
+
+#{list list, as:'act'}
+    <div class="list-item">
+        <div class="info">
+            ${act.performer}
+            ${act.creationTime}
+        </div>
+    </div>
+#{/list}
