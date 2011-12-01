@@ -4,8 +4,42 @@
 #{list list, as:'act'}
     <div class="list-item">
         <div class="info">
-            ${act.performer}
-            ${act.creationTime}
+            <div class="activity-date right">${act.getFormattedCreationDate()}</div>
+            *{ Show messages according to the type... }*
+            #{if act.type == models.ActivityType.ADDED_SERVICE}
+                <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> created a new service <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>.
+            #{/if}
+            #{if act.type == models.ActivityType.UPDATED_SERVICE}
+                Something was wrong but no more! <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> has updated the service <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>.
+            #{/if}
+            #{if act.type == models.ActivityType.APPLIED_SERVICE}
+                <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> applied to a service <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>.
+            #{/if}
+            #{if act.type == models.ActivityType.STARTED_SERVICE}
+                <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> started to finish a service <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>. He already finished the half!
+            #{/if}
+            #{if act.type == models.ActivityType.FINISHED_SERVICE}
+                <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> has done it and finished the service <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>. Gratz!
+            #{/if}
+            #{if act.type == models.ActivityType.COMMENTED_ON}
+                <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> added a comment on
+                #{if $act?.affectedService}
+                    <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>.
+                #{/if}
+                #{else}
+                    <a href="@{Tasks.proposals}">${act.affectedTask.name}</a>.
+                #{/else}
+                What does he mean?!
+            #{/if}
+            #{if act.type == models.ActivityType.PROPOSED_TASK}
+                Hmmm, <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> says that <a href="@{Tasks.proposals}">${act.affectedTask.name}</a> should be a new task, What do you say?
+            #{/if}
+            #{if act.type == models.ActivityType.VOTED_ON_TASK}
+                <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> voted on <a href="@{Tasks.proposals}">${act.affectedTask.name}</a>. I say you should do the same!
+            #{/if}
+            #{if act.type == models.ActivityType.TASK_APPROVED}
+                Yes! <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> has done it! With his last vote, <a href="@{Tasks.proposals}">${act.affectedTask.name}</a> as a task is approved. Go on try it!
+            #{/if}
         </div>
     </div>
 #{/list}

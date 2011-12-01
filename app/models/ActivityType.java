@@ -2,6 +2,7 @@ package models;
 
 public enum ActivityType {
     ADDED_SERVICE,
+    UPDATED_SERVICE,
     APPLIED_SERVICE,
     STARTED_SERVICE,
     FINISHED_SERVICE,

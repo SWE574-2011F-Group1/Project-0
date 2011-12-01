@@ -5,6 +5,7 @@ import play.db.jpa.*;
 
 import javax.persistence.*;
 import java.util.*;
+import java.text.SimpleDateFormat;
 
 @Entity
 public class Activity extends Model {
@@ -20,6 +21,12 @@ public class Activity extends Model {
     @Temporal(TemporalType.TIMESTAMP)
     public Date creationTime;
     
+    @ManyToOne
+    public Service affectedService;
+    
+    @ManyToOne
+    public Task affectedTask;
+    
     public Activity() {
         creationTime = new Date();
     }
@@ -30,6 +37,11 @@ public class Activity extends Model {
     
     public static List<Activity> findLatest(int count) {
         return find("select a from Activity a order by creationTime desc").fetch(count);
+    }
+    
+    public String getFormattedCreationDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        return sdf.format(this.creationTime);
     }
 }
 

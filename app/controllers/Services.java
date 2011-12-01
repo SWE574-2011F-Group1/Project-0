@@ -46,10 +46,13 @@ public class Services extends BaseController {
     		String location, String startDate, String endDate,String tags) {
         Service service;
         Set<STag> deletedTags = null;
+        Activity a = new Activity();
         if (params._contains("serviceId")) {
             service = Service.findById(Long.parseLong(params.get("serviceId")));
-            deletedTags=service.stags;
+            deletedTags = service.stags;
+            a.type = ActivityType.UPDATED_SERVICE;
         } else {
+            a.type = ActivityType.ADDED_SERVICE;
             service = new Service();
         }
         service.title = title;
@@ -90,10 +93,8 @@ public class Services extends BaseController {
 			}
         }
         
-        //Create an activy based on this...
-        Activity a = new Activity();
         a.performer = serviceOwner;
-        a.type = ActivityType.ADDED_SERVICE;
+        a.affectedService = service;
         a.save();
         
         detail(service.id);
