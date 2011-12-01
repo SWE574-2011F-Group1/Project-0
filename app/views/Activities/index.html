@@ -15,6 +15,9 @@
             #{if act.type == models.ActivityType.APPLIED_SERVICE}
                 <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> applied to a service <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>.
             #{/if}
+            #{if act.type == models.ActivityType.CANCEL_APPLICATION_SERVICE}
+                <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> resigned from a service <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>. Why??!!
+            #{/if}
             #{if act.type == models.ActivityType.STARTED_SERVICE}
                 <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> started to finish a service <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>. He already finished the half!
             #{/if}
@@ -23,7 +26,7 @@
             #{/if}
             #{if act.type == models.ActivityType.COMMENTED_ON}
                 <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> added a comment on
-                #{if $act?.affectedService}
+                #{if act.affectedService != null}
                     <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>.
                 #{/if}
                 #{else}

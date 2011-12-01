@@ -49,3 +49,86 @@ UserMessage(um1):
   message: Hello World2!
   sentTime: 2011-11-26 13:26:32
   readTime: 2011-11-26 14:26:32
+Service(se1):
+  boss: roy
+  type: PROVIDES
+  task: t2
+  status: PUBLISHED
+  title: Best Gardener Ever!
+  location: "Levent, Istanbul"
+  description: Love Gardening Work! I would love to keep clean your garden. Please Pick Me!
+Activity(a1):
+  performer: roy
+  type: ADDED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-20 14:26:32
+Activity(a2):
+  performer: roy
+  type: UPDATED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-20 14:36:32
+Activity(a3):
+  performer: admin
+  type: APPLIED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-21 14:26:32
+Activity(a4):
+  performer: admin
+  type: CANCEL_APPLICATION_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-21 16:26:32
+Activity(a5):
+  performer: admin
+  type: APPLIED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-21 18:26:32
+Activity(a6):
+  performer: admin
+  type: STARTED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-22 16:26:32
+Activity(a7):
+  performer: admin
+  type: STARTED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-22 16:26:32
+Activity(a8):
+  performer: admin
+  type: FINISHED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-23 16:26:32
+Activity(a9):
+  performer: admin
+  type: FINISHED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-23 16:26:32
+Activity(a10):
+  performer: admin
+  type: COMMENTED_ON
+  affectedService: se1
+  creationTime: 2011-11-23 16:26:30
+Activity(a11):
+  performer: admin
+  type: PROPOSED_TASK
+  affectedTask: t5
+  creationTime: 2011-11-24 16:26:32
+Activity(a12):
+  performer: roy
+  type: VOTED_ON_TASK
+  affectedTask: t5
+  creationTime: 2011-11-25 16:26:32
+Activity(a13):
+  performer: admin
+  type: VOTED_ON_TASK
+  affectedTask: t5
+  creationTime: 2011-11-26 16:26:32
+Activity(a14):
+  performer: admin
+  type: TASK_APPROVED
+  affectedTask: t5
+  creationTime: 2011-11-26 16:26:33
+Activity(a15):
+  performer: admin
+  type: COMMENTED_ON
+  affectedTask: t5
+  creationTime: 2011-11-23 16:26:30
