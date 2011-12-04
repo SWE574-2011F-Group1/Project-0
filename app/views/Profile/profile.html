@@ -3,41 +3,23 @@
 
 
 <div>
-
     #{if userObj.fbId}
         <img src="http://graph.facebook.com/${userObj.fbId}/picture?type=large" class="right" />
     #{/if}
-	<a href="@{Services.list}/${User.id}/1">Active Service Requests</a>
-	 | 
-	<a href="@{Services.list}/${User.id}/2">Active Service Offers</a>
-	 |
-	<a href="@{Services.list}/${User.id}/3">Planned Service Req/Offers</a>
-	 |
-	<a href="@{Services.list}/${User.id}/4">Done Service Req/Offers</a>
-	
-	<p>
-		<label>Name:</label> 
-		${User.name}
-	</p>
-	<p>
-		<label>Email:</label> 
-		${User.email}
-	</p>
-	<p>
-		<label>Provider Point:</label> 
-		${User.providerPoint}
-	</p>
-	<p>
-		<label>Requestor Point:</label> 
-		${User.requesterPoint}
-	</p>
-	<p>
-		<label>Social Point:</label>
-		${User.getAbsoluteSocialPoint()}
-	</p>
-	
-	<a href="@{Services.list}/${User.id}">Bookmark</a>
-		
+    <h2>About</h2>
+	<div class="info block">
+		<span class="item">Name: <span class="value">${User.name}</span></span>
+        <span class="item">Email: <span class="value">${User.email}</span></span>
+		<span class="item">Provider Point: <span class="value">${User.providerPoint}</span></span>
+		<span class="item">Requestor Point: <span class="value">${User.requesterPoint}</span></span>
+		<span class="item">Social Point: <span class="value">${User.getAbsoluteSocialPoint()}</span></span>
+	</div>
+	<h2>Actions</h2>
+	<a href="@{Services.list}/${User.id}/1">Active Service Requests</a> | 
+	<a href="@{Services.list}/${User.id}/2">Active Service Offers</a> |
+	<a href="@{Services.list}/${User.id}/3">Planned Service Req/Offers</a> |
+	<a href="@{Services.list}/${User.id}/4">Done Service Req/Offers</a> |
+	<a href="@{Services.list}/${User.id}">Bookmark</a> |
 	<a href="@{Services.list}/${User.id}">Remove Bookmark</a>
 	
 	<h2>Comments</h2>
