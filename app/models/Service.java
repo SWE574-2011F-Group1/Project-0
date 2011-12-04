@@ -50,6 +50,12 @@ public class Service extends CommentableModel {
     @ManyToMany(cascade=CascadeType.ALL)
     public List<SUser> applicants;
     
+    @OneToMany(cascade=CascadeType.ALL,mappedBy="serviceOfuser")
+    public List<ServiceMatch> matchesAsBoss;
+    
+    @OneToMany(cascade=CascadeType.ALL,mappedBy="matchService")
+    public List<ServiceMatch> matchesAsEmployee;
+
     /*@ManyToMany(cascade=CascadeType.ALL)
     public List<SUser> employees;*/
         
@@ -86,20 +92,24 @@ public class Service extends CommentableModel {
     
     public static List<Service> findByUserAndStatus(long userId, int type) {
     	List<Service> services = new ArrayList<Service>();
-    	StringBuffer sql = new StringBuffer("select s from Service s where s.boss.id = " + userId + " and ");
+    	StringBuffer sql = new StringBuffer("select s from Service s where s.boss.id = " + userId);
     	if (type == 1) { //active sr
-    		sql.append("s.status not in (?, ?) and s.type = ?");
+    		sql.append("and s.status not in (?, ?) and s.type = ?");
     		services = find(sql.toString(), ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.REQUESTS).fetch();
     	} else if (type == 2) { //active so
-    		sql.append("s.status not in (?, ?) and s.type = ?");
+    		sql.append("and s.status not in (?, ?) and s.type = ?");
     		services = find(sql.toString(), ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.PROVIDES).fetch();
     	} else if (type == 3) { //planned sr/so
-    		sql.append("s.status = (?)");
+    		sql.append("and s.status = (?)");
     		services = find (sql.toString(), ServiceStatus.IN_PROGRESS).fetch();
     	} else if (type == 4) { //done sr/so
-    		sql.append("s.status = (?)");
+    		sql.append("and s.status = (?)");
     		services = find (sql.toString(), ServiceStatus.FINISHED).fetch();
     	}	
+        else {
+    	    services = find(sql.toString()).fetch();
+    	}
+
         return services;
     }
 }

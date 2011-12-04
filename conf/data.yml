@@ -49,3 +49,116 @@ UserMessage(um1):
   message: Hello World2!
   sentTime: 2011-11-26 13:26:32
   readTime: 2011-11-26 14:26:32
+Service(se1):
+  boss: roy
+  type: PROVIDES
+  task: t2
+  status: PUBLISHED
+  title: Best Gardener Ever!
+  location: "Besiktas, Istanbul"
+  description: Love Gardening Work! I would love to keep clean your garden. Please Pick Me!
+Service(se2):
+  boss: admin
+  type: REQUIRES
+  task: t3
+  status: PUBLISHED
+  title: Driver Needed For Old Man
+  location: "Levent, Istanbul"
+  description: "I'm an old man living in the neighbourhood. I require someone who can drive me to my grandson's birthday party. I would really appraciate help and I can be generous too."
+Service(se3):
+  boss: admin
+  type: REQUIRES
+  task: t2
+  status: PUBLISHED
+  title: Need A Gardenar for my palace(!)
+  location: "Zekeriyakoy, Istanbul"
+  description: "I need a gardener who loves to work with gardens and grass. I need you to cut the grasses, plant some flowers and make the garden look like cool."
+Service(se4):
+  boss: admin
+  type: PROVIDES
+  task: t3
+  status: PUBLISHED
+  title: Can drive people to work from Zekeriyakoy to Mecidiyekoy
+  location: "Zekeriyakoy, Istanbul"
+  description: "I have a car and all the mornings, I go to work to Mecidiyekoy using my car. I can help anyone in the neighbourhood, pick them up (limited to the seat count of course) and drive them To Mecidiyekoy or vicinity.\n\n Contact me for the exact location and route."
+Activity(a1):
+  performer: roy
+  type: ADDED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-20 14:26:32
+Activity(a2):
+  performer: roy
+  type: UPDATED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-20 14:36:32
+Activity(a3):
+  performer: admin
+  type: APPLIED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-21 14:26:32
+Activity(a4):
+  performer: admin
+  type: CANCEL_APPLICATION_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-21 16:26:32
+Activity(a5):
+  performer: admin
+  type: APPLIED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-21 18:26:32
+Activity(a6):
+  performer: admin
+  type: STARTED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-22 16:26:32
+  affectedUsers: [admin, roy]
+Activity(a15):
+  performer: admin
+  type: REJECTED_SERVICE_OFFER
+  affectedService: se1
+  creationTime: 2011-11-23 16:26:30
+Activity(a7):
+  performer: roy
+  type: STARTED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-22 16:26:32
+Activity(a8):
+  performer: admin
+  type: FINISHED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-23 16:26:32
+Activity(a9):
+  performer: roy
+  type: FINISHED_SERVICE
+  affectedService: se1
+  creationTime: 2011-11-23 16:26:32
+Activity(a10):
+  performer: admin
+  type: COMMENTED_ON
+  affectedService: se1
+  creationTime: 2011-11-23 16:26:30
+Activity(a11):
+  performer: admin
+  type: PROPOSED_TASK
+  affectedTask: t5
+  creationTime: 2011-11-24 16:26:32
+Activity(a12):
+  performer: roy
+  type: VOTED_ON_TASK
+  affectedTask: t5
+  creationTime: 2011-11-25 16:26:32
+Activity(a13):
+  performer: admin
+  type: VOTED_ON_TASK
+  affectedTask: t5
+  creationTime: 2011-11-26 16:26:32
+Activity(a14):
+  performer: admin
+  type: TASK_APPROVED
+  affectedTask: t5
+  creationTime: 2011-11-26 16:26:33
+Activity(a15):
+  performer: admin
+  type: COMMENTED_ON
+  affectedTask: t5
+  creationTime: 2011-11-23 16:26:30
