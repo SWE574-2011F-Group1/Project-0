@@ -188,6 +188,8 @@ public class Services extends BaseController {
         String userEmail=Auth.connected();
         boolean isAppliedBefore=false;
         SUser currentUser=SUser.findByEmail(Auth.connected());
+        List<Comment> serviceComments = new ArrayList<Comment>();
+        serviceComments = Comment.findByService(serviceId);
         List<ServiceMatch> serviceMatches=null;
         if(!isBossUser){
         	isAppliedBefore=isApplied(service.applicants,SUser.findByEmail(userEmail));
@@ -198,7 +200,7 @@ public class Services extends BaseController {
 			serviceMatches=ServiceMatch.find(sql,null).fetch();
         	//serviceMatches=ServiceMatch.findByServiceOfUser(service);
         }
-        render(service, isBossUser,userEmail,isAppliedBefore,currentUser,serviceMatches);
+        render(service, isBossUser,userEmail,isAppliedBefore,currentUser,serviceMatches, serviceComments);
     }
     
     public static void search(int searchDone,String title, int serviceType, String description, long taskId, String location, String startDate, String endDate, int maxBasePoint,String tags) {
@@ -325,18 +327,22 @@ public class Services extends BaseController {
             a.save();
 	        
         }
-        Comment comment = new Comment(user, employer, bossComment);
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
-        Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
-        try {
-        	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
-        } catch (ParseException e) {
-            //FIXME: Find out what to do if this occurs...
-        }    
-        comment.commentDateWithTime = formatterTime.format(calendar.getTime());
-        comment.save();
+
+        if (bossComment != null && !"".equals(bossComment)) {
+            Comment comment = new Comment(user, SUser.findByEmail(employeeEmail), bossComment);
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+            SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
+            Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
+            try {
+            	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
+            } catch (ParseException e) {
+                //FIXME: Find out what to do if this occurs...
+            }    
+            comment.commentDateWithTime = formatterTime.format(calendar.getTime());
+            comment.service = service;
+            comment.save();
+        }
         detail(service.id);
     }
 	
@@ -359,18 +365,22 @@ public class Services extends BaseController {
             a.save();
 	        
         }
-        Comment comment = new Comment(user, service.boss, employeeComment);
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
-        Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
-        try {
-        	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
-        } catch (ParseException e) {
-            //FIXME: Find out what to do if this occurs...
-        }    
-        comment.commentDateWithTime = formatterTime.format(calendar.getTime());
-        comment.save();
+
+        if (employeeComment != null && !"".equals(employeeComment)) {
+	        Comment comment = new Comment(user, SUser.findByEmail(bossEmail), employeeComment);
+	        Calendar calendar = Calendar.getInstance();
+	        SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+	        SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
+	        Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
+	        try {
+	        	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
+	        } catch (ParseException e) {
+	            //FIXME: Find out what to do if this occurs...
+	        }    
+	        comment.commentDateWithTime = formatterTime.format(calendar.getTime());
+	        comment.service = service;
+	        comment.save();
+        }
         detail(service.id);
 }
 
