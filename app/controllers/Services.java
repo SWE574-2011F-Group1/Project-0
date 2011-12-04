@@ -19,7 +19,7 @@ import models.*;
 @Check("user")
 public class Services extends BaseController {
 	
-	public static int serviceNumberPerPage=5;
+	public static int serviceNumberPerPage = 5;
 
 
     public static void index() {
@@ -253,21 +253,23 @@ public class Services extends BaseController {
 	public static void apply(long serviceId,String email) throws Exception {
 	        Service service = Service.findById(serviceId);
 	        SUser user=SUser.findByEmail(email);
-	        List<SUser> applicants=service.applicants;
+	        List<SUser> applicants = service.applicants;
 	        boolean isBossUser = service.boss.email.equals(email);
 	        if (service.status==ServiceStatus.PUBLISHED && !isBossUser && !isApplied(applicants, user)) {
 		        if (applicants==null) {
 		        	applicants = new ArrayList<SUser>();
 		        }
-		        applicants.add(user);
-		        service.save();
 		        
                 Activity a = new Activity();
                 a.performer = user;
                 a.affectedService = service;
                 a.type = ActivityType.APPLIED_SERVICE;
                 a.affectedUsers.add(service.boss);
+                a.affectedUsers.addAll(service.applicants);
                 a.save();
+                
+                applicants.add(user);
+		        service.save();
 	        } else {
 	        	//APPLIED BEFORE
 	        }
@@ -306,7 +308,8 @@ public class Services extends BaseController {
         comment.commentDateWithTime = formatterTime.format(calendar.getTime());
         comment.save();
         detail(service.id);
-}
+    }
+	
 	public static void employeeClose(long serviceId,String email, String employeeComment, String bossEmail) throws Exception {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
@@ -345,8 +348,8 @@ public class Services extends BaseController {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
         List<SUser> applicants=service.applicants;
-        int index=findUserIndex(applicants, user);
-        if (index!=-1) {
+        int index = findUserIndex(applicants, user);
+        if (index != -1) {
 	        applicants.remove(index);
 	        service.save();
 	        
@@ -355,6 +358,7 @@ public class Services extends BaseController {
             a.affectedService = service;
             a.type = ActivityType.CANCEL_APPLICATION_SERVICE;
             a.affectedUsers.add(service.boss);
+            a.affectedUsers.addAll(service.applicants);
             a.save();
         } else {
         	//NOT APPLIED BEFORE
@@ -409,11 +413,16 @@ public class Services extends BaseController {
 	      
 	}
 	
-	public static void employeeApproval(long serviceId,long applicantId){
+	public static void employeeApproval(long serviceId, long applicantId) {
+	    
 		Service service = Service.findById(serviceId);
         SUser user = SUser.findById(applicantId);
-		render(service,user);
+        if (null == service || null == user) {
+            index();
+        }
+		render(service, user);
 	}
+	
 	public static void processEmployeeApproval(long serviceId,long applicantId,int approval){
 		Service service = Service.findById(serviceId);
         SUser user = SUser.findById(applicantId);
@@ -421,6 +430,15 @@ public class Services extends BaseController {
         //boolean isBossUser = Auth.connected().equals(service.boss.email);
         int index = findUserIndex(applicants, user);
         if (approval == 1 && index != -1 && service.status == ServiceStatus.WAITING_EMPLOYEE_APPROVAL) {
+            
+            Activity a = new Activity();
+            a.performer = user;
+            a.affectedService = service;
+            a.type = ActivityType.STARTED_SERVICE;
+            a.affectedUsers.add(service.boss);
+            a.affectedUsers.addAll(service.applicants);
+            a.save();
+            
         	service.status = ServiceStatus.IN_PROGRESS;
         	service.applicants = null;
 			service.save();
@@ -431,13 +449,6 @@ public class Services extends BaseController {
 			}
 			servicesAsEmployee.add(service);
 			user.save();
-			
-			Activity a = new Activity();
-            a.performer = user;
-            a.affectedService = service;
-            a.type = ActivityType.STARTED_SERVICE;
-            a.affectedUsers.add(service.boss);
-            a.save();
         }
 		if (approval != 1 && index != -1) {
 			service.status = ServiceStatus.PUBLISHED;
@@ -455,6 +466,7 @@ public class Services extends BaseController {
             a.affectedService = service;
             a.type = ActivityType.REJECTED_SERVICE_OFFER;
             a.affectedUsers.add(service.boss);
+            a.affectedUsers.addAll(service.applicants);
             a.save();
 			
 		} else {

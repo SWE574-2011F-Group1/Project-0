@@ -55,8 +55,32 @@ Service(se1):
   task: t2
   status: PUBLISHED
   title: Best Gardener Ever!
-  location: "Levent, Istanbul"
+  location: "Besiktas, Istanbul"
   description: Love Gardening Work! I would love to keep clean your garden. Please Pick Me!
+Service(se2):
+  boss: admin
+  type: REQUIRES
+  task: t3
+  status: PUBLISHED
+  title: Driver Needed For Old Man
+  location: "Levent, Istanbul"
+  description: "I'm an old man living in the neighbourhood. I require someone who can drive me to my grandson's birthday party. I would really appraciate help and I can be generous too."
+Service(se3):
+  boss: admin
+  type: REQUIRES
+  task: t2
+  status: PUBLISHED
+  title: Need A Gardenar for my palace(!)
+  location: "Zekeriyakoy, Istanbul"
+  description: "I need a gardener who loves to work with gardens and grass. I need you to cut the grasses, plant some flowers and make the garden look like cool."
+Service(se4):
+  boss: admin
+  type: PROVIDES
+  task: t3
+  status: PUBLISHED
+  title: Can drive people to work from Zekeriyakoy to Mecidiyekoy
+  location: "Zekeriyakoy, Istanbul"
+  description: "I have a car and all the mornings, I go to work to Mecidiyekoy using my car. I can help anyone in the neighbourhood, pick them up (limited to the seat count of course) and drive them To Mecidiyekoy or vicinity.\n\n Contact me for the exact location and route."
 Activity(a1):
   performer: roy
   type: ADDED_SERVICE
