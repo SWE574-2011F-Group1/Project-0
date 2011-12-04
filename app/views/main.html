@@ -42,9 +42,15 @@
             </div>
             <div id="menu">
             #{if loggedIn}
-                #{if userObj.fbId}
-                    <a href="@{Profile.profile}"><img src="http://graph.facebook.com/${userObj.fbId}/picture" class="profile-pic" /></a>
-                #{/if}
+                <div class="profile-pic">
+                    <div class="default">
+                        <a href="@{Profile.profile}">
+                            #{if userObj.fbId}
+                                <img src="http://graph.facebook.com/${userObj.fbId}/picture" />
+                            #{/if}
+                        </a>
+                    </div>
+                </div>
                 Olá, <a href="@{Profile.profile}">${userObj.name}</a>! |
                 <a href="@{Application.index}">SES-DasBoard</a> |
                 #{list menuItems, as:'m'}

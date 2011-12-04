@@ -35,7 +35,8 @@ div.list-item a {color: #67A927;}
 #crudHeader div.navigation a:hover {text-decoration: none;}
 span.radio-button {cursor: pointer;}
 
-img.profile-pic {float: left; padding: 3px; background-color:green; margin-right: 5px;}
+div.profile-pic {float: left; padding: 3px; background-color:green; margin-right: 5px;}
+div.profile-pic div.default {background-image:url("/public/images/default-avatar.jpg"); width: 50px; height: 50px; background-repeat: no-repeat;}
 
 span.tip {font-size: 10px; font-style: italic; display: block; color: gray;}
 
