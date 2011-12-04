@@ -4,6 +4,9 @@
 
 # Home page
 GET     /                                       Application.index
+*       /about/?                                StaticPages.about
+*       /faq/?                                  StaticPages.faq
+*       /help/?                                 StaticPages.help
 *       /services/?                             Services.list
 *       /services/detail/{serviceId}            Services.detail
 *       /services/detail/?                      Services.list

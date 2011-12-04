@@ -25,8 +25,8 @@ public class Services extends BaseController {
     public static void index() {
         Service service = new Service();
         service.type = ServiceType.REQUESTS;
-        if(params.get("type")!=null && params.get("type").equals("0")){
-        	service.type=ServiceType.PROVIDES;
+        if (params.get("type") != null && params.get("type").equals("0")) {
+        	service.type = ServiceType.PROVIDES;
         }
         Collection<Task> tasks = Task.findAllActive();
         render(service, tasks);
