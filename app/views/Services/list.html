@@ -4,9 +4,13 @@
 
 <div class="sidebar">
     <h3>Popular Tasks</h3>
-    <div id="task-cloud" class="cloud"></div>
+    <div id="task-cloud" class="cloud right"></div>
+    #{if tagClouds!=null && tagClouds.size()>0}
+	    <h3>Popular Tags</h3>
+	    <div id="tag-cloud" class="cloud right">
+	</div>
+#{/if}
 </div>
-
 
     <span>
         Are you looking for something?
@@ -20,6 +24,12 @@
            words.push({text:"${t.name}", url:"@{Services.list}?task=${t.id}", weight: ${t.weight}})
        #{/list}
        $("div#task-cloud").jQCloud(words);
+       
+       var tags = new Array();
+       #{list tagClouds, as:'tc'}
+       		tags.push({text:"${tc.tagText}", url:"@{Services.list}?tag=${tc.tagText}", weight:${tc.tagCount}})
+       	#{/list}
+       $("div#tag-cloud").jQCloud(tags);
     });
 </script>
 #{if services.size() < 1}

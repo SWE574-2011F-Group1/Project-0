@@ -4,6 +4,9 @@
 
 # Home page
 GET     /                                       Application.index
+*       /about/?                                StaticPages.about
+*       /faq/?                                  StaticPages.faq
+*       /help/?                                 StaticPages.help
 *       /services/?                             Services.list
 *       /services/detail/{serviceId}            Services.detail
 *       /services/detail/?                      Services.list
@@ -21,11 +24,13 @@ GET     /                                       Application.index
 * 		/services/search  						Services.search
 *       /services/{uid}/{st}                    Services.list
 *       /services/{uid}                         Services.list
-*       /services/edit/?                        Services.list
 *       /fbLogin/?                              BaseController.fbLogin
 *       /services/search                        Services.search
 *       /services/ajaxDeneme                    Services.ajaxDeneme
 *		/profile/?								Profile.profile
+*		/profile/addBookmark					Profile.addBookmark
+*		/profile/removeBookmark					Profile.removeBookmark
+*		/profile/								Profile.profile
 *		/profile/{uid}							Profile.profile
 *		/profile/								Profile.profile
 

@@ -102,17 +102,17 @@ public class Service extends CommentableModel {
     public static List<Service> findByTask(long taskId) {
         return find("byTask.id", taskId).fetch();
     }
-    
+    public static List<Service> findByTag(String tag) {
+    	String sql="select distinct s from Service s, STag st where st.service=s and st.text='"+tag+"'";
+        return find(sql,null).fetch();
+    }
     public static List<Service> findByUserAndStatus(long userId, int type) {
     	List<Service> services = new ArrayList<Service>();
-    	Logger.info("type: " + type);
-    	Logger.info("userId: " + userId);
     	StringBuffer sql = new StringBuffer("select s from Service s where s.boss.id = " + userId);
     	if (type == 1) { //active sr
     		sql.append("and s.status not in (?, ?) and s.type = ?");
     		services = find(sql.toString(), ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.REQUESTS).fetch();
     	} else if (type == 2) { //active so
-    		Logger.info("Type2");
     		sql.append("and s.status not in (?, ?) and s.type = ?");
     		services = find(sql.toString(), ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.PROVIDES).fetch();
     	} else if (type == 3) { //planned sr/so
@@ -121,16 +121,11 @@ public class Service extends CommentableModel {
     	} else if (type == 4) { //done sr/so
     		sql.append("and s.status = (?)");
     		services = find (sql.toString(), ServiceStatus.FINISHED).fetch();
-    	} else {
+    	}	
+        else {
     	    services = find(sql.toString()).fetch();
     	}
-    		
-    	Logger.info("type: " + type);
-    	Logger.info("userId: " + userId);
+
         return services;
-    	
-    	/*return find("select s from Service s where s.boss.id = " + userId + " and " +
-        		"s.status not in (?, ?) and " + 
-        		"s.type = ?", ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.REQUESTS).fetch();*/    
     }
 }
