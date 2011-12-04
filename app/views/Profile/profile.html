@@ -4,6 +4,9 @@
 
 <div>
 
+    #{if userObj.fbId}
+        <img src="http://graph.facebook.com/${userObj.fbId}/picture?type=large" class="right" />
+    #{/if}
 	<a href="@{Services.list}/${User.id}/1">Active Service Requests</a>
 	 | 
 	<a href="@{Services.list}/${User.id}/2">Active Service Offers</a>

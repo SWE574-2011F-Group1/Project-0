@@ -29,7 +29,7 @@
 	padding:5px 5px 12px 5px;
 	text-align:justify;
 	margin-bottom:11px;
-		}
+}
 		
 .search-background {
 	display: none;
@@ -44,32 +44,4 @@
 	width: 520px;
 	color:#FFFFFF;
 	text-shadow: #fff 0px 0px 20px;
-	}
-	
-search-background label{	
-
-	border:solid #66FF00 1px;
-}	
-
-#paging_button ul{ width: 510px; padding:0px; margin:8px; }
-
-#paging_button ul li { 
-
-	-moz-border-radius: 3px 3px 3px 3px;
-    background: none repeat scroll 0 0 #000000;
-    color: #FFFFFF;
-    float: left;
-    font-family: helvetica,arial,sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    margin: 0 2px 0px;
-    padding: 10px 10px;
-    text-align: center;
-    text-decoration: none;
-    text-shadow: none;
-	list-style-type:none; 
-    width: 20px;cursor:pointer;
-	}
-	
-#paging_button ul li:hover{background:#006699;}
-li:hover{ color: #CC0000; cursor: pointer; }
+}

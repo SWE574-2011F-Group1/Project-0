@@ -61,7 +61,7 @@ public class UserMessage extends Model {
     }
     
     private String formatDate(Date d) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         return null != d ? sdf.format(d) : "";
     }
     

@@ -99,10 +99,9 @@
 		                    #{/if}
 		    	        </span>
 		    	        <br/>
-			        	<span class="value">Provider Point:${service.employee.providerPoint}</span>
+			        	<span class="value">Provider Point: ${service.employee.providerPoint}</span>
 			       		<br/>
-			        	<span class="value">Requester Point:${service.employee.requesterPoint}</span>
-			        
+			        	<span class="value">Requester Point: ${service.employee.requesterPoint}</span>
 			        	<br/>
 			        	<br/>
 			        </li>	
@@ -151,9 +150,9 @@
 					            <a class="cancelBtn cancel-link" href="@{Services.cancelApply}?serviceId=${service.id}&email=${userEmail}">Cancel My Application</a>
 					        #{/if}
 					        <br/>
-					        <span class="value">Provider Point:${applicant.providerPoint}</span>
+					        <span class="value">Provider Point: ${applicant.providerPoint}</span>
 					        <br/>
-					        <span class="value">Requester Point:${applicant.requesterPoint}</span>
+					        <span class="value">Requester Point: ${applicant.requesterPoint}</span>
 					        
 					        <br/>
 					        <br/>
@@ -166,7 +165,7 @@
     #{/if}
     #{if service.status==models.ServiceStatus.PUBLISHED && isBossUser && service.applicants!=null && service.applicants.size()>0}
 	    <div class="bot">
-	    	<input type="button" value="Start Approval" class="start-approval-btn left" />
+	    	<input type="button" value="Start Approval &rarr;" class="start-approval-btn left" />
 	    </div>
     #{/if}
     #{if service.status==models.ServiceStatus.WAITING_EMPLOYEE_APPROVAL && service.employee!=null && service.employee.id==currentUser.id}
@@ -174,7 +173,7 @@
 	    	#{form @employeeApproval(),}
 	    		<input type="hidden" value="${service.id}" name="serviceId" id="serviceId" />
        			<input type="hidden" value="${currentUser.id}" name="applicantId" id="applicantId" />
-	    		<input type="submit" value="Process Approval" class="employee-approval-btn left" />
+	    		<input type="submit" value="Process Approval &rarr;" class="employee-approval-btn left" />
 	    	#{/form}
 	    </div>
     #{/if}
@@ -196,7 +195,7 @@
         		<input type="hidden" name="employeeEmail" value="${service.employee.email}"/>
         		<label>Comment:</label><br> 
         		<textarea rows="5" cols="5" name = "bossComment"></textarea>
-    			<input type="submit" value="Close" class="close-btn right" />
+    			<input type="submit" value="Close &rarr;" class="close-btn right" />
     	#{/form} 
     #{/if}
     #{if service.status==models.ServiceStatus.WAITING_EMPLOYEE_FINISH && service.employee.id==currentUser.id}
@@ -206,12 +205,34 @@
         		<input type="hidden" name="bossEmail" value="${service.boss.email}"/>
         		<label>Comment:</label><br> 
         		<textarea rows="5" cols="5" name = "employeeComment"></textarea>
-    			<input type="submit" value="Close" class="close-btn right" />
+    			<input type="submit" value="Close &rarr;" class="close-btn right" />
     	#{/form}
     #{/if}
     </div>
+     #{if serviceMatches!=null && serviceMatches.size()>0}
+	    <div class="clearfix"></div>
+	    <div class="info">
+	    	 <h3>Match Services</h3>
+	     	 #{list serviceMatches, as:'sm'}
+		             <span class="item">
+	            		Service title: <span class="value"><a href="/services/detail/${sm.matchService.id}">${sm.matchService.title}</a></span>
+
+	        		 </span>
+	        		 <span class="item">
+	            		Match Point:<span class="value">${sm.matchPoint}</span>
+	        		 </span>
+	        		 <!--  <span class="item">
+	            		Service boss: <span class="value"><a href="/profile/${sm.matchService.boss.id}">${sm.matchService.boss.name}</a></span>
+	        		 </span>
+	        		 <span class="item">
+	        		 <span class="value"></span>
+	        		 </span>
+	        		 -->     		 
+             #{/list}
+	    </div>
+    #{/if}
 </div>
-<script>
+<script type="text/javascript">
     $("input[type=button].pm-btn").bind("click", function() {
         document.location = '@{UserMessages.compose}?serviceId=${service.id}';
     });
