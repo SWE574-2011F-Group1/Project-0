@@ -88,20 +88,22 @@ public class Service extends CommentableModel {
     	List<Service> services = new ArrayList<Service>();
     	Logger.info("type: " + type);
     	Logger.info("userId: " + userId);
-    	StringBuffer sql = new StringBuffer("select s from Service s where s.boss.id = " + userId + " and ");
+    	StringBuffer sql = new StringBuffer("select s from Service s where s.boss.id = " + userId);
     	if (type == 1) { //active sr
-    		sql.append("s.status not in (?, ?) and s.type = ?");
+    		sql.append("and s.status not in (?, ?) and s.type = ?");
     		services = find(sql.toString(), ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.REQUESTS).fetch();
     	} else if (type == 2) { //active so
     		Logger.info("Type2");
-    		sql.append("s.status not in (?, ?) and s.type = ?");
+    		sql.append("and s.status not in (?, ?) and s.type = ?");
     		services = find(sql.toString(), ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.PROVIDES).fetch();
     	} else if (type == 3) { //planned sr/so
-    		sql.append("s.status = (?)");
+    		sql.append("and s.status = (?)");
     		services = find (sql.toString(), ServiceStatus.IN_PROGRESS).fetch();
     	} else if (type == 4) { //done sr/so
-    		sql.append("s.status = (?)");
+    		sql.append("and s.status = (?)");
     		services = find (sql.toString(), ServiceStatus.FINISHED).fetch();
+    	} else {
+    	    services = find(sql.toString()).fetch();
     	}
     		
     	Logger.info("type: " + type);

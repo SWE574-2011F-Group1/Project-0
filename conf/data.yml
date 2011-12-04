@@ -87,8 +87,14 @@ Activity(a6):
   type: STARTED_SERVICE
   affectedService: se1
   creationTime: 2011-11-22 16:26:32
-Activity(a7):
+  affectedUsers: [admin, roy]
+Activity(a15):
   performer: admin
+  type: REJECTED_SERVICE_OFFER
+  affectedService: se1
+  creationTime: 2011-11-23 16:26:30
+Activity(a7):
+  performer: roy
   type: STARTED_SERVICE
   affectedService: se1
   creationTime: 2011-11-22 16:26:32
@@ -98,7 +104,7 @@ Activity(a8):
   affectedService: se1
   creationTime: 2011-11-23 16:26:32
 Activity(a9):
-  performer: admin
+  performer: roy
   type: FINISHED_SERVICE
   affectedService: se1
   creationTime: 2011-11-23 16:26:32

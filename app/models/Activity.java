@@ -10,8 +10,8 @@ import java.text.SimpleDateFormat;
 @Entity
 public class Activity extends Model {
     
-    @ManyToOne
-    public SUser affected;
+    @ManyToMany(cascade=CascadeType.ALL)
+    public List<SUser> affectedUsers;
     
     @ManyToOne
     public SUser performer;
@@ -29,6 +29,7 @@ public class Activity extends Model {
     
     public Activity() {
         creationTime = new Date();
+        affectedUsers = new ArrayList<SUser>();
     }
     
     public static List<Activity> findLatest() {
