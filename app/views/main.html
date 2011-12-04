@@ -43,6 +43,7 @@
             <div id="menu">
             #{if loggedIn}
                 Olá, ${user_name}! |
+                  <a href="@{Application.index}">SES-DasBoard</a> |
                 <a href="@{Profile.profile}">My Profile</a> |
                 #{list menuItems, as:'m'}
                     #{set additionalMenuMessage:'' /}
