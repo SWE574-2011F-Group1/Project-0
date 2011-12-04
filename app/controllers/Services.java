@@ -46,9 +46,11 @@ public class Services extends BaseController {
     		String location, String startDate, String endDate,String tags) {
         Service service;
         Set<STag> deletedTags=null;
+        boolean isUpdate=false;
         if (params._contains("serviceId")) {
             service = Service.findById(Long.parseLong(params.get("serviceId")));
             deletedTags=service.stags;
+            isUpdate=true;
         } else {
             service = new Service();
         }
@@ -89,6 +91,8 @@ public class Services extends BaseController {
 				tag.delete();
 			}
         }
+        
+        findMatchServices(service,isUpdate);
         
         detail(service.id);
     }
@@ -146,10 +150,17 @@ public class Services extends BaseController {
         String userEmail=Auth.connected();
         boolean isAppliedBefore=false;
         SUser currentUser=SUser.findByEmail(Auth.connected());
+        List<ServiceMatch> serviceMatches=null;
         if(!isBossUser){
         	isAppliedBefore=isApplied(service.applicants,SUser.findByEmail(userEmail));
         }
-        render(service, isBossUser,userEmail,isAppliedBefore,currentUser);
+        else{
+        	String sql = "select sm from ServiceMatch sm where sm.serviceOfuser.id="+service.id+
+					 		" order by matchPoint desc";
+			serviceMatches=ServiceMatch.find(sql,null).fetch();
+        	//serviceMatches=ServiceMatch.findByServiceOfUser(service);
+        }
+        render(service, isBossUser,userEmail,isAppliedBefore,currentUser,serviceMatches);
     }
     
     public static void search(int searchDone,String title, int serviceType, 
@@ -536,4 +547,169 @@ public class Services extends BaseController {
         
         render(services, tasks);
  }
+	private  static void findMatchServices(Service service, boolean isUpdate){
+		
+		if(isUpdate){
+			String sql = "select sm from ServiceMatch sm where sm.serviceOfuser.id="+service.id+" " +
+					 " or sm.matchService.id="+service.id;
+			List<ServiceMatch> serviceMatches=ServiceMatch.find(sql,null).fetch();
+			for (ServiceMatch sm : serviceMatches) {
+				Logger.info("sm with id %d and wiht service %s is deleted", sm.id,sm.serviceOfuser.title);
+				sm.delete();
+			}
+		}
+		
+		ServiceType type=service.type;
+		int ordinal;
+		if(type==ServiceType.PROVIDES){
+			ordinal=ServiceType.REQUESTS.getOrdinal();
+		}
+		else{
+			ordinal=ServiceType.PROVIDES.getOrdinal();
+		}
+		
+		String sql = "select s from Service s where s.type="+ordinal+" " +
+					 " and s.boss.id!="+service.boss.id+" and s.status="+ServiceStatus.PUBLISHED.ordinal();
+		List<Service> services=Service.find(sql,null).fetch();
+		
+		Logger.info("Find match services size:%d services with ordinal %d found ",services.size(),ordinal);
+		
+		for (Service s : services) {
+			int matchPoint=1;
+			String taskName=s.task.name;
+			if(taskName.toLowerCase().equals(service.task.name.toLowerCase())){
+				matchPoint++;
+				Logger.info("TaskName1:%s TaskName2:%s. Match Point is incremented to:%d", service.task.name,taskName,matchPoint);
+			}
+			if(s.stags!=null && service.stags!=null && s.stags.size()>0 && service.stags.size()>0){
+				Set<STag> tags=s.stags;
+				for (STag tag : tags) {
+					String tText=tag.text.toLowerCase();
+					for (STag t : service.stags) {
+						String tText2=t.text.toLowerCase();
+						if(tText.equals(tText2) || tText.contains(tText2) || tText2.contains(tText)){
+							matchPoint++;
+							Logger.info("Tag1:%s Tag2:%s. Match Point is incremented to:%d", tText2,tText,matchPoint);
+						}
+					}
+				}
+			}
+			
+			String title=s.title.trim().toLowerCase();
+			if(title.contains(service.title.trim().toLowerCase()) || service.title.trim().toLowerCase().contains(title)){
+				matchPoint++;
+				Logger.info("Title1:%s Title2:%s. Match Point is incremented to:%d", service.title,title,matchPoint);
+			}
+			int minTitleLength=Math.min(title.length(), service.title.trim().length());
+			int diff=calculateTextDifference(title, service.title.trim().toLowerCase());
+			if(diff<=minTitleLength){
+				matchPoint++;
+				Logger.info("Title1:%s Title2:%s. Match Point is incremented to:%d", service.title,title,matchPoint);
+			}
+			
+			String location=s.location.trim().toLowerCase();
+			if(location.contains(service.location.trim().toLowerCase()) || service.location.trim().toLowerCase().contains(location)){
+				matchPoint++;
+				Logger.info("Location1:%s Location2:%s. Match Point is incremented to:%d", service.location,location,matchPoint);
+			}
+			int minLocationLength=Math.min(location.length(), service.location.trim().length());
+			diff=calculateTextDifference(location, service.location.trim().toLowerCase());
+			if(diff<=minLocationLength){
+				matchPoint++;
+				Logger.info("Location1:%s Location2:%s. Match Point is incremented to:%d", service.location,location,matchPoint);
+			}
+			
+			String desc=s.description.trim().toLowerCase();
+			if(desc.contains(service.description.trim().toLowerCase()) || service.description.trim().toLowerCase().contains(desc)){
+				matchPoint++;
+				Logger.info("Desc1:%s Desc2:%s. Match Point is incremented to:%d", service.description,desc,matchPoint);
+			}
+			int minDescLength=Math.min(desc.length(), service.description.trim().length());
+			diff=calculateTextDifference(desc, service.description.trim().toLowerCase());
+			if(diff<=minDescLength){
+				matchPoint++;
+				Logger.info("Desc1:%s Desc2:%s. Match Point is incremented to:%d", service.description,desc,matchPoint);
+			}
+			
+			Date startDate=s.startDate;
+			Date endDate=s.endDate;
+			
+			if(startDate!=null && endDate!=null && service.startDate!=null && service.endDate!=null){
+				if((startDate.compareTo(service.startDate)<=0 && startDate.compareTo(service.endDate)>=0)
+					|| (endDate.compareTo(service.startDate)>=0 && endDate.compareTo(service.endDate)<=0)	
+				){
+					matchPoint++;
+					Logger.info("StartDate1:%s EndDate1:%s StartDate2:%s EndDate2:%s. Match Point is incremented to:%d", service.startDate, service.endDate,startDate,endDate,matchPoint);
+				}
+				
+			}
+			else if(endDate!=null && service.startDate!=null){
+				if(endDate.compareTo(service.startDate)>=0){
+					matchPoint++;
+					Logger.info("StartDate1:%s EndDate2:%s. Match Point is incremented to:%d", service.startDate,endDate,matchPoint);
+				}
+			}
+			else if(startDate!=null && service.endDate!=null){
+				if(startDate.compareTo(service.endDate)<=0){
+					matchPoint++;
+					Logger.info("EndDate1:%s StartDate2:%s. Match Point is incremented to:%d", service.endDate,startDate,matchPoint);
+				}
+			}
+			else{
+				matchPoint++;
+				Logger.info("No date limitation. Match point is incremented to %d",matchPoint);
+			}
+			
+			ServiceMatch sm=new ServiceMatch();
+			sm.setServiceOfuser(service);
+			sm.setMatchService(s);
+			sm.setMatchPoint(matchPoint);
+			sm.setUser(service.boss);
+			sm.save();
+			
+			Logger.info("Service1:%s Service2:%s matchPoint:%d saved",service.title,s.title,matchPoint);
+
+			sm=new ServiceMatch();
+			sm.setServiceOfuser(s);
+			sm.setMatchService(service);
+			sm.setMatchPoint(matchPoint);
+			sm.setUser(s.boss);
+			sm.save();
+			
+			Logger.info("Service1:%s Service2:%s matchPoint:%d saved",s.title,service.title,matchPoint);
+		}
+	}
+	private static int calculateTextDifference(String s1,String s2){
+		
+		int array[][]=new int[s1.length()+1][s2.length()+1];
+		
+		for(int i=0;i<=s1.length();i++){
+			array[i][0]=i;
+		}
+		
+		for(int j=0;j<=s2.length();j++){
+			array[0][j]=j;
+		}
+		
+		for(int i=1;i<=s1.length();i++){
+			for(int j=1;j<=s2.length();j++){
+				String s11=s1.substring(0,s1.length()-1);
+				int a=calculateTextDifference(s11,s2)+1;
+				
+				String s22=s2.substring(0,s2.length()-1);
+				int b=calculateTextDifference(s1, s22)+1;
+				
+				int c=calculateTextDifference(s11, s22);
+				if(s1.charAt(s1.length()-1)!=s2.charAt(s2.length()-1)){
+					c++;
+				}
+				
+				int d=Math.min(a, b);
+				array[i][j]=Math.min(c,d);
+			}
+		}
+		
+		return array[s1.length()][s2.length()];
+	}
+
 }

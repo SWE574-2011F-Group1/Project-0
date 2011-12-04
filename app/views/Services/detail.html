@@ -210,6 +210,28 @@
     	#{/form}
     #{/if}
     </div>
+     #{if serviceMatches!=null && serviceMatches.size()>0}
+	    <div class="clearfix"></div>
+	    <div class="info">
+	    	 <h3>Match Services</h3>
+	     	 #{list serviceMatches, as:'sm'}
+		             <span class="item">
+	            		Service title: <span class="value"><a href="/services/detail/${sm.matchService.id}">${sm.matchService.title}</a></span>
+
+	        		 </span>
+	        		 <span class="item">
+	            		Match Point:<span class="value">${sm.matchPoint}</span>
+	        		 </span>
+	        		 <!--  <span class="item">
+	            		Service boss: <span class="value"><a href="/profile/${sm.matchService.boss.id}">${sm.matchService.boss.name}</a></span>
+	        		 </span>
+	        		 <span class="item">
+	        		 <span class="value"></span>
+	        		 </span>
+	        		 -->     		 
+             #{/list}
+	    </div>
+    #{/if}
 </div>
 <script>
     $("input[type=button].pm-btn").bind("click", function() {
