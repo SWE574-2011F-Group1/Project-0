@@ -86,14 +86,11 @@ public class Service extends CommentableModel {
     
     public static List<Service> findByUserAndStatus(long userId, int type) {
     	List<Service> services = new ArrayList<Service>();
-    	Logger.info("type: " + type);
-    	Logger.info("userId: " + userId);
     	StringBuffer sql = new StringBuffer("select s from Service s where s.boss.id = " + userId + " and ");
     	if (type == 1) { //active sr
     		sql.append("s.status not in (?, ?) and s.type = ?");
     		services = find(sql.toString(), ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.REQUESTS).fetch();
     	} else if (type == 2) { //active so
-    		Logger.info("Type2");
     		sql.append("s.status not in (?, ?) and s.type = ?");
     		services = find(sql.toString(), ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.PROVIDES).fetch();
     	} else if (type == 3) { //planned sr/so
@@ -102,15 +99,8 @@ public class Service extends CommentableModel {
     	} else if (type == 4) { //done sr/so
     		sql.append("s.status = (?)");
     		services = find (sql.toString(), ServiceStatus.FINISHED).fetch();
-    	}
-    		
-    	Logger.info("type: " + type);
-    	Logger.info("userId: " + userId);
+    	}	
         return services;
-    	
-    	/*return find("select s from Service s where s.boss.id = " + userId + " and " +
-        		"s.status not in (?, ?) and " + 
-        		"s.type = ?", ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.REQUESTS).fetch();*/    
     }
 }
 

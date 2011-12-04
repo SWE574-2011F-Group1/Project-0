@@ -15,6 +15,8 @@ GET     /foo                                    admin.Foo.index
 *       /services/search                        Services.search
 *       /services/ajaxDeneme                    Services.ajaxDeneme
 *		/profile/?								Profile.profile
+*		/profile/addBookmark					Profile.addBookmark
+*		/profile/removeBookmark					Profile.removeBookmark
 *		/profile/								Profile.profile
 *		/profile/{uid}							Profile.profile
 *       /services/apply		                    Services.apply

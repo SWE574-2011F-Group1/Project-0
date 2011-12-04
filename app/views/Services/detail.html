@@ -210,6 +210,15 @@
     	#{/form}
     #{/if}
     </div>
+   <h2>Comments</h2>
+	#{list serviceComments, as:'c'}
+		<div class="list-item">
+		<a href="@{Profile.profile}/${c.commenter.id}">${c.commenter.name}</a><em>  wrote on ${c.commentDateWithTime}</em>
+			<div class="info">
+				${c.comment}
+			</div>
+		</div>
+	#{/list}
 </div>
 <script>
     $("input[type=button].pm-btn").bind("click", function() {
