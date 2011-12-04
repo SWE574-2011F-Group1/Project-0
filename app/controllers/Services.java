@@ -2,6 +2,7 @@ package controllers;
 
 import play.*;
 import play.cache.Cache;
+import play.db.jpa.JPA;
 import play.mvc.*;
 
 import java.io.Serializable;
@@ -9,6 +10,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import javax.persistence.Query;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.joda.time.DateTime;
@@ -105,7 +108,13 @@ public class Services extends BaseController {
         if (params._contains("task") && null != params.get("task") && !params.get("task").equals("")) {
             Logger.info("hede ho o");
             services = Service.findByTask(Long.valueOf(params.get("task")));
-        }  else if (params._contains("uid")) {
+        }
+        else if (params._contains("tag") && null != params.get("tag") && !params.get("tag").equals("")) {
+           String tag=params.get("tag");
+        	Logger.info("service list wit tag %s",tag);
+            services = Service.findByTag(tag);
+        }
+        else if (params._contains("uid")) {
         	services = Service.findByUserAndStatus(uid, st);
         	if (services.isEmpty()) {
         		
@@ -132,10 +141,29 @@ public class Services extends BaseController {
         if(maxPageNumber!=0){
         	services=getServicesForPage(services, 1);
         }
+       
+        List<STagCloud> tagClouds=getTagCloudData();
         
-        render(services, tasks,maxPageNumber);
+        render(services, tasks,maxPageNumber,tagClouds);
     }
     
+    private static  List<STagCloud> getTagCloudData(){
+    	String sql="Select st.text as tagText, count(*) as tagCount from STag st group by st.text";
+        
+        
+        Query query = JPA.em().createQuery(sql);
+        Iterator i = query.getResultList().iterator();
+        List<STagCloud> tagClouds=new ArrayList<STagCloud>();
+        while (i.hasNext()) {
+            STagCloud stc=new STagCloud();
+        	Object[] o = (Object[]) i.next();
+            stc.tagText=String.valueOf(o[0]);
+            stc.tagCount=Long.valueOf((Long)o[1]);
+            tagClouds.add(stc);
+        }
+        
+        return tagClouds;
+    }
     private static List<Service> getServicesForPage(List<Service> services,int page){
     	int lastindex=page*serviceNumberPerPage;
     	if(lastindex>services.size()){

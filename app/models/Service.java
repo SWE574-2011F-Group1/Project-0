@@ -89,7 +89,10 @@ public class Service extends CommentableModel {
     public static List<Service> findByTask(long taskId) {
         return find("byTask.id", taskId).fetch();
     }
-    
+    public static List<Service> findByTag(String tag) {
+    	String sql="select distinct s from Service s, STag st where st.service=s and st.text='"+tag+"'";
+        return find(sql,null).fetch();
+    }
     public static List<Service> findByUserAndStatus(long userId, int type) {
     	List<Service> services = new ArrayList<Service>();
     	Logger.info("type: " + type);

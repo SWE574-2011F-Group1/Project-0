@@ -44,7 +44,7 @@ span.error {float:right; position: relative; left: 2px; color: red;}
 
 .sidebar {position: absolute; right: 0px; height: 500px; width: 250px;}
 .sidebar h3 {text-align:center;}
-.cloud {height: 500px; width: 250px;}
+.cloud {height: 100px; width: 250px;}
 
 /* Default Layout is here, everything else below is copied and pasted */
 
