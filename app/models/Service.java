@@ -14,6 +14,10 @@ import play.data.validation.*;
 
 @Entity
 public class Service extends CommentableModel {
+
+    public Service() {
+        this.slots = new ArrayList<ServiceAvailabilitySlot>();
+    }
     
 	@Required
 	@NotEmpty
@@ -62,7 +66,16 @@ public class Service extends CommentableModel {
     
     @OneToMany
     public Set<Reward> rewards;
-    
+
+    @OneToMany(cascade=javax.persistence.CascadeType.ALL)
+    public List<ServiceAvailabilitySlot> slots;
+
+    public void addSlot(DayOfWeek dayOfWeek, int startTimeHour, int startTimeMinute, int endTimeHour, int endTimeMinute) {
+        ServiceAvailabilitySlot slot = new ServiceAvailabilitySlot(this, dayOfWeek, startTimeHour, startTimeMinute, endTimeHour, endTimeMinute);
+
+        this.slots.add(slot);
+    }
+
     public String getFormattedStartDate() {
         return formatDate(this.startDate);
     }
@@ -113,4 +126,3 @@ public class Service extends CommentableModel {
         		"s.type = ?", ServiceStatus.DRAFT, ServiceStatus.FINISHED, ServiceType.REQUESTS).fetch();*/    
     }
 }
-
