@@ -42,6 +42,9 @@ public class SUser extends CommentableModel {
     
     @OneToMany
     public List<Service> servicesAsBoss;
+    
+    @OneToMany(cascade=javax.persistence.CascadeType.ALL,mappedBy="user")
+    public List<ServiceMatch> matchServices;
 
     @OneToMany(cascade=javax.persistence.CascadeType.ALL)
     public List<SUserTaskVote> taskVotes;

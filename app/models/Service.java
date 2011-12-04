@@ -50,6 +50,12 @@ public class Service extends CommentableModel {
     @ManyToMany(cascade=CascadeType.ALL)
     public List<SUser> applicants;
     
+    @OneToMany(cascade=CascadeType.ALL,mappedBy="serviceOfuser")
+    public List<ServiceMatch> matchesAsBoss;
+    
+    @OneToMany(cascade=CascadeType.ALL,mappedBy="matchService")
+    public List<ServiceMatch> matchesAsEmployee;
+
     /*@ManyToMany(cascade=CascadeType.ALL)
     public List<SUser> employees;*/
         
