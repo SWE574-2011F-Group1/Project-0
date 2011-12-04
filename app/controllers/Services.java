@@ -22,7 +22,7 @@ import models.*;
 @Check("user")
 public class Services extends BaseController {
 	
-	public static int serviceNumberPerPage=5;
+	public static int serviceNumberPerPage = 5;
 
 
     public static void index() {
@@ -48,13 +48,17 @@ public class Services extends BaseController {
     public static void save(String title, ServiceType type, String description, long taskId, 
     		String location, String startDate, String endDate,String tags) {
         Service service;
+
         Set<STag> deletedTags=null;
+        Activity a = new Activity();
         boolean isUpdate=false;
         if (params._contains("serviceId")) {
             service = Service.findById(Long.parseLong(params.get("serviceId")));
-            deletedTags=service.stags;
+            deletedTags = service.stags;
             isUpdate=true;
+            a.type = ActivityType.UPDATED_SERVICE;
         } else {
+            a.type = ActivityType.ADDED_SERVICE;
             service = new Service();
         }
         service.title = title;
@@ -68,8 +72,8 @@ public class Services extends BaseController {
         } catch (ParseException e) {
             //FIXME: Find out what to do if this occurs...
         }
-        SUser u = SUser.findByEmail(Secure.Security.connected());
-        service.boss = u;
+        SUser serviceOwner = SUser.findByEmail(Secure.Security.connected());
+        service.boss = serviceOwner;
         service.stags = new HashSet<STag>();
         
         if (!tags.trim().equals("")) {
@@ -78,7 +82,7 @@ public class Services extends BaseController {
         	while (st.hasMoreTokens()){
         		STag t = new STag(st.nextToken().trim());
         		sTags.add(t);
-        		t.service=service;
+        		t.service = service;
         	}
         	service.stags = sTags;
         }
@@ -86,27 +90,32 @@ public class Services extends BaseController {
         Task task = Task.findById(taskId);
         service.task = task;
 
-        service.status=ServiceStatus.PUBLISHED;
+        service.status = ServiceStatus.PUBLISHED;
         service.save();
         
-        if(deletedTags!=null){
+        if (deletedTags!=null) {
         	for (STag tag: deletedTags) {
 				tag.delete();
 			}
         }
+        
+        a.performer = serviceOwner;
+        a.affectedService = service;
+        a.save();
         
         findMatchServices(service,isUpdate);
         
         detail(service.id);
     }
 
+    public static void myServices() {
+        SUser u = SUser.findByEmail(Auth.connected());
+        list(u.id, -1);
+    }
 
-    public static void list(long uid, int st) {
-        //TODO: Pagination...
-    	
+    public static void list(long uid, int st) {    	
         List<Service> services = null;
         if (params._contains("task") && null != params.get("task") && !params.get("task").equals("")) {
-            Logger.info("hede ho o");
             services = Service.findByTask(Long.valueOf(params.get("task")));
         }
         else if (params._contains("tag") && null != params.get("tag") && !params.get("tag").equals("")) {
@@ -114,37 +123,38 @@ public class Services extends BaseController {
         	Logger.info("service list wit tag %s",tag);
             services = Service.findByTag(tag);
         }
-        else if (params._contains("uid")) {
+        else if (params._contains("uid") && params._contains("st")) {
+
         	services = Service.findByUserAndStatus(uid, st);
-        	if (services.isEmpty()) {
-        		
-        	}
-        }else {
+        } else if (params._contains("uid") && st == -1) {
+            services = Service.findByUserAndStatus(uid, -1);
+        } else {
         	services = Service.findAll();
         }
         Collection<Task> tasks = Task.findWithWeights();
      
-        int maxPageNumber=0;
-        if(services!=null){
-        	maxPageNumber=services.size()/serviceNumberPerPage;
-        	if(services.size()%serviceNumberPerPage>0)
+        int maxPageNumber = 0;
+        if (services != null) {
+        	maxPageNumber = services.size() / serviceNumberPerPage;
+        	if (services.size() % serviceNumberPerPage > 0)
         		maxPageNumber++;
         }
         
-        List<Service> serializedServices=new ArrayList<Service>();
+        List<Service> serializedServices = new ArrayList<Service>();
         for (Service service : services) {
         	serializedServices.add(service);
 		}
         Cache.set("listServices", serializedServices, "30min");
         
         
-        if(maxPageNumber!=0){
-        	services=getServicesForPage(services, 1);
+        if (maxPageNumber != 0) {
+        	services = getServicesForPage(services, 1);
         }
        
         List<STagCloud> tagClouds=getTagCloudData();
         
         render(services, tasks,maxPageNumber,tagClouds);
+
     }
     
     private static  List<STagCloud> getTagCloudData(){
@@ -191,9 +201,7 @@ public class Services extends BaseController {
         render(service, isBossUser,userEmail,isAppliedBefore,currentUser,serviceMatches);
     }
     
-    public static void search(int searchDone,String title, int serviceType, 
-			String description, long taskId, String location, 
-			String startDate, String endDate, int maxBasePoint,String tags) {
+    public static void search(int searchDone,String title, int serviceType, String description, long taskId, String location, String startDate, String endDate, int maxBasePoint,String tags) {
 		Date sd, ed;
 		// Map<String,String> errors=new HashMap<String,String>();
 		String error = "";
@@ -275,34 +283,49 @@ public class Services extends BaseController {
 	public static void apply(long serviceId,String email) throws Exception {
 	        Service service = Service.findById(serviceId);
 	        SUser user=SUser.findByEmail(email);
-	        List<SUser> applicants=service.applicants;
+	        List<SUser> applicants = service.applicants;
 	        boolean isBossUser = service.boss.email.equals(email);
-	        if(service.status==ServiceStatus.PUBLISHED && !isBossUser && !isApplied(applicants, user)){
-		        if(applicants==null){
-		        	applicants=new ArrayList<SUser>();
+	        if (service.status==ServiceStatus.PUBLISHED && !isBossUser && !isApplied(applicants, user)) {
+		        if (applicants==null) {
+		        	applicants = new ArrayList<SUser>();
 		        }
-		        applicants.add(user);
+		        
+                Activity a = new Activity();
+                a.performer = user;
+                a.affectedService = service;
+                a.type = ActivityType.APPLIED_SERVICE;
+                a.affectedUsers.add(service.boss);
+                a.affectedUsers.addAll(service.applicants);
+                a.save();
+                
+                applicants.add(user);
 		        service.save();
-	        }
-	        else{
+	        } else {
 	        	//APPLIED BEFORE
 	        }
 		        
-	        
 	        detail(service.id);
 	}
 	public static void bossClose(long serviceId,String email, String bossComment, String employeeEmail) throws Exception {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
+        SUser employer = SUser.findByEmail(employeeEmail);
         boolean isBossUser = service.boss.email.equals(email);
         Logger.info("employeeEmail:" + employeeEmail);
          if(service.status==ServiceStatus.IN_PROGRESS && isBossUser ){
 	     
 	        service.status=ServiceStatus.WAITING_EMPLOYEE_FINISH;
 	        service.save();
-	      
+	        
+	        Activity a = new Activity();
+            a.performer = user;
+            a.affectedService = service;
+            a.type = ActivityType.FINISHED_SERVICE;
+            a.affectedUsers.add(employer);
+            a.save();
+	        
         }
-        Comment comment = new Comment(user, SUser.findByEmail(employeeEmail), bossComment);
+        Comment comment = new Comment(user, employer, bossComment);
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
@@ -315,7 +338,8 @@ public class Services extends BaseController {
         comment.commentDateWithTime = formatterTime.format(calendar.getTime());
         comment.save();
         detail(service.id);
-}
+    }
+	
 	public static void employeeClose(long serviceId,String email, String employeeComment, String bossEmail) throws Exception {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
@@ -326,8 +350,16 @@ public class Services extends BaseController {
 	        service.employee.providerPoint+=service.task.point;
 	        service.boss.requesterPoint+=service.task.point;
 	        service.save();
+	        
+	        Activity a = new Activity();
+            a.performer = user;
+            a.affectedService = service;
+            a.type = ActivityType.FINISHED_SERVICE;
+            a.affectedUsers.add(service.boss);
+            a.save();
+	        
         }
-        Comment comment = new Comment(user, SUser.findByEmail(bossEmail), employeeComment);
+        Comment comment = new Comment(user, service.boss, employeeComment);
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
         SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
@@ -346,14 +378,20 @@ public class Services extends BaseController {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
         List<SUser> applicants=service.applicants;
-        int index=findUserIndex(applicants, user);
-        if(index!=-1){
-	       applicants.remove(index);
+        int index = findUserIndex(applicants, user);
+        if (index != -1) {
+	        applicants.remove(index);
 	        service.save();
-        }
-        else{
+	        
+	        Activity a = new Activity();
+            a.performer = user;
+            a.affectedService = service;
+            a.type = ActivityType.CANCEL_APPLICATION_SERVICE;
+            a.affectedUsers.add(service.boss);
+            a.affectedUsers.addAll(service.applicants);
+            a.save();
+        } else {
         	//NOT APPLIED BEFORE
-        	
         }
 	                
         detail(service.id);
@@ -361,35 +399,42 @@ public class Services extends BaseController {
 	public static void startApproval(long serviceId,String email) throws Exception {
 		
         Service service = Service.findById(serviceId);
-        SUser user=SUser.findByEmail(email);
-        List<SUser> applicants=service.applicants;
+        SUser user = SUser.findByEmail(email);
+        List<SUser> applicants = service.applicants;
         boolean isBossUser = Auth.connected().equals(service.boss.email);
-        int index=findUserIndex(applicants, user);
-        if (isBossUser && index!=-1) {
+        int index = findUserIndex(applicants, user);
+        if (isBossUser && index != -1) {
             render(service,user);
         } else {
         	//NOT APPLIED BEFORE	
         }
 	}
 	
-	public static void processStartApproval(long serviceId,long applicantId, 
-											String actualDate,String location) throws Exception {	
+	public static void processStartApproval(long serviceId, long applicantId, 
+											String actualDate, String location) throws Exception {	
         Service service = Service.findById(serviceId);
-        SUser user=SUser.findById(applicantId);
-        List<SUser> applicants=service.applicants;
+        SUser user = SUser.findById(applicantId);
+        List<SUser> applicants = service.applicants;
         boolean isBossUser = Auth.connected().equals(service.boss.email);
-        int index=findUserIndex(applicants, user);
-        if (isBossUser && index!=-1 && service.status==ServiceStatus.PUBLISHED) {
+        int index = findUserIndex(applicants, user);
+        if (isBossUser && index != -1 && service.status == ServiceStatus.PUBLISHED) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
             try {
-            	service.actualDate= sdf.parse(actualDate);
+            	service.actualDate = sdf.parse(actualDate);
             } catch (ParseException e) {
                 //FIXME: Find out what to do if this occurs...
             }
-            service.location=location;
-            service.status=ServiceStatus.WAITING_EMPLOYEE_APPROVAL;
-            service.employee=user;
+            service.location = location;
+            service.status = ServiceStatus.WAITING_EMPLOYEE_APPROVAL;
+            service.employee = user;
             service.save();
+            
+            Activity a = new Activity();
+            a.performer = user;
+            a.affectedService = service;
+            a.type = ActivityType.STARTED_SERVICE;
+            a.affectedUsers.addAll(applicants);
+            a.save();
             
             detail(serviceId);
         } else {
@@ -398,25 +443,39 @@ public class Services extends BaseController {
 	      
 	}
 	
-	public static void employeeApproval(long serviceId,long applicantId){
+	public static void employeeApproval(long serviceId, long applicantId) {
+	    
 		Service service = Service.findById(serviceId);
-        SUser user=SUser.findById(applicantId);
-		render(service,user);
+        SUser user = SUser.findById(applicantId);
+        if (null == service || null == user) {
+            index();
+        }
+		render(service, user);
 	}
+	
 	public static void processEmployeeApproval(long serviceId,long applicantId,int approval){
 		Service service = Service.findById(serviceId);
-        SUser user=SUser.findById(applicantId);
-        List<SUser> applicants=service.applicants;
+        SUser user = SUser.findById(applicantId);
+        List<SUser> applicants = service.applicants;
         //boolean isBossUser = Auth.connected().equals(service.boss.email);
         int index = findUserIndex(applicants, user);
-        if(approval==1 && index!=-1 && service.status==ServiceStatus.WAITING_EMPLOYEE_APPROVAL){
-        	service.status=ServiceStatus.IN_PROGRESS;
-        	service.applicants=null;
+        if (approval == 1 && index != -1 && service.status == ServiceStatus.WAITING_EMPLOYEE_APPROVAL) {
+            
+            Activity a = new Activity();
+            a.performer = user;
+            a.affectedService = service;
+            a.type = ActivityType.STARTED_SERVICE;
+            a.affectedUsers.add(service.boss);
+            a.affectedUsers.addAll(service.applicants);
+            a.save();
+            
+        	service.status = ServiceStatus.IN_PROGRESS;
+        	service.applicants = null;
 			service.save();
 			
-			List<Service> servicesAsEmployee=user.servicesAsEmployee;
-			if(servicesAsEmployee!=null){
-				servicesAsEmployee=new ArrayList<Service>();
+			List<Service> servicesAsEmployee = user.servicesAsEmployee;
+			if (servicesAsEmployee != null) {
+				servicesAsEmployee = new ArrayList<Service>();
 			}
 			servicesAsEmployee.add(service);
 			user.save();
@@ -431,6 +490,15 @@ public class Services extends BaseController {
 				user.appliedServices.remove(serviceIndex);
 				user.save();
 			}
+			
+			Activity a = new Activity();
+            a.performer = user;
+            a.affectedService = service;
+            a.type = ActivityType.REJECTED_SERVICE_OFFER;
+            a.affectedUsers.add(service.boss);
+            a.affectedUsers.addAll(service.applicants);
+            a.save();
+			
 		} else {
 			//NOT AN APPLICANT
 		}

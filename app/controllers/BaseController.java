@@ -29,9 +29,10 @@ public class BaseController extends Controller {
             if (null != u) {
                 renderArgs.put("user", u.email);
                 renderArgs.put("user_name", u.name);
+                renderArgs.put("userObj", u);
                 renderArgs.put("unreadMsgCount", UserMessage.findUnreadCountByUser(u));
                 renderArgs.put("loggedIn", true);
-                renderArgs.put("menuItems", new String[] {"Services", "Messages", "Tasks"});
+                renderArgs.put("menuItems", new String[] {"Services", "Messages", "Tasks", "Activities"});
                 renderArgs.put("message", flash.get("message"));
             }
         }
@@ -42,6 +43,7 @@ public class BaseController extends Controller {
         if (null != token && !token.isEmpty()) {
             FacebookClient fb = new DefaultFacebookClient(token);
             User fbUser = fb.fetchObject("me", User.class);
+            
             Logger.info("Facebook User:" + fbUser);
             SUser sesUser = SUser.findByFbId(fbUser.getId());
             Logger.info("returned user %s", sesUser);
