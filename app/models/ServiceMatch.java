@@ -57,4 +57,9 @@ public class ServiceMatch extends Model {
 	 public static List<ServiceMatch> findByServiceOfUser(Service service) {
 	        return find("byServiceOfuser", service).fetch();
 	 }
+	 
+	 public static List<ServiceMatch> findByUser(SUser user) {
+	        return find("byUser", user).fetch();
+	 }
+	 
 }

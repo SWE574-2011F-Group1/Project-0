@@ -213,6 +213,9 @@ a {
     -moz-border-radius: 3px;
     border-radius: 3px;
 }
+input.time{
+width: 25px;
+}
 
 .wikistyle h1,.wikistyle h2,.wikistyle h3,.wikistyle h4,.wikistyle h5,.wikistyle h6{border:0!important;text-shadow: #fff 1px 1px 0px;}
 .wikistyle h1{font-size:170%!important;border-top:4px solid #aaa!important;padding-top:.5em!important;margin-top:1.5em!important;}

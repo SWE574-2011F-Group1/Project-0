@@ -16,6 +16,9 @@ GET     /                                       Application.index
 *       /services/processEmployeeApproval	    Services.processEmployeeApproval
 *       /services/listPage                      Services.listPage
 *       /services/myservices                    Services.myServices
+* 		/services/index                   		Services.index
+* 		/services/save  						Services.save
+* 		/services/search  						Services.search
 *       /services/{uid}/{st}                    Services.list
 *       /services/{uid}                         Services.list
 *       /services/edit/?                        Services.list

@@ -53,6 +53,25 @@
             #{/field}
         </p>
         <p>
+         <label>Week day:</label>
+        <select id="day"> <option value="0" >Monday</option>
+        <option value="1" >Tuesday</option>
+        <option value="2" >Wednesday</option>
+        <option value="3" >Thursday</option>
+        <option value="4" >Friday</option>
+        <option value="5" >Saturday</option>
+        <option value="6" >Sunday</option>
+         </select> 
+         <input type="text" id="hourStart"/ class="time">:<input type="text" class="time" id="minStart"/>
+         -<input type="text" id="hourEnd" class="time"/>:<input type="text" class="time" id="minEnd"/>
+        <input type="button" id="addTimeSlot" value="Add" /> 
+        </p>
+        <p>
+        <div id="divTimeSlot">
+        <ul></ul>
+        </div>
+        </p>
+        <p>
             #{field 'title'}
             <label>Title:</label>
             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.title}" />
@@ -99,6 +118,22 @@
 </div>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
+    	//// add time slot
+    	$('input#addTimeSlot').click(function(){
+    		var day=$('select#day option:selected').val();
+    		var dayText=$('select#day option:selected').text();
+    		var sh=$('input#hourStart').val();
+    		var sm=$('input#minStart').val();
+    		var eh=$('input#hourEnd').val();
+    		var em=$('input#minEnd').val();
+    		
+    		$('div#divTimeSlot ul').append('<li> Every'+ dayText+'from'+sh+':'+sm+' to '+eh+':'+em+ '</li>');
+    		$('div#divTimeSlot').prepend('<input type="hidden" name="slots" value="'+day+','+sh+','+sm+','+eh+','+em+'"/>')
+    		 
+    	});
+    	
+    	
+    	//////
         $("input[type=text].datepicker").datepicker({dateFormat: "dd.mm.yy"});
 
         $("input[type=button]#submit-btn").bind("click", function() {

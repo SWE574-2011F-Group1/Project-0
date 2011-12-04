@@ -43,7 +43,7 @@ public class Services extends BaseController {
     }
 
     public static void save(String title, ServiceType type, String description, long taskId, 
-    		String location, String startDate, String endDate,String tags) {
+    		String location, String startDate, String endDate,String tags, List<String> slots) {
         Service service;
 
         Set<STag> deletedTags=null;
@@ -58,6 +58,19 @@ public class Services extends BaseController {
             a.type = ActivityType.ADDED_SERVICE;
             service = new Service();
         }
+        
+        for (String slot: slots) {
+        	String[] parts = slot.split(",");
+        	
+        	DayOfWeek day = DayOfWeek.values()[Integer.valueOf(parts[0])];
+        	int hourStart = Integer.valueOf(parts[1]);
+        	int minuteStart = Integer.valueOf(parts[2]);
+        	int hourEnd = Integer.valueOf(parts[3]);
+        	int minuteEnd = Integer.valueOf(parts[4]);
+
+        	service.addSlot(day, hourStart, minuteStart, hourEnd, minuteEnd);
+        }
+
         service.title = title;
         service.description = description;
         service.type = type;
@@ -69,6 +82,7 @@ public class Services extends BaseController {
         } catch (ParseException e) {
             //FIXME: Find out what to do if this occurs...
         }
+        
         SUser serviceOwner = SUser.findByEmail(Secure.Security.connected());
         service.boss = serviceOwner;
         service.stags = new HashSet<STag>();

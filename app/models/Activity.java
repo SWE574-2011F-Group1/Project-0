@@ -44,5 +44,15 @@ public class Activity extends Model {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm");
         return sdf.format(this.creationTime);
     }
+    
+    public static List<Activity> findByPerfomer(SUser u) {
+    	return find("byPerformer", u).fetch();
+    }
+    
+    public static List<Activity> findByAffected(SUser u) {
+    	return find("select a from Activity a join a.affectedUsers u where u = ?", u).fetch();
+    }
+    
+    
 }
 
