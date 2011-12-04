@@ -49,7 +49,7 @@ span.error {float:right; position: relative; left: 2px; color: red;}
 
 .sidebar {position: absolute; right: 0px; height: 500px; width: 250px;}
 .sidebar h3 {text-align:center;}
-.cloud {height: 500px; width: 250px;}
+.cloud {height: 100px; width: 250px;}
 
 div#footer {
     position: fixed;

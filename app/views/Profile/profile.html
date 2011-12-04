@@ -1,10 +1,31 @@
 #{extends 'main.html' /}
-#{set title:'User Profile' /}
+#{if loginUser}
+	#{set title:'My Profile' /}
+#{/if}	
+#{elseif !loginUser}
+	#{set title: User.name + '\'s Profile' /}
+#{/elseif}
 
-
+<div class="social-bar right">
+    #{if !loginUser}
+ 		#{if !isBookmarked}
+ 			#{form @addBookmark(), }
+ 				<input type="hidden" name="userId" value="${User.id}"/>
+				<input type="submit" value="Add to Bookmarks" class="close-btn right" />
+			#{/form} 
+		#{/if}
+		#{elseif isBookmarked}			
+			#{form @removeBookmark(),}
+				<input type="hidden" name="userId" value="${User.id}"/>
+				<input type="submit" value="Remove from Bookmarks" class="close-btn right" />
+			#{/form}
+		#{/elseif}
+	#{/if}
+</div>
+<div class="clearfix"></div>
 <div>
-    #{if userObj.fbId}
-        <img src="http://graph.facebook.com/${userObj.fbId}/picture?type=large" class="right" />
+    #{if User.fbId}
+        <img src="http://graph.facebook.com/${User.fbId}/picture?type=large" class="right" />
     #{/if}
     <h2>About</h2>
 	<div class="info block">
@@ -18,19 +39,27 @@
 	<a href="@{Services.list}/${User.id}/1">Active Service Requests</a> | 
 	<a href="@{Services.list}/${User.id}/2">Active Service Offers</a> |
 	<a href="@{Services.list}/${User.id}/3">Planned Service Req/Offers</a> |
-	<a href="@{Services.list}/${User.id}/4">Done Service Req/Offers</a> |
-	<a href="@{Services.list}/${User.id}">Bookmark</a> |
-	<a href="@{Services.list}/${User.id}">Remove Bookmark</a>
-	
+	<a href="@{Services.list}/${User.id}/4">Done Service Req/Offers</a>
+	#{if loginUser}
+		<h2>My Bookmarked Users</h2>
+		#{list bookmarks, as:'b'}
+			<div class="list-item">
+				<a href="@{Profile.profile}/${b.bookmarkedUsers.id}">${b.bookmarkedUsers.name}</a>
+				<em> added on ${b.bookmarkDateStr}</em>
+				<a href="@{Profile.removeBookmark}?userId=${b.bookmarkedUsers.id}" >(Remove From Bookmarks)</a>
+			</div>
+		#{/list}	
+	#{/if}
+	<!--
 	<h2>Comments</h2>
-#{list comments, as:'c'}
-	<div class="list-item">
-	<a href="@{Profile.profile}/${c.commenter.id}">${c.commenter.name}</a><em>  wrote on ${c.commentDateWithTime}</em>
-		<div class="info">
-			${c.comment}
-		</div>
-	</div>
-#{/list}
-	
+    #{list comments, as:'c'}
+    	<div class="list-item">
+    	<a href="@{Profile.profile}/${c.commenter.id}">${c.commenter.name}</a><em>  wrote on ${c.commentDateWithTime}</em>
+    		<div class="info">
+    			${c.comment}
+    		</div>
+    	</div>
+    #{/list}	
+    -->
 </div>			        		
 

@@ -2,6 +2,7 @@ package controllers;
 
 import play.*;
 import play.cache.Cache;
+import play.db.jpa.JPA;
 import play.mvc.*;
 
 import java.io.Serializable;
@@ -9,6 +10,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import javax.persistence.Query;
 
 import org.apache.commons.lang.SerializationUtils;
 import org.joda.time.DateTime;
@@ -114,7 +117,14 @@ public class Services extends BaseController {
         List<Service> services = null;
         if (params._contains("task") && null != params.get("task") && !params.get("task").equals("")) {
             services = Service.findByTask(Long.valueOf(params.get("task")));
-        } else if (params._contains("uid") && params._contains("st")) {
+        }
+        else if (params._contains("tag") && null != params.get("tag") && !params.get("tag").equals("")) {
+           String tag=params.get("tag");
+        	Logger.info("service list wit tag %s",tag);
+            services = Service.findByTag(tag);
+        }
+        else if (params._contains("uid") && params._contains("st")) {
+
         	services = Service.findByUserAndStatus(uid, st);
         } else if (params._contains("uid") && st == -1) {
             services = Service.findByUserAndStatus(uid, -1);
@@ -140,10 +150,30 @@ public class Services extends BaseController {
         if (maxPageNumber != 0) {
         	services = getServicesForPage(services, 1);
         }
+       
+        List<STagCloud> tagClouds=getTagCloudData();
         
-        render(services, tasks, maxPageNumber);
+        render(services, tasks,maxPageNumber,tagClouds);
+
     }
     
+    private static  List<STagCloud> getTagCloudData(){
+    	String sql="Select st.text as tagText, count(*) as tagCount from STag st group by st.text";
+        
+        
+        Query query = JPA.em().createQuery(sql);
+        Iterator i = query.getResultList().iterator();
+        List<STagCloud> tagClouds=new ArrayList<STagCloud>();
+        while (i.hasNext()) {
+            STagCloud stc=new STagCloud();
+        	Object[] o = (Object[]) i.next();
+            stc.tagText=String.valueOf(o[0]);
+            stc.tagCount=Long.valueOf((Long)o[1]);
+            tagClouds.add(stc);
+        }
+        
+        return tagClouds;
+    }
     private static List<Service> getServicesForPage(List<Service> services,int page){
     	int lastindex=page*serviceNumberPerPage;
     	if(lastindex>services.size()){
@@ -158,6 +188,8 @@ public class Services extends BaseController {
         String userEmail=Auth.connected();
         boolean isAppliedBefore=false;
         SUser currentUser=SUser.findByEmail(Auth.connected());
+        List<Comment> serviceComments = new ArrayList<Comment>();
+        serviceComments = Comment.findByService(serviceId);
         List<ServiceMatch> serviceMatches=null;
         if(!isBossUser){
         	isAppliedBefore=isApplied(service.applicants,SUser.findByEmail(userEmail));
@@ -168,7 +200,7 @@ public class Services extends BaseController {
 			serviceMatches=ServiceMatch.find(sql,null).fetch();
         	//serviceMatches=ServiceMatch.findByServiceOfUser(service);
         }
-        render(service, isBossUser,userEmail,isAppliedBefore,currentUser,serviceMatches);
+        render(service, isBossUser,userEmail,isAppliedBefore,currentUser,serviceMatches, serviceComments);
     }
     
     public static void search(int searchDone,String title, int serviceType, String description, long taskId, String location, String startDate, String endDate, int maxBasePoint,String tags) {
@@ -295,18 +327,22 @@ public class Services extends BaseController {
             a.save();
 	        
         }
-        Comment comment = new Comment(user, employer, bossComment);
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
-        Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
-        try {
-        	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
-        } catch (ParseException e) {
-            //FIXME: Find out what to do if this occurs...
-        }    
-        comment.commentDateWithTime = formatterTime.format(calendar.getTime());
-        comment.save();
+
+        if (bossComment != null && !"".equals(bossComment)) {
+            Comment comment = new Comment(user, SUser.findByEmail(employeeEmail), bossComment);
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+            SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
+            Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
+            try {
+            	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
+            } catch (ParseException e) {
+                //FIXME: Find out what to do if this occurs...
+            }    
+            comment.commentDateWithTime = formatterTime.format(calendar.getTime());
+            comment.service = service;
+            comment.save();
+        }
         detail(service.id);
     }
 	
@@ -329,18 +365,22 @@ public class Services extends BaseController {
             a.save();
 	        
         }
-        Comment comment = new Comment(user, service.boss, employeeComment);
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
-        Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
-        try {
-        	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
-        } catch (ParseException e) {
-            //FIXME: Find out what to do if this occurs...
-        }    
-        comment.commentDateWithTime = formatterTime.format(calendar.getTime());
-        comment.save();
+
+        if (employeeComment != null && !"".equals(employeeComment)) {
+	        Comment comment = new Comment(user, SUser.findByEmail(bossEmail), employeeComment);
+	        Calendar calendar = Calendar.getInstance();
+	        SimpleDateFormat  formatterTime = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+	        SimpleDateFormat  formatterDate = new SimpleDateFormat("dd.MM.yyyy");
+	        Logger.info("Comment Date:" + formatterTime.format(calendar.getTime()));
+	        try {
+	        	comment.commentDate = formatterDate.parse(formatterDate.format(calendar.getTime()));
+	        } catch (ParseException e) {
+	            //FIXME: Find out what to do if this occurs...
+	        }    
+	        comment.commentDateWithTime = formatterTime.format(calendar.getTime());
+	        comment.service = service;
+	        comment.save();
+        }
         detail(service.id);
 }
 

@@ -21,6 +21,9 @@ public class Comment extends Model {
     @ManyToOne
     public SUser owner;
     
+    @ManyToOne
+    public Service service;
+    
     @Lob
     public String comment;
     
@@ -41,6 +44,10 @@ public class Comment extends Model {
     public static List<Comment> findByUserId(long userId){
     	//List<Comment> services = new ArrayList<Comment>();
     	return find("select c from Comment c where c.owner.id = ?", userId).fetch();
+    }
+    
+    public static List<Comment> findByService(long serviceId) {
+    	return find ("select c from Comment c where c.service.id = ?", serviceId).fetch();
     }
 }
 
