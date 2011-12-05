@@ -59,7 +59,7 @@ Service(se1):
   description: Love Gardening Work! I would love to keep clean your garden. Please Pick Me!
 Service(se2):
   boss: admin
-  type: REQUIRES
+  type: REQUESTS
   task: t3
   status: PUBLISHED
   title: Driver Needed For Old Man
@@ -67,7 +67,7 @@ Service(se2):
   description: "I'm an old man living in the neighbourhood. I require someone who can drive me to my grandson's birthday party. I would really appraciate help and I can be generous too."
 Service(se3):
   boss: admin
-  type: REQUIRES
+  type: REQUESTS
   task: t2
   status: PUBLISHED
   title: Need A Gardenar for my palace(!)
