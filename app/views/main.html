@@ -52,12 +52,20 @@
                     </div>
                 </div>
                 Olá, <a href="@{Profile.profile}">${userObj.name}</a>! |
-                <a href="@{Application.index}">SES-Dashboard</a> |
+                #{if submenuView == null}
+                    <span class="selected">
+                #{/if}
+                    <img class="icons" src="@{'/public/images/icons/dashboard.ico'}" />
+                    <a href="@{Application.index}">Dashboard</a>
+                #{if submenuView == null}
+                    </span>
+                #{/if} |
                 #{list menuItems, as:'m'}
                     #{set additionalMenuMessage:'' /}
                     #{if submenuView == m.toLowerCase()}
                         <span class="selected">
                     #{/if}
+                    <img class="icons" src="@{'/public/images/icons/' + m.toLowerCase() + '.ico'}" />
                     <a href="
                     *{Burasi biraz pis oldu...}*
                     #{if m.toLowerCase() == "tasks"}
@@ -75,10 +83,11 @@
                     #{else}
                         @{Services.list}
                     #{/else}
-                    ">${m}</a><sup>${additionalMenuMessage}</sup></span> |
+                    ">${m}</a><sup>${additionalMenuMessage}</sup>
                     #{if submenuView == m.toLowerCase()}
                         </span>
                     #{/if}
+                    |
                 #{/list}
                 #{secure.check 'admin'}
                     <a href="/admin">Admin</a> |

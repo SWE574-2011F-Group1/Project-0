@@ -1,5 +1,11 @@
 #{list services, as:'s'}
     <div class="list-item" id="list-item">
+        #{if s.type == s.type.PROVIDES}
+            <img src="@{'/public/images/icons/services-provide.ico'}" class="icons left" /> 
+        #{/if}
+        #{else}
+            <img src="@{'/public/images/icons/services-request.ico'}" class="icons left" /> 
+        #{/else}
         <a href="@{Services.detail}/${s.id}">${s.title}</a>
         <div class="info">
             <span class="item">

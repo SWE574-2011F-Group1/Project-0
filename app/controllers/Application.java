@@ -40,8 +40,6 @@ public class Application extends BaseController {
 		
     		//activities-begin
     		List<Activity> activities = Activity.findByAffected(r);
-    		Logger.info("%s", r.email);
-    		Logger.info("%s", activities);
     		
     		
     		
