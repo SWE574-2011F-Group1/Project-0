@@ -21,11 +21,11 @@ GET     /                                       Application.index
 *       /services/myservices                    Services.myServices
 * 		/services/index                   		Services.index
 * 		/services/save  						Services.save
+* 		/services/searchlist  					Services.searchlist
 * 		/services/search  						Services.search
 *       /services/{uid}/{st}                    Services.list
 *       /services/{uid}                         Services.list
 *       /fbLogin/?                              BaseController.fbLogin
-*       /services/search                        Services.search
 *       /services/ajaxDeneme                    Services.ajaxDeneme
 *		/profile/?								Profile.profile
 *		/profile/addBookmark					Profile.addBookmark
