@@ -233,7 +233,7 @@ a {
     border-radius: 3px;
 }
 input.time{
-width: 25px;
+width: 25px !important;
 }
 
 .wikistyle h1,.wikistyle h2,.wikistyle h3,.wikistyle h4,.wikistyle h5,.wikistyle h6{border:0!important;text-shadow: #fff 1px 1px 0px;}
