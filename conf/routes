@@ -22,6 +22,7 @@ GET     /                                       Application.index
 * 		/services/index                   		Services.index
 * 		/services/save  						Services.save
 * 		/services/search  						Services.search
+* 		/services/searchList    				Services.searchList
 *       /services/{uid}/{st}                    Services.list
 *       /services/{uid}                         Services.list
 *       /fbLogin/?                              BaseController.fbLogin

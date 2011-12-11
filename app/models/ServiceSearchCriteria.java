@@ -11,6 +11,28 @@ public class ServiceSearchCriteria {
 	private int maxBasePoint;
 	private String tags;
 	
+	public boolean searchSlots;
+	public DayOfWeek dayOfWeek;
+	public int hourStart;
+	public int minStart;
+	public int hourEnd;
+	public int minEnd;
+	public int startTimeMinutesAfterMidnight;
+	public int endTimeMinutesAfterMidnight;
+	
+	public void setStartTime(int hour, int min) {
+		this.hourStart = hour;
+		this.minStart = min;
+		
+		this.startTimeMinutesAfterMidnight = (this.hourStart * 60) + this.minStart;
+	}
+	
+	public void setEndTime(int hour, int min) {
+		this.hourEnd = hour;
+		this.minEnd = min;
+		
+		this.endTimeMinutesAfterMidnight = (this.hourEnd * 60) + this.minEnd;
+	}
 	
 	public long getTaskId() {
 		return taskId;

@@ -83,6 +83,38 @@
                     #{/field}
                 </p>
                 <p>
+                <label>Available Slots:</label>
+                #{field 'searchSlots'}
+                <input type="checkbox" id="${field.name}" name="${field.name}" />
+                #{/field}
+                #{field 'dayOfWeek'}
+                <select id="${field.name}" name="${field.name}">
+                  <option value="0" >Monday</option>
+                  <option value="1" >Tuesday</option>
+		          <option value="2" >Wednesday</option>
+		          <option value="3" >Thursday</option>
+		          <option value="4" >Friday</option>
+		          <option value="5" >Saturday</option>
+		          <option value="6" >Sunday</option>
+                </select>
+                #{/field}
+                #{field 'hourStart'}
+                <input type="text" id="${field.name}" name="${field.name}" class="time"/>
+                #{/field}
+                :
+                #{field 'minStart'}
+                <input type="text" class="time" id="${field.name}" name="${field.name}"/>
+                #{/field}
+                -
+                #{field 'hourEnd'}
+                <input type="text" id="${field.name}" name="${field.name}" class="time"/>
+                #{/field}
+                :
+                #{field 'minEnd'}
+                <input type="text" class="time" id="${field.name}" name="${field.name}"/>
+                #{/field}
+                </p>
+                <p>
                 <label>Tags:</label>
                     #{field 'tags'}
                         <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${sc.tags}" />
@@ -102,5 +134,18 @@
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
         $("input[type=text].datepicker").datepicker({dateFormat: "dd.mm.yy"});
+        $("input#searchSlots").click(function (){
+        	if($(this).is(':checked'))
+        		{
+        		$(this).parent().find("input:text").removeProp("disabled");
+            	$(this).parent().find("select").removeProp("disabled",true);        		}
+        	else
+        		{
+        		$(this).parent().find("input:text").prop("disabled",true);
+        		$(this).parent().find("select").prop("disabled",true);
+        		}
+        	
+        });
+        
     });
 </script> 
