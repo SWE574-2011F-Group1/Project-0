@@ -61,8 +61,9 @@ public class Services extends BaseController {
             a.type = ActivityType.ADDED_SERVICE;
             service = new Service();
         }
-        
-        for (String slot: slots) {
+
+        if (slots != null) {
+            for (String slot: slots) {
         	String[] parts = slot.split(",");
         	
         	DayOfWeek day = DayOfWeek.values()[Integer.valueOf(parts[0])];
@@ -72,6 +73,7 @@ public class Services extends BaseController {
         	int minuteEnd = Integer.valueOf(parts[4]);
 
         	service.addSlot(day, hourStart, minuteStart, hourEnd, minuteEnd);
+            }
         }
 
         service.title = title;
@@ -689,18 +691,19 @@ public class Services extends BaseController {
 		}
 		
 		String sql = "select s from Service s where s.type="+ordinal+" " +
-					 " and s.boss.id!="+service.boss.id+" and s.status="+ServiceStatus.PUBLISHED.ordinal();
+					 " and s.boss.id!="+service.boss.id+" and s.status="+ServiceStatus.PUBLISHED.ordinal()
+					 +" and s.task.id="+service.task.id;
 		List<Service> services=Service.find(sql,null).fetch();
 		
 		Logger.info("Find match services size:%d services with ordinal %d found ",services.size(),ordinal);
 		
 		for (Service s : services) {
-			int matchPoint=1;
+			int matchPoint=2;
 			String taskName=s.task.name;
-			if(taskName.toLowerCase().equals(service.task.name.toLowerCase())){
+			/*if(taskName.toLowerCase().equals(service.task.name.toLowerCase())){
 				matchPoint++;
 				Logger.info("TaskName1:%s TaskName2:%s. Match Point is incremented to:%d", service.task.name,taskName,matchPoint);
-			}
+			}*/
 			if(s.stags!=null && service.stags!=null && s.stags.size()>0 && service.stags.size()>0){
 				Set<STag> tags=s.stags;
 				for (STag tag : tags) {
@@ -715,6 +718,31 @@ public class Services extends BaseController {
 				}
 			}
 			
+			if(service.slots!=null && s.slots!=null && service.slots.size()>0 && s.slots.size()>0){
+				for (ServiceAvailabilitySlot serviceSlot : service.slots) {
+					for (ServiceAvailabilitySlot sSlot : s.slots) {
+						if(serviceSlot.dayOfWeek==sSlot.dayOfWeek){
+							int serviceStartMinute=serviceSlot.startTimeMinutesAfterMidnight;
+							int serviceEndMinute=serviceSlot.endTimeMinutesAfterMidnight;
+							int sStartMinute=sSlot.startTimeMinutesAfterMidnight;
+							int sEndMinute=sSlot.endTimeMinutesAfterMidnight;
+							
+							if(sStartMinute>=serviceStartMinute && sEndMinute<=serviceEndMinute){
+								matchPoint+=3;
+								Logger.info("Slot exact match.Match Point is incremented to:%d",matchPoint);
+							}
+							else if(sStartMinute>=serviceStartMinute && sEndMinute>serviceEndMinute){
+								matchPoint+=2;
+								Logger.info("Slot partial match.Match Point is incremented to:%d",matchPoint);
+							}
+							else if(sStartMinute<serviceStartMinute && sEndMinute>serviceStartMinute){
+								matchPoint+=2;
+								Logger.info("Slot partial match.Match Point is incremented to:%d",matchPoint);
+							}
+						}
+					}
+				}
+			}
 			String title=s.title.trim().toLowerCase();
 			if(title.contains(service.title.trim().toLowerCase()) || service.title.trim().toLowerCase().contains(title)){
 				matchPoint++;
@@ -813,14 +841,11 @@ public class Services extends BaseController {
 		
 		for(int i=1;i<=s1.length();i++){
 			for(int j=1;j<=s2.length();j++){
-				String s11=s1.substring(0,s1.length()-1);
-				int a=calculateTextDifference(s11,s2)+1;
 				
-				String s22=s2.substring(0,s2.length()-1);
-				int b=calculateTextDifference(s1, s22)+1;
-				
-				int c=calculateTextDifference(s11, s22);
-				if(s1.charAt(s1.length()-1)!=s2.charAt(s2.length()-1)){
+				int a=array[i-1][j]+1;
+				int b=array[i][j-1]+1;
+				int c=array[i-1][j-1];
+				if(s1.charAt(i-1)!=s2.charAt(j-1)){
 					c++;
 				}
 				
@@ -828,6 +853,8 @@ public class Services extends BaseController {
 				array[i][j]=Math.min(c,d);
 			}
 		}
+		
+		Logger.info("String1:%s String2:%s is compared. Difference is %d", s1,s2,array[s1.length()][s2.length()]);
 		
 		return array[s1.length()][s2.length()];
 	}
