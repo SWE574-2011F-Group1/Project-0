@@ -718,6 +718,31 @@ public class Services extends BaseController {
 				}
 			}
 			
+			if(service.slots!=null && s.slots!=null && service.slots.size()>0 && s.slots.size()>0){
+				for (ServiceAvailabilitySlot serviceSlot : service.slots) {
+					for (ServiceAvailabilitySlot sSlot : s.slots) {
+						if(serviceSlot.dayOfWeek==sSlot.dayOfWeek){
+							int serviceStartMinute=serviceSlot.startTimeMinutesAfterMidnight;
+							int serviceEndMinute=serviceSlot.endTimeMinutesAfterMidnight;
+							int sStartMinute=sSlot.startTimeMinutesAfterMidnight;
+							int sEndMinute=sSlot.endTimeMinutesAfterMidnight;
+							
+							if(sStartMinute>=serviceStartMinute && sEndMinute<=serviceEndMinute){
+								matchPoint+=3;
+								Logger.info("Slot exact match.Match Point is incremented to:%d",matchPoint);
+							}
+							else if(sStartMinute>=serviceStartMinute && sEndMinute>serviceEndMinute){
+								matchPoint+=2;
+								Logger.info("Slot partial match.Match Point is incremented to:%d",matchPoint);
+							}
+							else if(sStartMinute<serviceStartMinute && sEndMinute>serviceStartMinute){
+								matchPoint+=2;
+								Logger.info("Slot partial match.Match Point is incremented to:%d",matchPoint);
+							}
+						}
+					}
+				}
+			}
 			String title=s.title.trim().toLowerCase();
 			if(title.contains(service.title.trim().toLowerCase()) || service.title.trim().toLowerCase().contains(title)){
 				matchPoint++;
