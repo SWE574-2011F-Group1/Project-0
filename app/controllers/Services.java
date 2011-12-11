@@ -219,11 +219,30 @@ public class Services extends BaseController {
         render(service, isBossUser,userEmail,isAppliedBefore,currentUser,serviceMatches, serviceComments);
     }
     
-    public static void search(int searchDone,String title, int serviceType, String description, long taskId, String location, String startDate, String endDate, int maxBasePoint,String tags) {
+    public static void search(
+    		int searchDone,
+    		String title,
+    		int serviceType,
+    		String description,
+    		long taskId,
+    		String location,
+    		String startDate,
+    		String endDate,
+    		int maxBasePoint,
+    		String tags,
+    		boolean searchSlots,
+    		int dayOfWeekInt,
+    		int hourStart,
+    		int minStart,
+    		int hourEnd,
+    		int minEnd) {
 		Date sd, ed;
 		// Map<String,String> errors=new HashMap<String,String>();
 		String error = "";
 		ServiceSearchCriteria sc = new ServiceSearchCriteria();
+
+		DayOfWeek dayOfWeek = DayOfWeek.values()[dayOfWeekInt];
+	
 
 		if (searchDone == 1) {
 			sc.setDescription(description.trim());
@@ -235,6 +254,11 @@ public class Services extends BaseController {
 			sc.setTaskId(taskId);
 			sc.setMaxBasePoint(maxBasePoint);
 			sc.setTags(tags.trim());
+			
+			sc.searchSlots = searchSlots;
+			sc.dayOfWeek = dayOfWeek;
+			sc.setStartTime(hourStart, minStart);
+			sc.setEndTime(hourEnd, minEnd);
 		} else if (searchDone == 2) {
 			//System.out.println("title=" + title);
 			sc.setTitle(title.trim());
@@ -257,43 +281,76 @@ public class Services extends BaseController {
 		}
 
 		if (searchDone == 0) {
+			System.out.println("searchDone == 0");
+
 			Collection<Task> tasks = Task.findAllActive();
 			List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
 			serviceTypes.add(ServiceType.REQUESTS);
 			serviceTypes.add(ServiceType.PROVIDES);
 			render(error, serviceTypes, tasks, sc);
 		} else if (searchDone == 1) {
+			System.out.println("searchDone == 1");
 			searchList(sc, false);
 		} else {
+			System.out.println("searchDone != 1,0");
 			searchList(sc, true);
 		}
 	}
 
 	public static void searchList(ServiceSearchCriteria sc, boolean quickSearch) {
-
-		Collection<Service> services = null;
+		
+		System.out.println("searchList: searchList started");
+		
+		Collection<Service> allServices = null;
 		if (!quickSearch) {
-			services = Service.find(prepareQueryForServiceSearch(sc), null)
+			allServices = Service.find(prepareQueryForServiceSearch(sc), null)
 					.fetch();
 		} else {
-			services = Service.find(
+			allServices = Service.find(
 					prepareQueryForQuickServiceSearch(sc.getTitle()), null)
 					.fetch();
 		}
-		
+		System.out.print("searchList: service count: ");
+		System.out.println(allServices.size());
 		int maxPageNumber=0;
-        if(services!=null){
-        	maxPageNumber=services.size()/serviceNumberPerPage;
-        	if(services.size()%serviceNumberPerPage>0)
+        if(allServices!=null){
+        	maxPageNumber=allServices.size()/serviceNumberPerPage;
+        	if(allServices.size()%serviceNumberPerPage>0)
         		maxPageNumber++;
         }
-        
+
         List<Service> serializedServices=new ArrayList<Service>();
-        for (Service service : services) {
+        List<Service> services=new ArrayList<Service>();
+
+        for (Service service : allServices) {
         	serializedServices.add(service);
+
+        	System.out.println(sc.searchSlots);
+        	System.out.println(service.slots != null);
+        	System.out.println(service.slots != null && service.slots.size() > 0);
+        	
+        	if(sc.searchSlots && service.slots != null && service.slots.size() != 0) {
+				for (ServiceAvailabilitySlot serviceSlot : service.slots) {
+					if (serviceSlot.dayOfWeek==sc.dayOfWeek) {
+						if (sc.startTimeMinutesAfterMidnight <= serviceSlot.endTimeMinutesAfterMidnight
+								&& sc.endTimeMinutesAfterMidnight >= serviceSlot.startTimeMinutesAfterMidnight) {
+							services.add(service);
+							break;
+						}
+					}
+				}
+        	}
+        	else {
+        	    services.add(service);
+        	}
 		}
+        System.out.print("searchList: serialized service count: ");
+		System.out.println(serializedServices.size());
+		System.out.print("searchList: filtered service count: ");
+		System.out.println(services.size());
+        
         Cache.set("listServices", serializedServices, "30min");
-		
+
 		Collection<Task> tasks = Task.findAllActive();
 		render(services, tasks,maxPageNumber);
 	}
@@ -717,7 +774,7 @@ public class Services extends BaseController {
 					}
 				}
 			}
-			
+
 			if(service.slots!=null && s.slots!=null && service.slots.size()>0 && s.slots.size()>0){
 				for (ServiceAvailabilitySlot serviceSlot : service.slots) {
 					for (ServiceAvailabilitySlot sSlot : s.slots) {
