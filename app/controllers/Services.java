@@ -61,8 +61,9 @@ public class Services extends BaseController {
             a.type = ActivityType.ADDED_SERVICE;
             service = new Service();
         }
-        
-        for (String slot: slots) {
+
+        if (slots != null) {
+            for (String slot: slots) {
         	String[] parts = slot.split(",");
         	
         	DayOfWeek day = DayOfWeek.values()[Integer.valueOf(parts[0])];
@@ -72,6 +73,7 @@ public class Services extends BaseController {
         	int minuteEnd = Integer.valueOf(parts[4]);
 
         	service.addSlot(day, hourStart, minuteStart, hourEnd, minuteEnd);
+            }
         }
 
         service.title = title;
