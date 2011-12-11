@@ -66,6 +66,21 @@
                 	</span>
 	            </span>
             #{/if}
+            
+              #{if service.slots!=null && service.slots.size()>0}
+	            <span class="item">
+	                Available Slots: <span class="value">
+	                <ul>
+	                 #{list service.slots, as:'slot'}
+	               		<li>
+	               		Every ${slot.dayOfWeek} from   ${slot.startTimeHour}:${slot.startTimeMinute} to ${slot.endTimeHour}:${slot.endTimeMinute} 
+                	    </li>
+                	#{/list}
+                	
+                	</ul>
+                	</span>
+	            </span>
+            #{/if}
         <div class="clearfix"></div>
     </div>
     #{if isBossUser && service.status==models.ServiceStatus.PUBLISHED}
