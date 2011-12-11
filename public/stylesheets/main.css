@@ -49,6 +49,7 @@ span.error {float:right; position: relative; left: 2px; color: red;}
 .fb-login-btn {cursor: pointer; background-image: url("../images/fb-login-btn.png"); width: 87px; height:21px;}
 
 .icons {width: 16px; height:16px; position: relative; top:2px; border:none !important;}
+.icons-big {width: 32px; height: 32px;}
 #search-bar input[type=text] {width: 150px;}
 
 .sidebar {position: absolute; right: 0px; height: 500px; width: 250px;}
