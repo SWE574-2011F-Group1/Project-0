@@ -40,7 +40,7 @@ div.profile-pic div.default {background-image:url("/public/images/default-avatar
 
 span.tip {font-size: 10px; font-style: italic; display: block; color: gray;}
 
-div.activity-date {font-size: 10px; color: gray; position: relative; top: -5px;}
+div.activity-date {font-size: 10px; color: gray; position: relative; top: -2px;}
 
 p.error {margin: 5px; padding: 5px 25px; background-color: red; color: white; font-weight: bold; border-bottom-left-radius: 5px; border-top-right-radius: 5px;}
 .error-field {border: 1px solid red;}
