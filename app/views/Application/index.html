@@ -2,13 +2,40 @@
 
 #{if loggedIn}
 #{set title:'Let\'s Begin!' /}
+
+<div class="dashboard">
+
+<div class="dashboard-buttons">
+    <button id="create-new-provide-btn">
+        <img src="@{'/public/images/icons/services-provide.ico'}" class="icons left icons-big" />
+        <span>Provide A New Service!<span>
+    </button>
+    <button id="create-new-request-btn">
+        <img src="@{'/public/images/icons/services-request.ico'}" class="icons left icons-big" /> 
+        <span>Request A New Service!</span>
+    </button>
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+        $("#create-new-request-btn").bind("click", function() {
+            document.location = '@{Services.index}?type=1';
+        });
+        $("#create-new-provide-btn").bind("click", function() {
+            document.location = '@{Services.index}?type=0';
+        });
+    })
+</script>
 <p>
     Now that you are logged in, everything will go smoother! Now you can use all the features of this site.
     Go on, look around. Check <a href="@{Services.list}">services</a> or explore the possibilities by searching! 
 </p>
 
-<div id="activities" style="display: inline; width:350px">
-<p style="background-color: #ddd"><a href="@{Activities.index}">Activities</a></p>
+<div class="clearfix">
+    
+</div>
+
+<div id="activities" class="block right">
+<h3 class="dash"><a href="@{Activities.index}">Activities</a></h3>
 #{list activities, as:'act'}
     <div class="list-item">
         <div class="info">
@@ -66,8 +93,8 @@
 #{/list}
 </div>
 
-<div id="proposedTasks" style="display: inline; width:350px">
-<p style="background-color: #ddd"><a href="@{Tasks.proposals}">Proposed Tasks</a></p>
+<div id="proposedTasks" class="block">
+<h3 class="dash"><a href="@{Tasks.proposals}">Proposed Tasks</a></h3>
 #{list tasks, as:'t'}
     <div class="list-item">
         <div class="info" style="display:inline;">
@@ -88,8 +115,8 @@
     </div>
 #{/list}
 </div>
-<div id="matchedServices" style="display: inline; width:350px">
-<p style="background-color: #ddd"><a href="">Service Matches</a></p>
+<div id="matchedServices" class="block wide">
+<h3 class="dash">Service Matches</h3>
 #{list services, as:'s'}
    <div class="list-item" id="list-item">
         <a href="@{Services.detail}/${s.id}">${s.title}</a>
@@ -150,8 +177,11 @@
             <div class="clearfix"></div>
     </div>
 #{/list}
+#{else}
+    <div class="list-item"><div class="not-found">No Match is found yet! It will be loaded when someone posts services!</div></div>
+#{/else}
 </div>
-
+</div>
 
 
 

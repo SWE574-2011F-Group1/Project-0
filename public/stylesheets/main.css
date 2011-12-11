@@ -56,6 +56,21 @@ span.error {float:right; position: relative; left: 2px; color: red;}
 .sidebar h3 {text-align:center;}
 .cloud {height: 100px; width: 250px;}
 
+.dashboard-buttons { width: 210px; float: right; }
+.dashboard-buttons button { float: right; margin-bottom: 10px; width: 200px; font-size: 14px; height: 40px; }
+.dashboard-buttons button span { vertical-align: middle; display: block; }
+.dashboard-buttons button img { position: relative; top: -2px }
+
+.dashboard .block { width: 310px; background-color: white; padding: 5px; margin-bottom: 10px; border-top-left-radius: 36px; border-bottom-right-radius: 18px;}
+.wide {width: 100% !important;}
+.dashboard .list-item {border-top: 1px solid black; border-radius: 0px; margin-bottom: 0px;}
+.dashboard h3.dash { margin-bottom: -2px; margin-left: 8px; margin-top: 4px !important; text-align: right; font-style: italic; color: #444444;}
+.dashboard .not-found {color: gray; font-size: 10px; margin-bottom: 0; text-align: center;}
+
+.service-request, .service-provide {font-weight: bold !important; text-transform: uppercase !important;}
+.service-request {color: #E372E7 !important;}
+.service-provide {color: #B8DA2A !important;}
+
 div#footer {
     position: fixed;
     bottom: 0px;

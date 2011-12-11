@@ -31,11 +31,11 @@
         	<label>Type:</label>
         	#{if service.type==models.ServiceType.REQUESTS}
     			<input type="hidden" name="type" value="${service.type.REQUESTS}"/>
-       			<span style="color:green"><b>Request</b></span>
+       			<span class="service-request">Requests</span>
        		#{/if}
 	 		#{else}
 	 			<input type="hidden" name="type" value="${service.type.PROVIDES}"/>
-	 			<span style="color:green"><b>Provide</b></span>
+	 			<span class="service-provide">Provides</span>
 	 		#{/else}
         </p>
         <p>

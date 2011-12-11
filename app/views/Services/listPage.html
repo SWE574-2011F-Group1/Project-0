@@ -12,7 +12,7 @@
                 Task: <span class="value">${s.task}</span>
             </span>
             <span class="item">
-                Type: <span class="value">${s.type}</span>
+                Type: <span class="value #{if s.type == s.type.PROVIDES} service-provide #{/if}#{else}service-request#{/else}">${s.type}</span>
             </span>
             <span class="item">
                 Owner: <span class="value"><a style="color:black;" href="@{Profile.profile}/${s.boss.id}">${s.boss}</a></span>
