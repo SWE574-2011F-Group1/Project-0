@@ -5,11 +5,11 @@
 
 form p label {width:100px; float: left;}
 form.search p label {width:120px; float: left;}
-form input[type=text]:not(.datepicker), form textarea {width: 300px;}
+form input[type=text]:not(.datepicker, .time), form textarea {width: 300px;}
 form textarea {height: 100px;}
 
 div#menu {background-color: #67A927; padding: 5px;}
-div#menu span.selected {background-color: green; border-top-right-radius: 5px; padding: 7px 10px 7px;}
+div#menu span.selected {background-color: green; border-top-right-radius: 5px; padding: 7px 10px 7px; margin-right:5px;}
 div#submenu {background-color: green; color: white; padding: 5px 0 5px 40px;}
 div#search-bar {float: right; margin-right: 10px; margin-top: 3px;}
 
@@ -40,7 +40,7 @@ div.profile-pic div.default {background-image:url("/public/images/default-avatar
 
 span.tip {font-size: 10px; font-style: italic; display: block; color: gray;}
 
-div.activity-date {font-size: 10px; color: gray; position: relative; top: -5px;}
+div.activity-date {font-size: 10px; color: gray; position: relative; top: -2px;}
 
 p.error {margin: 5px; padding: 5px 25px; background-color: red; color: white; font-weight: bold; border-bottom-left-radius: 5px; border-top-right-radius: 5px;}
 .error-field {border: 1px solid red;}
@@ -48,9 +48,28 @@ span.error {float:right; position: relative; left: 2px; color: red;}
 
 .fb-login-btn {cursor: pointer; background-image: url("../images/fb-login-btn.png"); width: 87px; height:21px;}
 
+.icons {width: 16px; height:16px; position: relative; top:2px; border:none !important;}
+.icons-big {width: 32px; height: 32px;}
+#search-bar input[type=text] {width: 150px;}
+
 .sidebar {position: absolute; right: 0px; height: 500px; width: 250px;}
 .sidebar h3 {text-align:center;}
 .cloud {height: 100px; width: 250px;}
+
+.dashboard-buttons { width: 210px; float: right; }
+.dashboard-buttons button { float: right; margin-bottom: 10px; width: 200px; font-size: 14px; height: 40px; }
+.dashboard-buttons button span { vertical-align: middle; display: block; }
+.dashboard-buttons button img { position: relative; top: -2px }
+
+.dashboard .block { width: 310px; background-color: white; padding: 5px; margin-bottom: 10px; border-top-left-radius: 36px; border-bottom-right-radius: 18px;}
+.wide {width: 100% !important;}
+.dashboard .list-item {border-top: 1px solid black; border-radius: 0px; margin-bottom: 0px;}
+.dashboard h3.dash { margin-bottom: -2px; margin-left: 8px; margin-top: 4px !important; text-align: right; font-style: italic; color: #444444;}
+.dashboard .not-found {color: gray; font-size: 10px; margin-bottom: 0; text-align: center;}
+
+.service-request, .service-provide {font-weight: bold !important; text-transform: uppercase !important;}
+.service-request {color: #E372E7 !important;}
+.service-provide {color: #B8DA2A !important;}
 
 div#footer {
     position: fixed;
@@ -90,7 +109,7 @@ div#header {
     height: 47px;
     width: 100%;
     z-index: 2;
-    min-width: 910px;
+    min-width: 1060px;
 }
 
 div#header a, div#header {
@@ -263,5 +282,4 @@ width: 25px !important;
 .wikistyle h1:after, .wikistyle h2:after, .wikistyle h3:after {content: '';}
 .wikistyle a{color: #444; font-style: italic;}
 .wikistyle hr{height: 1px; border: none; background: #e0e0e0; margin: 30px 0;}
-.wikistyle img {max-width: 642px; border:4px solid #e0e0e0!important;}
 .wikistyle p.note {background:#FFF9D8!important; padding: 10px!important;color:#333!important;border-left:6px solid #F3E378!important;}

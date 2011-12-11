@@ -5,6 +5,8 @@
 #{elseif !loginUser}
 	#{set title: User.name + '\'s Profile' /}
 #{/elseif}
+#{set submenuView:'profile' /}
+
 
 <div class="social-bar right">
     #{if !loginUser}

@@ -8,7 +8,7 @@
             Task: <span class="value">${service.task}</span>
         </span>
         <span class="item">
-            Type: <span class="value">${service.type}</span>
+            Type: <span class="value #{if service.type == service.type.PROVIDES} service-provide #{/if}#{else}service-request#{/else}">${service.type}</span>
         </span>
         <span class="item">
             Owner: <span class="value">${service.boss}</span>
