@@ -91,6 +91,9 @@
         </div>
     </div>
 #{/list}
+#{else}
+    <div class="list-item"><div class="not-found">No Activity is found yet! Things will happened, don't worry.</div></div>
+#{/else}
 </div>
 
 <div id="proposedTasks" class="block">
@@ -114,6 +117,9 @@
         <div class="clearfix"></div>
     </div>
 #{/list}
+#{else}
+    <div class="list-item"><div class="not-found">No proposed tasks yet! Is it so then? We cover all the tasks that is possible?</div></div>
+#{/else}
 </div>
 <div id="matchedServices" class="block wide">
 <h3 class="dash">Service Matches</h3>
@@ -178,7 +184,7 @@
     </div>
 #{/list}
 #{else}
-    <div class="list-item"><div class="not-found">No Match is found yet! It will be loaded when someone posts services!</div></div>
+    <div class="list-item"><div class="not-found">No Match is found yet! It will be loaded when someone post a service or two.</div></div>
 #{/else}
 </div>
 </div>
