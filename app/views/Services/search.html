@@ -88,7 +88,7 @@
                 <input type="checkbox" id="${field.name}" name="${field.name}" />
                 #{/field}
                 #{field 'dayOfWeek'}
-                <select id="${field.name}" name="${field.name}">
+                <select id="${field.name}" name="${field.name}" disabled>
                   <option value="0" >Monday</option>
                   <option value="1" >Tuesday</option>
 		          <option value="2" >Wednesday</option>
@@ -99,19 +99,19 @@
                 </select>
                 #{/field}
                 #{field 'hourStart'}
-                <input type="text" id="${field.name}" name="${field.name}" class="time"/>
+                <input type="text" id="${field.name}" name="${field.name}" class="time" disabled />
                 #{/field}
                 :
                 #{field 'minStart'}
-                <input type="text" class="time" id="${field.name}" name="${field.name}"/>
+                <input type="text" class="time" id="${field.name}" name="${field.name}" disabled />
                 #{/field}
                 -
                 #{field 'hourEnd'}
-                <input type="text" id="${field.name}" name="${field.name}" class="time"/>
+                <input type="text" id="${field.name}" name="${field.name}" class="time" disabled />
                 #{/field}
                 :
                 #{field 'minEnd'}
-                <input type="text" class="time" id="${field.name}" name="${field.name}"/>
+                <input type="text" class="time" id="${field.name}" name="${field.name}" disabled />
                 #{/field}
                 </p>
                 <p>
@@ -137,12 +137,13 @@
         $("input#searchSlots").click(function (){
         	if($(this).is(':checked'))
         		{
-        		$(this).parent().find("input:text").removeProp("disabled");
-            	$(this).parent().find("select").removeProp("disabled",true);        		}
+        		$(this).parent().find("input:text").removeAttr("disabled");
+            	$(this).parent().find("select").removeAttr("disabled");
+        		}
         	else
         		{
-        		$(this).parent().find("input:text").prop("disabled",true);
-        		$(this).parent().find("select").prop("disabled",true);
+        		$(this).parent().find("input:text").attr("disabled", true);
+        		$(this).parent().find("select").attr("disabled", true);
         		}
         	
         });
