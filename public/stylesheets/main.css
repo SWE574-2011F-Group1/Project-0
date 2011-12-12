@@ -27,6 +27,8 @@ div#serviceDetail a.cancelBtn {color: red; font-style: italic;}
 div#serviceDetail ul, div#serviceDetail li {list-style: none; margin: 0px !important;}
 div#serviceDetail .value.status,div#list-item .value.status{color: #CF7F26;}
 
+div#newService textarea {width: 400px;}
+
 div.list-item {background-color: white; padding: 5px; border-top-right-radius: 5px; border-bottom-left-radius:5px; margin-bottom: 10px;}
 div.list-item a {color: #67A927;}
 
