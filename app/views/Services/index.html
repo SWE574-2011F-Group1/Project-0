@@ -20,13 +20,14 @@
         <p>
         	<label class="required">Type:</label>
         	#{if service.type==models.ServiceType.REQUESTS}
-    			<input type="hidden" name="type" value="${service.type.REQUESTS}"/>
-       			<span class="service-request">Requests</span>
+    			<input type="hidden" name="type" id="type" value="${service.type.REQUESTS}"/>
+       			<span class="service-type service-request">Requests</span>
        		#{/if}
 	 		#{else}
-	 			<input type="hidden" name="type" value="${service.type.PROVIDES}"/>
-	 			<span class="service-provide">Provides</span>
+	 			<input type="hidden" name="type" id="type" value="${service.type.PROVIDES}"/>
+	 			<span class=" service-type service-provide">Provides</span>
 	 		#{/else}
+	 		<input type="button" class="change-type-btn right" value="Change Type!" />
         </p>
         <p>
             #{field 'taskId'}
@@ -142,13 +143,28 @@
                 $(".proposal").show();
             }
         });
-        
         $("select#taskId").change();
+        
+        $(".change-type-btn").bind("click", function() {
+            var type = $("#type").val();
+            if (type == '${service.type.PROVIDES}') {
+                $("span.service-type")
+                    .removeClass("service-provide")
+                    .addClass("service-request")
+                    .html("REQUESTS");
+                $("#type").val("${service.type.REQUESTS}");
+            } else {
+                $("span.service-type")
+                    .removeClass("service-request")
+                    .addClass("service-provide")
+                    .html("PROVIDES");
+                $("#type").val("${service.type.PROVIDES}");
+            }
+        });
         
         var removeTimeSlotFn = function() {
             $(this).parent().remove(); 
         };
-        
         $("input.removeTimeSlot").bind("click", removeTimeSlotFn);
         
     	//// add time slot
