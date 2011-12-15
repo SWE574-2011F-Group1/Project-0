@@ -124,7 +124,7 @@
         
         $("select#taskId").bind("change", function() {
             if ($(this).val() != "") {
-                $("span.point-tip").html("You will gain " + $(this).val() + " points if you finish this task");
+                $("span.point-tip").html("You will gain <a href='javascript:return false;'>" + $(this).val() + "</a> points if you finish this task");
                 $(".proposal").hide();
             } else {
                 $("span.point-tip").html("");
