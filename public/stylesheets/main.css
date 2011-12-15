@@ -5,8 +5,10 @@
 
 form p label {width:100px; float: left;}
 form.search p label {width:120px; float: left;}
+form p label.required {font-weight: bold; font-style: italic;}
 form input[type=text]:not(.datepicker, .time), form textarea {width: 300px;}
 form textarea {height: 100px;}
+.form-separator {text-shadow: #fff 1px 1px 0px; font-size:11px;border-top:4px solid #e0e0e0!important; text-align: right; font-weight: bold;}
 
 div#menu {background-color: #67A927; padding: 5px;}
 div#menu span.selected {background-color: green; border-top-right-radius: 5px; padding: 7px 10px 7px; margin-right:5px;}

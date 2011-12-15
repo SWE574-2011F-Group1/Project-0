@@ -14,21 +14,9 @@
     #{form @save(), id:'add-service'}
         <p class="error hidden">
         </p>
+        <div class="form-separator">Required Fields</div>
         <p>
-            #{field 'taskId'}
-            <label>Task:</label>
-            <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
-                <option value="" />-
-                #{list tasks, as:'t'}
-	               	<option value="${t.id}" />${t.name}
-                #{/list}
-            </select>
-            <span class="tip right proposal">Not Found What You're looking for? Check the <a href="@{Tasks.proposals}">proposals!</a></span>
-            <span class="tip">This service is related with what? You shall gain points based on this option.</span>
-            #{/field}
-        </p>
-        <p>
-        	<label>Type:</label>
+        	<label class="required">Type:</label>
         	#{if service.type==models.ServiceType.REQUESTS}
     			<input type="hidden" name="type" value="${service.type.REQUESTS}"/>
        			<span class="service-request">Requests</span>
@@ -37,6 +25,58 @@
 	 			<input type="hidden" name="type" value="${service.type.PROVIDES}"/>
 	 			<span class="service-provide">Provides</span>
 	 		#{/else}
+        </p>
+        <p>
+            #{field 'taskId'}
+            <label class="required">Task:</label>
+            <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
+                <option value="" />-
+                #{list tasks, as:'t'}
+	               	<option value="${t.id}" data-point="${t.point}" />${t.name}
+                #{/list}
+            </select>
+            <span class="tip right point-tip"></span>
+            <span class="tip right proposal">Not Found What You're looking for? Check the <a href="@{Tasks.proposals}">proposals!</a></span>
+            <span class="tip">This service is related with what? You shall gain points based on this option.</span>
+            #{/field}
+        </p>
+        <p>
+            #{field 'title'}
+            <label class="required">Title:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.title}" />
+            <span class="tip">What do you call for this service? Something that will define your service uniquely. People should remember it too!</span>
+            #{/field}
+        </p>
+        <p>
+            #{field 'location'}
+            <label class="required">Location:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
+            <span class="tip">Well, if you are in Istanbul, someone in New York may not help you! Best tell it!</span>
+
+            #{/field}
+        </p>
+        <p>
+            #{field 'description'}
+            <label class="required">Description:</label><br />
+            <span class="tip">Give a little bit more detail about your need or service. Something that will define the boundaries of it etc.</span>
+            <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${service.description}</textarea>
+            #{/field}
+        </p>
+        <div class="form-separator">Optional Fields</div>
+        <p>
+            #{field 'tags'}
+            <label>Tags:</label>
+            #{if service.stags!=null}
+                #{list service.stags, as:'tag'}
+                    #{set tagString: tagString + tag.text + (tag_isLast ? '' : ', ') /}
+            	#{/list}
+            	<input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${tagString}" />
+           	#{/if}
+           	#{else}
+                <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
+           	#{/else}
+           	#{/field}
+           	<span class="tip">Add tags seperated by a comma to allow people to search your services easily</span>
         </p>
         <p>
             #{field 'startDate'}
@@ -70,44 +110,7 @@
         <div id="divTimeSlot">
         <ul></ul>
         </div>
-        </p>
-        <p>
-            #{field 'title'}
-            <label>Title:</label>
-            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.title}" />
-            <span class="tip">What do you call for this service? Something that will define your service uniquely. People should remember it too!</span>
-            #{/field}
-        </p>
-        <p>
-            #{field 'location'}
-            <label>Location:</label>
-            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
-            <span class="tip">Well, if you are in Istanbul, someone in New York may not help you! Best tell it!</span>
-
-            #{/field}
-        </p>
-        <p>
-            #{field 'tags'}
-            <label>Tags:</label>
-            #{if service.stags!=null}
-                #{list service.stags, as:'tag'}
-                    #{set tagString: tagString + tag.text + (tag_isLast ? '' : ', ') /}
-            	#{/list}
-            	<input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${tagString}" />
-           	#{/if}
-           	#{else}
-                <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
-           	#{/else}
-           	#{/field}
-           	<span class="tip">Add tags seperated by a comma to allow people to search your services easily</span>
         </p>	
-        <p>
-            #{field 'description'}
-            <label>Description:</label><br />
-            <span class="tip">Give a little bit more detail about your need or service. Something that will define the boundaries of it etc.</span>
-            <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}">${service.description}</textarea>
-            #{/field}
-        </p>
         <p>
             <input type="button" value="Continue &rarr;" id="submit-btn">
         </p>
@@ -117,7 +120,18 @@
     #{/form}
 </div>
 <script type="text/javascript" charset="utf-8">
-    $(document).ready(function(){
+    $(document).ready(function() {
+        
+        $("select#taskId").bind("change", function() {
+            if ($(this).val() != "") {
+                $("span.point-tip").html("You will gain " + $(this).val() + " points if you finish this task");
+                $(".proposal").hide();
+            } else {
+                $("span.point-tip").html("");
+                $(".proposal").show();
+            }
+        });
+        
     	//// add time slot
     	$('input#addTimeSlot').click(function(){
     		var day=$('select#day option:selected').val();
@@ -132,8 +146,6 @@
     		 
     	});
     	
-    	
-    	//////
         $("input[type=text].datepicker").datepicker({dateFormat: "dd.mm.yy"});
 
         $("input[type=button]#submit-btn").bind("click", function() {
