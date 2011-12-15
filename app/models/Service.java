@@ -32,6 +32,14 @@ public class Service extends CommentableModel {
     @NotEmpty
     public String location;
     
+    @Required
+    @NotEmpty
+    public double locationLat;
+    
+    @Required
+    @NotEmpty
+    public double locationLng;
+    
     @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
     public Set<STag> stags;
     

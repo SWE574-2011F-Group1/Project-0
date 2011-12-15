@@ -46,7 +46,8 @@ public class Services extends BaseController {
     }
 
     public static void save(String title, ServiceType type, String description, long taskId, 
-    		String location, String startDate, String endDate,String tags, List<String> slots) {
+    		String location, String startDate, String endDate,String tags, List<String> slots,
+    		double locationLat,double locationLng) {
         Service service;
 
         Set<STag> deletedTags=null;
@@ -82,6 +83,8 @@ public class Services extends BaseController {
         service.description = description;
         service.type = type;
         service.location = location;
+        service.locationLat=locationLat;
+        service.locationLng=locationLng;
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         try {
             service.startDate = sdf.parse(startDate);
