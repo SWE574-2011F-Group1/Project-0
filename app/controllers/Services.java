@@ -62,6 +62,8 @@ public class Services extends BaseController {
             service = new Service();
         }
 
+        service.slots = new ArrayList<ServiceAvailabilitySlot>();
+
         if (slots != null) {
             for (String slot: slots) {
         	String[] parts = slot.split(",");

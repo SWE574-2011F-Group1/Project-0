@@ -41,4 +41,8 @@ public class ServiceAvailabilitySlot extends Model {
         this.startTimeMinutesAfterMidnight = this.startTimeHour * 60 + this.startTimeMinute;
         this.endTimeMinutesAfterMidnight = this.endTimeHour * 60 + this.endTimeMinute;
     }
+    
+    public String toString() {
+        return "Every " + dayOfWeek + " from " + startTimeHour + ":" + startTimeMinute + " to " + endTimeHour + ":" + endTimeMinute;
+    }    
 }

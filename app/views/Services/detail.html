@@ -84,7 +84,7 @@
         <div class="clearfix"></div>
     </div>
     #{if isBossUser && service.status==models.ServiceStatus.PUBLISHED}
-    	<input type="button" value="I made a mistake!" class="edit-btn" />
+    	<input type="button" value="Change details" class="edit-btn" />
     #{/if}
     #{if service.status==models.ServiceStatus.PUBLISHED && !isBossUser && !isAppliedBefore}
     	#{form @apply(),}

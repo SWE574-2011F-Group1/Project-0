@@ -3,7 +3,7 @@
 #{set tagString:'' /}
 
 #{if serviceId}
-    <input type="button" class="back-btn" value="&larr; Nope, my bad!" />
+    <input type="button" class="back-btn" value="&larr; Discard Changes" />
     #{set title:'Edit Your Service: ' + service.title /}
 #{/if}
 #{else}
@@ -32,7 +32,7 @@
             <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
                 <option value="" />-
                 #{list tasks, as:'t'}
-	               	<option value="${t.id}" data-point="${t.point}" />${t.name}
+	               	<option value="${t.id}" data-point="${t.point}" #{if t.equals(service.task)}} selected #{/if} />${t.name}
                 #{/list}
             </select>
             <span class="tip right point-tip"></span>
@@ -93,23 +93,31 @@
             #{/field}
         </p>
         <p>
-         <label>Week day:</label>
-        <select id="day"> <option value="0" >Monday</option>
-        <option value="1" >Tuesday</option>
-        <option value="2" >Wednesday</option>
-        <option value="3" >Thursday</option>
-        <option value="4" >Friday</option>
-        <option value="5" >Saturday</option>
-        <option value="6" >Sunday</option>
-         </select> 
-         <input type="text" id="hourStart"/ class="time">:<input type="text" class="time" id="minStart"/>
-         -<input type="text" id="hourEnd" class="time"/>:<input type="text" class="time" id="minEnd"/>
-        <input type="button" id="addTimeSlot" value="Add" /> 
+            <label>Week day:</label>
+            <select id="day">
+                <option value="0" >Monday</option>
+                <option value="1" >Tuesday</option>
+                <option value="2" >Wednesday</option>
+                <option value="3" >Thursday</option>
+                <option value="4" >Friday</option>
+                <option value="5" >Saturday</option>
+                <option value="6" >Sunday</option>
+             </select> 
+             <input type="text" id="hourStart"/ class="time">:<input type="text" class="time" id="minStart"/> - <input type="text" id="hourEnd" class="time"/>:<input type="text" class="time" id="minEnd"/>
+             <input type="button" id="addTimeSlot" value="Add" /> 
         </p>
         <p>
-        <div id="divTimeSlot">
-        <ul></ul>
-        </div>
+            <div id="divTimeSlot">
+                <ul>
+                    #{list service.slots, as:'slot'}
+                        <li>
+                            ${slot}
+                            <input type="button" value="Remove" class="removeTimeSlot" />
+                            <input type="hidden" name="slots" value="${slot.dayOfWeek.ordinal()},${slot.startTimeHour},${slot.startTimeMinute},${slot.endTimeHour},${slot.endTimeMinute}" />
+                        </li>
+                    #{/list}
+                </ul>
+            </div>
         </p>	
         <p>
             <input type="button" value="Continue &rarr;" id="submit-btn">
@@ -132,6 +140,12 @@
             }
         });
         
+        $("select#taskId").change();
+        
+        $("input.removeTimeSlot").bind("click", function() {
+           $(this).parent().remove(); 
+        });
+        
     	//// add time slot
     	$('input#addTimeSlot').click(function(){
     		var day=$('select#day option:selected').val();
@@ -141,8 +155,13 @@
     		var eh=$('input#hourEnd').val();
     		var em=$('input#minEnd').val();
     		
-    		$('div#divTimeSlot ul').append('<li> Every'+ dayText+'from'+sh+':'+sm+' to '+eh+':'+em+ '</li>');
-    		$('div#divTimeSlot').prepend('<input type="hidden" name="slots" value="'+day+','+sh+','+sm+','+eh+','+em+'"/>')
+    		$('div#divTimeSlot ul')
+    		    .append(
+    		        $("<li>")
+    		            .html('Every '+ dayText + ' from ' + sh + ':' + sm +' to ' + eh + ':' + em + ' ')
+    		            .append('<input type="hidden" name="slots" value="'+day+','+sh+','+sm+','+eh+','+em+'"/>')
+    		            .append('<input type="button" value="Remove" class="removeTimeSlot" />')
+    		    );
     		 
     	});
     	
