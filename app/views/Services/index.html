@@ -145,9 +145,11 @@
         
         $("select#taskId").change();
         
-        $("input.removeTimeSlot").bind("click", function() {
-           $(this).parent().remove(); 
-        });
+        var removeTimeSlotFn = function() {
+            $(this).parent().remove(); 
+        };
+        
+        $("input.removeTimeSlot").bind("click", removeTimeSlotFn);
         
     	//// add time slot
     	$('input#addTimeSlot').click(function(){
@@ -165,7 +167,7 @@
     		            .append('<input type="hidden" name="slots" value="'+day+','+sh+','+sm+','+eh+','+em+'"/>')
     		            .append('<input type="button" value="Remove" class="removeTimeSlot" />')
     		    );
-    		 
+	        $("input.removeTimeSlot").bind("click", removeTimeSlotFn);
     	});
     	
         $("input[type=text].datepicker").datepicker({dateFormat: "dd.mm.yy"});
