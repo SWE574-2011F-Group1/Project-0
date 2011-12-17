@@ -252,10 +252,34 @@
 	            		Service title: <span class="value"><a href="/services/detail/${sm.matchService.id}">${sm.matchService.title}</a></span>
 	        		 </span>
 	        		 <span class="item">
+	            		Service location Type: 
+	            		<span class="value">
+	            			#{if sm.matchService.locationType==models.LocationType.VIRTUAL}
+			            		VIRTUAL LOCATION
+			            	#{/if}
+			            	#{elseif sm.matchService.locationType==models.LocationType.ANYLOCATION}
+			            		ANY LOCATION
+			            	#{/elseif}
+			            	#{else}
+			            		LOCATION BASED
+			            	#{/else}
+	            		</span>
+	        		 </span>
+	        		 <span class="item">
 	            		Match Point: <span class="value">${sm.matchPoint}</span>
 	        		 </span>
 	        		 <span class="item">
-	            		Distance : <span class="value">${sm.distance} km</span>
+	        		 	Distance : <span class="value">
+		        		 	#{if sm.distance==-1}
+		        		 		NONE(Service itself is not location based)
+		        		 	#{/if}
+		        		 	#{elseif sm.distance==-2} 
+		        		 		NONE(Match service is not location based)
+		        		 	#{/elseif}
+		        		 	#{else}
+		        		 		${sm.distance} km
+		        		 	#{/else}
+	            		</span>
 	        		 </span>
 	        		 <!--  <span class="item">
 	            		Service boss: <span class="value"><a href="/profile/${sm.matchService.boss.id}">${sm.matchService.boss.name}</a></span>

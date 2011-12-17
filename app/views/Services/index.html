@@ -79,7 +79,7 @@
         <p>
             #{field 'location'}
             <label class="required">Location:</label>
-            #{if locationType==models.LocationType.NORMAL}
+            #{if service.locationType==models.LocationType.NORMAL}
            		<input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
             #{/if}
             #{else}
@@ -88,7 +88,7 @@
             <span class="tip">Well, if you are in Istanbul, someone in New York may not help you! Best tell it!</span>
 
             #{/field}
-            #{if locationType==models.LocationType.NORMAL}
+            #{if service.locationType==models.LocationType.NORMAL}
             	<div id="map_canvas" style="width: 500px; height: 300px"></div>
             #{/if}
         </p>

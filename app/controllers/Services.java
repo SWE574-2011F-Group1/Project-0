@@ -775,7 +775,10 @@ public class Services extends BaseController {
 		
 		Logger.info("Find match services size:%d services with ordinal %d found ",services.size(),ordinal);
 		
-		Map<Long,Double> distanceToOtherServices=getDistances(service, services);
+		Map<Long,Double> distanceToOtherServices=new HashMap<Long, Double>();
+		if(service.locationType==LocationType.NORMAL){
+			distanceToOtherServices=getDistances(service, services);
+		}
 			
 		for (Service s : services) {
 			int matchPoint=2;
@@ -888,50 +891,100 @@ public class Services extends BaseController {
 				Logger.info("No date limitation. Match point is incremented to %d",matchPoint);
 			}
 			
-			Double distance=distanceToOtherServices.get(new Long(s.id));
-			if(distance!=null){
-				Logger.info("Distance is got from map for service:%s. Distance %s km",s.title,""+distance.doubleValue());
-				if(distance.doubleValue()>0 && distance<50000){
+			System.out.println(service.locationType);
+			if(service.locationType==LocationType.NORMAL){
+				
+				System.out.println("if");
+				
+				Double distance=distanceToOtherServices.get(new Long(s.id));
+				if(distance!=null){
+					Logger.info("Distance is got from map for service:%s. Distance %s km",s.title,""+distance.doubleValue());
+					
+					if((distance.doubleValue()>0 && distance<50000) || distance.doubleValue()==-2){
+				
+						if(distance.doubleValue()<1000){
+							matchPoint+=30;
+						}
+						else if(distance.doubleValue()<5000){
+							matchPoint+=20;
+						}
+						else if(distance.doubleValue()<10000){
+							matchPoint+=15;
+						}
+						else if(distance.doubleValue()<30000){
+							matchPoint+=10;
+						}
+						else{
+							matchPoint+=5;
+						}
+						
+						Logger.info("Matchpoint is incremented to %d because of distance %s km",matchPoint,""+distance.doubleValue());
+						
+						
+						ServiceMatch sm=new ServiceMatch();
+						sm.setServiceOfuser(service);
+						sm.setMatchService(s);
+						sm.setMatchPoint(matchPoint);
+						sm.setUser(service.boss);
+						if(distance.doubleValue()==-2){
+							sm.distance=-2;//match service is not location based
+						}
+						else{
+							sm.distance=distance.doubleValue()/1000;
+						}
+						sm.save();
+						
+						Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",service.title,s.title,matchPoint,""+sm.distance);
 			
-					if(distance.doubleValue()<1000){
-						matchPoint+=30;
+						sm=new ServiceMatch();
+						sm.setServiceOfuser(s);
+						sm.setMatchService(service);
+						sm.setMatchPoint(matchPoint);
+						sm.setUser(s.boss);
+						if(distance.doubleValue()==-2){
+							sm.distance=-1;//service itself is not location based
+						}
+						else{
+							sm.distance=distance.doubleValue()/1000;
+						}
+						sm.save();
+						
+						Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",s.title,service.title,matchPoint,""+sm.distance);
 					}
-					else if(distance.doubleValue()<5000){
-						matchPoint+=20;
-					}
-					else if(distance.doubleValue()<10000){
-						matchPoint+=15;
-					}
-					else if(distance.doubleValue()<30000){
-						matchPoint+=10;
-					}
-					else{
-						matchPoint+=5;
-					}
-					
-					Logger.info("Matchpoint is incremented to %d because of distance %s km",matchPoint,""+distance.doubleValue());
-					
-					
-					ServiceMatch sm=new ServiceMatch();
-					sm.setServiceOfuser(service);
-					sm.setMatchService(s);
-					sm.setMatchPoint(matchPoint);
-					sm.setUser(service.boss);
-					sm.distance=distance.doubleValue()/1000;
-					sm.save();
-					
-					Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",service.title,s.title,matchPoint,""+sm.distance);
-		
-					sm=new ServiceMatch();
-					sm.setServiceOfuser(s);
-					sm.setMatchService(service);
-					sm.setMatchPoint(matchPoint);
-					sm.setUser(s.boss);
-					sm.distance=distance.doubleValue()/1000;
-					sm.save();
-					
-					Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",s.title,service.title,matchPoint,""+sm.distance);
 				}
+				
+			}
+			else{
+				System.out.println("else");
+				matchPoint+=30;
+				
+				Logger.info("Location type is not location based. Matchpoint is incremented to %d because service is not location based",matchPoint);
+				
+				ServiceMatch sm=new ServiceMatch();
+				sm.setServiceOfuser(service);
+				sm.setMatchService(s);
+				sm.setMatchPoint(matchPoint);
+				sm.setUser(service.boss);
+				sm.distance=-1;//service itself is not location based
+				sm.save();
+				
+				Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",service.title,s.title,matchPoint,""+sm.distance);
+	
+				sm=new ServiceMatch();
+				sm.setServiceOfuser(s);
+				sm.setMatchService(service);
+				sm.setMatchPoint(matchPoint);
+				sm.setUser(s.boss);
+				if(s.locationType!=LocationType.NORMAL){
+					sm.distance=-1;//service itself is not location based
+				}
+				else{
+					sm.distance=-2;//match service is not location based
+				}
+				sm.save();
+				
+				Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",s.title,service.title,matchPoint,""+sm.distance);
+
 			}
 		}
 	}
@@ -968,6 +1021,20 @@ public class Services extends BaseController {
 	}
 	
 	private static Map<Long,Double> getDistances(Service originService, List<Service> matchServices) {
+		
+		List<Service> locationBasedMatchServices=new ArrayList<Service>();
+		Map<Long,Double> distanceMap=new HashMap<Long,Double>();
+		
+		for (Service s: matchServices) {
+			if(s.locationType==LocationType.NORMAL){
+				locationBasedMatchServices.add(s);
+			}
+			else{
+				distanceMap.put(new Long(s.id), new Double(-2));
+			}
+		}
+		
+		
 		HttpClient client = new DefaultHttpClient();
 		String origins=""+originService.locationLat+","+originService.locationLng;
 		String destinations="";
@@ -975,14 +1042,13 @@ public class Services extends BaseController {
 		boolean first=true;
 		sentServices=0;
 		int index=0;
-		Map<Long,Double> distanceMap=new HashMap<Long,Double>();
 		try {
-			while(index<matchServices.size()){
-				while(index<matchServices.size() && sentServices<=30){
+			while(index<locationBasedMatchServices.size()){
+				while(index<locationBasedMatchServices.size() && sentServices<=30){
 					if(!first){
 						destinations+="%7C";
 					}
-					Service s=matchServices.get(index);
+					Service s=locationBasedMatchServices.get(index);
 					destinations+=""+s.locationLat+","+s.locationLng;				
 					
 					
@@ -1011,11 +1077,11 @@ public class Services extends BaseController {
 						JSONObject o=array.getJSONObject(i);
 						
 						int whichSet=index/30;
-						if((index-1)%30==0){
+						if(index!=1 && (index-1)%30==0){
 							whichSet--;
 						}
 						int whichIndex=whichSet*30+i;
-						Service whichService=matchServices.get(whichIndex);
+						Service whichService=locationBasedMatchServices.get(whichIndex);
 						
 						if(o.getString("status").equals("OK")){
 							JSONObject jo=new JSONObject(o.getString("distance"));
