@@ -5,7 +5,9 @@ import play.cache.Cache;
 import play.db.jpa.JPA;
 import play.mvc.*;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,9 +16,28 @@ import java.util.*;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import models.*;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.*;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.sun.jndi.toolkit.url.UrlUtil;
+
 
 @With(Secure.class)
 @Check("user")
@@ -174,6 +195,7 @@ public class Services extends BaseController {
        
         List<STagCloud> tagClouds=getTagCloudData();
         
+        
         render(services, tasks,maxPageNumber,tagClouds);
 
     }
@@ -265,7 +287,6 @@ public class Services extends BaseController {
 			sc.setStartTime(hourStart, minStart);
 			sc.setEndTime(hourEnd, minEnd);
 		} else if (searchDone == 2) {
-			//System.out.println("title=" + title);
 			sc.setTitle(title.trim());
 		}
 
@@ -286,7 +307,6 @@ public class Services extends BaseController {
 		}
 
 		if (searchDone == 0) {
-			System.out.println("searchDone == 0");
 
 			Collection<Task> tasks = Task.findAllActive();
 			List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
@@ -294,17 +314,14 @@ public class Services extends BaseController {
 			serviceTypes.add(ServiceType.PROVIDES);
 			render(error, serviceTypes, tasks, sc);
 		} else if (searchDone == 1) {
-			System.out.println("searchDone == 1");
 			searchList(sc, false);
 		} else {
-			System.out.println("searchDone != 1,0");
 			searchList(sc, true);
 		}
 	}
 
 	public static void searchList(ServiceSearchCriteria sc, boolean quickSearch) {
 		
-		System.out.println("searchList: searchList started");
 		
 		Collection<Service> allServices = null;
 		if (!quickSearch) {
@@ -315,8 +332,6 @@ public class Services extends BaseController {
 					prepareQueryForQuickServiceSearch(sc.getTitle()), null)
 					.fetch();
 		}
-		System.out.print("searchList: service count: ");
-		System.out.println(allServices.size());
 		int maxPageNumber=0;
         if(allServices!=null){
         	maxPageNumber=allServices.size()/serviceNumberPerPage;
@@ -329,10 +344,6 @@ public class Services extends BaseController {
 
         for (Service service : allServices) {
         	serializedServices.add(service);
-
-        	System.out.println(sc.searchSlots);
-        	System.out.println(service.slots != null);
-        	System.out.println(service.slots != null && service.slots.size() > 0);
         	
         	if(sc.searchSlots && service.slots != null && service.slots.size() != 0) {
 				for (ServiceAvailabilitySlot serviceSlot : service.slots) {
@@ -349,11 +360,6 @@ public class Services extends BaseController {
         	    services.add(service);
         	}
 		}
-        System.out.print("searchList: serialized service count: ");
-		System.out.println(serializedServices.size());
-		System.out.print("searchList: filtered service count: ");
-		System.out.println(services.size());
-        
         Cache.set("listServices", serializedServices, "30min");
 
 		Collection<Task> tasks = Task.findAllActive();
@@ -759,6 +765,8 @@ public class Services extends BaseController {
 		
 		Logger.info("Find match services size:%d services with ordinal %d found ",services.size(),ordinal);
 		
+		Map<Long,Double> distanceToOtherServices=getDistances(service, services);
+			
 		for (Service s : services) {
 			int matchPoint=2;
 			String taskName=s.task.name;
@@ -870,23 +878,51 @@ public class Services extends BaseController {
 				Logger.info("No date limitation. Match point is incremented to %d",matchPoint);
 			}
 			
-			ServiceMatch sm=new ServiceMatch();
-			sm.setServiceOfuser(service);
-			sm.setMatchService(s);
-			sm.setMatchPoint(matchPoint);
-			sm.setUser(service.boss);
-			sm.save();
+			Double distance=distanceToOtherServices.get(new Long(s.id));
+			if(distance!=null){
+				Logger.info("Distance is got from map for service:%s. Distance %s km",s.title,""+distance.doubleValue());
+				if(distance.doubleValue()>0 && distance<50000){
 			
-			Logger.info("Service1:%s Service2:%s matchPoint:%d saved",service.title,s.title,matchPoint);
-
-			sm=new ServiceMatch();
-			sm.setServiceOfuser(s);
-			sm.setMatchService(service);
-			sm.setMatchPoint(matchPoint);
-			sm.setUser(s.boss);
-			sm.save();
-			
-			Logger.info("Service1:%s Service2:%s matchPoint:%d saved",s.title,service.title,matchPoint);
+					if(distance.doubleValue()<1000){
+						matchPoint+=30;
+					}
+					else if(distance.doubleValue()<5000){
+						matchPoint+=20;
+					}
+					else if(distance.doubleValue()<10000){
+						matchPoint+=15;
+					}
+					else if(distance.doubleValue()<30000){
+						matchPoint+=10;
+					}
+					else{
+						matchPoint+=5;
+					}
+					
+					Logger.info("Matchpoint is incremented to %d because of distance %s km",matchPoint,""+distance.doubleValue());
+					
+					
+					ServiceMatch sm=new ServiceMatch();
+					sm.setServiceOfuser(service);
+					sm.setMatchService(s);
+					sm.setMatchPoint(matchPoint);
+					sm.setUser(service.boss);
+					sm.distance=distance.doubleValue()/1000;
+					sm.save();
+					
+					Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",service.title,s.title,matchPoint,""+sm.distance);
+		
+					sm=new ServiceMatch();
+					sm.setServiceOfuser(s);
+					sm.setMatchService(service);
+					sm.setMatchPoint(matchPoint);
+					sm.setUser(s.boss);
+					sm.distance=distance.doubleValue()/1000;
+					sm.save();
+					
+					Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",s.title,service.title,matchPoint,""+sm.distance);
+				}
+			}
 		}
 	}
 	private static int calculateTextDifference(String s1,String s2){
@@ -920,5 +956,77 @@ public class Services extends BaseController {
 		
 		return array[s1.length()][s2.length()];
 	}
+	
+	private static Map<Long,Double> getDistances(Service originService, List<Service> matchServices) {
+		HttpClient client = new DefaultHttpClient();
+		String origins=""+originService.locationLat+","+originService.locationLng;
+		String destinations="";
+		int sentServices=0;
+		boolean first=true;
+		sentServices=0;
+		int index=0;
+		Map<Long,Double> distanceMap=new HashMap<Long,Double>();
+		try {
+			while(index<matchServices.size()){
+				while(index<matchServices.size() && sentServices<=30){
+					if(!first){
+						destinations+="%7C";
+					}
+					Service s=matchServices.get(index);
+					destinations+=""+s.locationLat+","+s.locationLng;				
+					
+					
+					first=false;
+					sentServices++;
+					index++;
+				}
+				String URL="http://maps.googleapis.com/maps/api/distancematrix/json?sensor=false&";
+				HttpGet get = new HttpGet(URL+"origins="+origins+"&destinations="+destinations);
+				get.setHeader("Accept", "text/xml");
+		        HttpResponse response = client.execute(get);
+		        
+		        Logger.info("Index %d iken distance almak icin request yollandi", index);
+		        
+				HttpEntity entity = response.getEntity();
+				if (entity != null) {
+					String resp="";
+	           
+					resp = EntityUtils.toString(entity);
+				
+					JSONObject jsonObject=new JSONObject(resp);
+					JSONObject jsonObject2=new JSONObject(jsonObject.getString("rows").substring(1,jsonObject.getString("rows").length()-1));
+					JSONArray array=new JSONArray(jsonObject2.getString("elements"));
+			
+					for(int i=0;i<array.length();i++){
+						JSONObject o=array.getJSONObject(i);
+						
+						int whichSet=index/30;
+						if((index-1)%30==0){
+							whichSet--;
+						}
+						int whichIndex=whichSet*30+i;
+						Service whichService=matchServices.get(whichIndex);
+						
+						if(o.getString("status").equals("OK")){
+							JSONObject jo=new JSONObject(o.getString("distance"));
+							
+							distanceMap.put(new Long(whichService.id), new Double(jo.getDouble("value")));
+							Logger.info("Service1:%s Service2:%s Distance:%s",originService.title,whichService.title,jo.getString("value"));
+						}
+						else{
+							Logger.info("Service1:%s Service2:%s Status Ok degil. Distance alınamadı",originService.title,whichService.title);
+						}
+					}
+				}
+				sentServices=0;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Logger.info("Uzaklıklar alınırken hata olustu");
 
+		}
+		
+		return distanceMap;
+    }
 }

@@ -57,6 +57,8 @@ Service(se1):
   title: Best Gardener Ever!
   location: "Besiktas, Istanbul"
   description: Love Gardening Work! I would love to keep clean your garden. Please Pick Me!
+  locationLat: 38.341656192795924
+  locationLng: 27.24609375
 Service(se2):
   boss: admin
   type: REQUESTS
@@ -65,6 +67,8 @@ Service(se2):
   title: Driver Needed For Old Man
   location: "Levent, Istanbul"
   description: "I'm an old man living in the neighbourhood. I require someone who can drive me to my grandson's birthday party. I would really appraciate help and I can be generous too."
+  locationLat: 41.049323867571616
+  locationLng: 29.07257080078125
 Service(se3):
   boss: admin
   type: REQUESTS
@@ -73,6 +77,8 @@ Service(se3):
   title: Need A Gardenar for my palace(!)
   location: "Zekeriyakoy, Istanbul"
   description: "I need a gardener who loves to work with gardens and grass. I need you to cut the grasses, plant some flowers and make the garden look like cool."
+  locationLat: 39.842286020743394
+  locationLng: 32.87109375
 Service(se4):
   boss: admin
   type: PROVIDES
@@ -81,6 +87,8 @@ Service(se4):
   title: Can drive people to work from Zekeriyakoy to Mecidiyekoy
   location: "Zekeriyakoy, Istanbul"
   description: "I have a car and all the mornings, I go to work to Mecidiyekoy using my car. I can help anyone in the neighbourhood, pick them up (limited to the seat count of course) and drive them To Mecidiyekoy or vicinity.\n\n Contact me for the exact location and route."
+  locationLat: 41.03223326026193
+  locationLng: 29.0313720703125
 Activity(a1):
   performer: roy
   type: ADDED_SERVICE

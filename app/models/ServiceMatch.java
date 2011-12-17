@@ -23,6 +23,8 @@ public class ServiceMatch extends Model {
 	
 	private int matchPoint;
 
+	public double distance=-1;
+	
 	public Service getServiceOfuser() {
 		return serviceOfuser;
 	}
