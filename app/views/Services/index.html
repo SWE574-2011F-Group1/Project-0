@@ -50,14 +50,47 @@
             <span class="tip">What do you call for this service? Something that will define your service uniquely. People should remember it too!</span>
             #{/field}
         </p>
+         <p>
+            #{field 'locationType'}
+            <label class="required">Location Type:</label>
+            #{if service.locationType==models.LocationType.VIRTUAL}
+            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.VIRTUAL}" checked/>Virtual Location
+            #{/if}
+            #{else}
+           		<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.VIRTUAL}"/>Virtual Location
+            #{/else}
+            
+            #{if service.locationType==models.LocationType.ANYLOCATION}
+            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.ANYLOCATION}" checked/>Any Location
+            #{/if}
+            #{else}
+            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.ANYLOCATION}"/>Any Location
+            #{/else}
+            
+            #{if service.locationType==models.LocationType.NORMAL}
+            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}" checked/>Location Based
+            #{/if}
+            #{else}
+            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}"/>Location Based
+            #{/else}
+            <span class="tip"></span>
+            #{/field}
+        </p>
         <p>
             #{field 'location'}
             <label class="required">Location:</label>
-            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
+            #{if locationType==models.LocationType.NORMAL}
+           		<input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
+            #{/if}
+            #{else}
+            	<input type="text" disabled id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${service.location}" />
+            #{/else}
             <span class="tip">Well, if you are in Istanbul, someone in New York may not help you! Best tell it!</span>
 
             #{/field}
-            <div id="map_canvas" style="width: 500px; height: 300px"></div>
+            #{if locationType==models.LocationType.NORMAL}
+            	<div id="map_canvas" style="width: 500px; height: 300px"></div>
+            #{/if}
         </p>
         <p>
             #{field 'description'}
@@ -132,6 +165,9 @@
     #{/form}
 </div>
 <script type="text/javascript" charset="utf-8">
+
+	var locationType="${service.locationType}";
+	
     $(document).ready(function() {
         
         $("select#taskId").bind("change", function() {
@@ -195,13 +231,25 @@
             var errorDiv = $("p.error").addClass("hidden").html("");
             $("span.error").remove();
             $(".error-field").removeClass("error-field");
-            form.find("select#taskId, textarea#description, input#location, input#title").each(function(item, key) {
-                if (!$(this).val()) {
-                    errors = true;
-                    $(this).addClass("error-field");
-                    $(this).parent().prepend($("<span>").addClass("error").html("This field cannot be empty!"));
-                }
-            });
+            
+            if(locationType=="NORMAL"){
+	            form.find("select#taskId, textarea#description, input#location, input#title").each(function(item, key) {
+	                if (!$(this).val()) {
+	                    errors = true;
+	                    $(this).addClass("error-field");
+	                    $(this).parent().prepend($("<span>").addClass("error").html("This field cannot be empty!"));
+	                }
+	            });
+            }
+            else{
+            	form.find("select#taskId, textarea#description, input#title").each(function(item, key) {
+	                if (!$(this).val()) {
+	                    errors = true;
+	                    $(this).addClass("error-field");
+	                    $(this).parent().prepend($("<span>").addClass("error").html("This field cannot be empty!"));
+	                }
+	            });
+            }
             if (!errors) {
                 form.submit();
             } else {
@@ -215,5 +263,23 @@
             });
             $("input[type=radio][name=type][value=${service.type}]").attr("checked", "");
         #{/if}
+        	 
+        
+        $("input#locationType").bind("click", function() {
+              
+          	  if($(this).val()=="${models.LocationType.VIRTUAL}" || $(this).val()=="${models.LocationType.ANYLOCATION}"){
+          		$("input#location").attr('disabled', true);
+          		$("div#map_canvas").children().remove();
+          	  }
+          	  else{
+          		$("input#location").attr('disabled', false);
+          		if($("div#map_canvas").length<=0){
+          			$("input#location").parent().append("<div id='map_canvas' style='width: 500px; height: 300px'></div>");
+          		}
+          		initialize();
+          	  }
+          	locationType=$(this).val();
+          	
+          });
     });
 </script>

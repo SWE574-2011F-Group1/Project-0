@@ -49,6 +49,7 @@ public class Services extends BaseController {
     public static void index() {
         Service service = new Service();
         service.type = ServiceType.REQUESTS;
+        service.locationType=LocationType.NORMAL;
         if (params.get("type") != null && params.get("type").equals("0")) {
         	service.type = ServiceType.PROVIDES;
         }
@@ -68,7 +69,7 @@ public class Services extends BaseController {
 
     public static void save(String title, ServiceType type, String description, long taskId, 
     		String location, String startDate, String endDate,String tags, List<String> slots,
-    		double locationLat,double locationLng) {
+    		double locationLat,double locationLng,LocationType locationType) {
         Service service;
 
         Set<STag> deletedTags=null;
@@ -103,9 +104,18 @@ public class Services extends BaseController {
         service.title = title;
         service.description = description;
         service.type = type;
-        service.location = location;
-        service.locationLat=locationLat;
-        service.locationLng=locationLng;
+        service.locationType=locationType;
+        
+        if(locationType!=LocationType.NORMAL){
+        	service.location = "";
+	        service.locationLat=0;
+	        service.locationLng=0;
+        }
+        else{
+	        service.location = location;
+	        service.locationLat=locationLat;
+	        service.locationLng=locationLng;
+        }
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         try {
             service.startDate = sdf.parse(startDate);

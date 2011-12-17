@@ -38,6 +38,10 @@ public class Service extends CommentableModel {
     
     @Required
     @NotEmpty
+    public LocationType locationType;
+    
+    @Required
+    @NotEmpty
     public double locationLng;
     
     @OneToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)

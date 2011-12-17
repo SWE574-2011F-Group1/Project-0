@@ -3,7 +3,9 @@
 #{set submenuView: 'services' /}
 
 <div id="serviceDetail">
-	 <div id="map_canvas" style="width: 500px; height: 300px"></div>
+	#{if service.locationType==models.LocationType.NORMAL}
+	 	<div id="map_canvas" style="width: 500px; height: 300px"></div>
+	#{/if}
     <div class="info">
         <span class="item">
             Task: <span class="value">${service.task}</span>
@@ -15,8 +17,23 @@
             Owner: <span class="value">${service.boss}</span>
         </span>
         <span class="item">
-            Location: <span class="value">${service.location}</span>
+            LocationType: <span class="value">
+            	#{if service.locationType==models.LocationType.VIRTUAL}
+            		VIRTUAL LOCATION
+            	#{/if}
+            	#{elseif service.locationType==models.LocationType.ANYLOCATION}
+            		ANY LOCATION
+            	#{/elseif}
+            	#{else}
+            		LOCATION BASED
+            	#{/else}
+            </span>
         </span>
+        #{if service.locationType==models.LocationType.NORMAL}
+	        <span class="item">
+	            Location: <span class="value">${service.location}</span>
+	        </span>
+	    #{/if}
           <span class="item">
             Status:
             <span class="value status">
