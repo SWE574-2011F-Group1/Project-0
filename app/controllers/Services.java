@@ -370,7 +370,7 @@ public class Services extends BaseController {
         	    services.add(service);
         	}
 		}
-        Cache.set("listServices", serializedServices, "30min");
+		Cache.set("filteredServices", services, "30min");
 
 		Collection<Task> tasks = Task.findAllActive();
 		render(services, tasks,maxPageNumber);
@@ -732,7 +732,7 @@ public class Services extends BaseController {
     	List<Service> services = null;
        
         //services = Service.findAll();
-        services=Cache.get("listServices",List.class);
+        services=Cache.get("filteredServices",List.class);
        
         Collection<Task> tasks = Task.findWithWeights();
         

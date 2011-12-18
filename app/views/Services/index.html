@@ -384,18 +384,54 @@
     	$('input#addTimeSlot').click(function(){
     		var day=$('select#day option:selected').val();
     		var dayText=$('select#day option:selected').text();
+
     		var sh=$('select#hourStart').val();
     		var sm=$('select#minStart').val();
     		var eh=$('select#hourEnd').val();
     		var em=$('select#minEnd').val();
-    		
+    		if($('div#divTimeSlot ul li').length==0)//first slot addition
+    			{
     		$('div#divTimeSlot ul')
     		    .append(
-    		        $("<li>")
+    		        $("<li data-day="+day+">")
     		            .html('Every '+ dayText + ' from ' + leftPadWithZeros(sh, 2) + ':' + leftPadWithZeros(sm, 2) +' to ' + leftPadWithZeros(eh, 2) + ':' + leftPadWithZeros(em, 2) + ' ')
     		            .append('<input type="hidden" name="slots" value="'+day+','+sh+','+sm+','+eh+','+em+'"/>')
     		            .append('<input type="button" value="Remove" class="removeTimeSlot" />')
     		    );
+    		
+    			}
+    		else//additional slots addition is sorted
+    			{
+    			var added=false;
+    			var dayIndex=0;
+    			$('div#divTimeSlot ul li').each(function (){
+    				if(added)return;
+    				dayIndex = $(this).attr('data-day');
+    				if(day<=dayIndex)
+    					{
+    					$(this).before(
+    							 $("<li data-day="+day+">")
+    		    		            .html('Every '+ dayText + ' from ' + leftPadWithZeros(sh, 2) + ':' + leftPadWithZeros(sm, 2) +' to ' + leftPadWithZeros(eh, 2) + ':' + leftPadWithZeros(em, 2) + ' ')
+    		    		            .append('<input type="hidden" name="slots" value="'+day+','+sh+','+sm+','+eh+','+em+'"/>')
+    		    		            .append('<input type="button" value="Remove" class="removeTimeSlot" />')
+    							);
+    							 added=true;
+    							
+    					}
+    				
+    			});
+    			if(!added)
+    				{
+    				$('div#divTimeSlot ul')
+        		    .append(
+        		        $("<li data-day="+day+">")
+        		            .html('Every '+ dayText + ' from ' + leftPadWithZeros(sh, 2) + ':' + leftPadWithZeros(sm, 2) +' to ' + leftPadWithZeros(eh, 2) + ':' + leftPadWithZeros(em, 2) + ' ')
+        		            .append('<input type="hidden" name="slots" value="'+day+','+sh+','+sm+','+eh+','+em+'"/>')
+        		            .append('<input type="button" value="Remove" class="removeTimeSlot" />')
+        		    );
+    				}
+    			}
+    		
 	        $("input.removeTimeSlot").bind("click", removeTimeSlotFn);
     	});
     	

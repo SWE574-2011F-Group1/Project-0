@@ -53,20 +53,21 @@ public class SUser extends CommentableModel {
         return providerPoint + requesterPoint;
     }
     
-    public void upvoteForTask(Task task) {
+    public boolean upvoteForTask(Task task) {
     	for(SUserTaskVote taskVote : this.taskVotes)
-    		if (taskVote.votedFor == task) return;
+    		if (taskVote.votedFor == task) return false;
     	
     	SUserTaskVote vote = new SUserTaskVote(this, task, true);
     	//vote.save();
     	this.taskVotes.add(vote);
     	task.upvote();
     	task.save();
+    	return true;
     }
     
-    public void downvoteForTask(Task task) {
+    public boolean downvoteForTask(Task task) {
     	for(SUserTaskVote taskVote : this.taskVotes)
-    		if (taskVote.votedFor == task) return;
+    		if (taskVote.votedFor == task) return false;
 
     	SUserTaskVote vote = new SUserTaskVote(this, task, false);
     	//vote.save();
@@ -74,6 +75,7 @@ public class SUser extends CommentableModel {
     	this.taskVotes.add(vote);
     	task.downvote();
     	task.save();
+    	return false;
     }
 
     public SUser(String name, String email) {
