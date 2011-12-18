@@ -61,6 +61,9 @@ public class Task extends Model {
     public static List<Task> findProposed() {
         return findByStatus(TaskStatus.PENDING);
     }
+    public static List<Task> findAllTasks() {
+        return findAll();
+    }
     
     public static List<Task> findAllActive() {
         return findByStatus(TaskStatus.ACTIVE);

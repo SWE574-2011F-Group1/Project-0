@@ -211,14 +211,49 @@
     		var sm=$('input#minStart').val();
     		var eh=$('input#hourEnd').val();
     		var em=$('input#minEnd').val();
-    		
+    		if($('div#divTimeSlot ul li').length==0)//first slot addition
+    			{
     		$('div#divTimeSlot ul')
     		    .append(
-    		        $("<li>")
+    		        $("<li data-day="+day+">")
     		            .html('Every '+ dayText + ' from ' + sh + ':' + sm +' to ' + eh + ':' + em + ' ')
     		            .append('<input type="hidden" name="slots" value="'+day+','+sh+','+sm+','+eh+','+em+'"/>')
     		            .append('<input type="button" value="Remove" class="removeTimeSlot" />')
     		    );
+    		
+    			}
+    		else//additional slots addition is sorted
+    			{
+    			var added=false;
+    			var dayIndex=0;
+    			$('div#divTimeSlot ul li').each(function (){
+    				if(added)return;
+    				dayIndex = $(this).attr('data-day');
+    				if(day<=dayIndex)
+    					{
+    					$(this).before(
+    							 $("<li data-day="+day+">")
+    		    		            .html('Every '+ dayText + ' from ' + sh + ':' + sm +' to ' + eh + ':' + em + ' ')
+    		    		            .append('<input type="hidden" name="slots" value="'+day+','+sh+','+sm+','+eh+','+em+'"/>')
+    		    		            .append('<input type="button" value="Remove" class="removeTimeSlot" />')
+    							);
+    							 added=true;
+    							
+    					}
+    				
+    			});
+    			if(!added)
+    				{
+    				$('div#divTimeSlot ul')
+        		    .append(
+        		        $("<li data-day="+day+">")
+        		            .html('Every '+ dayText + ' from ' + sh + ':' + sm +' to ' + eh + ':' + em + ' ')
+        		            .append('<input type="hidden" name="slots" value="'+day+','+sh+','+sm+','+eh+','+em+'"/>')
+        		            .append('<input type="button" value="Remove" class="removeTimeSlot" />')
+        		    );
+    				}
+    			}
+    		
 	        $("input.removeTimeSlot").bind("click", removeTimeSlotFn);
     	});
     	

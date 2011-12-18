@@ -1,6 +1,16 @@
 #{extends 'main.html' /}
 #{set title: 'Task Proposals' /}
 #{set submenuView: 'tasks' /}
+#{if message!=null}
+	 	<div class="list-item">
+        <div class="info" style="display:inline;">
+           message
+        </div>
+        <div class="clearfix"></div>
+    </div>
+	#{/if}
+
+
 
 #{list tasks, as:'t'}
     <div class="list-item">

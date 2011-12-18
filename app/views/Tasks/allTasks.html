@@ -1,0 +1,20 @@
+#{extends 'main.html' /}
+#{set title: 'Task List' /}
+#{set submenuView: 'tasks' /}
+
+#{list tasks, as:'t'}
+    <div class="list-item">
+        <div class="info" style="display:inline;">
+            <span class="item">
+                Title: <span class="value">${t.name}</span>
+            </span>
+            <span class="item">
+                Point: <span class="value">${t.point}</span>
+            </span>
+             <span class="item">
+                Status: <span class="value">${t.status}</span>
+            </span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+#{/list}
