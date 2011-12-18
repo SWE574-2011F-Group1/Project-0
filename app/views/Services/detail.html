@@ -90,8 +90,11 @@
 	                Available Slots: <span class="value">
 	                <ul>
 	                 #{list service.slots, as:'slot'}
-	               		<li>
-	               		Every ${slot.dayOfWeek} from   ${slot.startTimeHour}:${slot.startTimeMinute} to ${slot.endTimeHour}:${slot.endTimeMinute} 
+                            <li>
+                              Every ${slot.dayOfWeek} from
+                              ${String.format("%02d", slot.startTimeHour)}:${String.format("%02d", slot.startTimeMinute)}
+                              to
+                              ${String.format("%02d", slot.endTimeHour)}:${String.format("%02d", slot.endTimeMinute)}
                 	    </li>
                 	#{/list}
                 	
