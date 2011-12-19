@@ -158,7 +158,7 @@
                         if (response.status == "connected") {
                             $.post(
                                 "/fbLogin", {
-                                    token: response.session.access_token
+                                    token: response.authResponse.accessToken
                                 },
                                 function(data) {
                                     document.location.href = "@{Application.index}";
@@ -167,7 +167,7 @@
                         } else {
                             console.log('User cancelled login or did not fully authorize.');
                         }
-                    }, {perms: 'email'});
+                    }, {scope: 'email'});
                 });
             });
         </script>
