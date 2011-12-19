@@ -44,10 +44,10 @@
 	 			WAITING EMPLOYEE APPROVAL
 	 		#{/elseif}
 	 		#{elseif service.status==models.ServiceStatus.IN_PROGRESS}
-                IN PROGRESS
+                PENDING
 	 		#{/elseif}
 	 		#{elseif service.status==models.ServiceStatus.WAITING_EMPLOYEE_FINISH}
-                WAITING EMPLOYEE FINISH
+                WAITING CLOSING APPROVAL
 	 		#{/elseif}
 	 		#{elseif service.status==models.ServiceStatus.FINISHED}
                 FINISHED
@@ -111,7 +111,12 @@
     	#{form @apply(),}
         		<input type="hidden" name="serviceId" value="${service.id}"/>
         		<input type="hidden" name="email" value="${userEmail}"/>
-    			<input type="submit" value="Apply Now!" class="apply-btn right" />
+                        #{if service.type == models.ServiceType.PROVIDES}
+                          <input type="submit" value="I'd like that" class="apply-btn right" />
+                        #{/if}
+                        #{else}
+                          <input type="submit" value="I can do that" class="apply-btn right" />
+                        #{/else}
     	#{/form}
     #{/if}
     #{if !isBossUser}
@@ -201,15 +206,16 @@
     #{/if}
     #{if service.status==models.ServiceStatus.PUBLISHED && isBossUser && service.applicants!=null && service.applicants.size()>0}
 	    <div class="bot">
-	    	<input type="button" value="Start Approval &rarr;" class="start-approval-btn left" />
+	    	<input type="button" value="Choose this applicant &rarr;" class="start-approval-btn left" />
 	    </div>
     #{/if}
     #{if service.status==models.ServiceStatus.WAITING_EMPLOYEE_APPROVAL && service.employee!=null && service.employee.id==currentUser.id}
 	    <div class="bot buttons">
+	      Congratulations! ${service.boss.name} has chosen you.<br />Click the button below to see his/her proposed date and location for this service.<br /><br />
 	    	#{form @employeeApproval(),}
 	    		<input type="hidden" value="${service.id}" name="serviceId" id="serviceId" />
        			<input type="hidden" value="${currentUser.id}" name="applicantId" id="applicantId" />
-	    		<input type="submit" value="Process Approval &rarr;" class="employee-approval-btn left" />
+	    		<input type="submit" value="Go to Proposal &rarr;" class="employee-approval-btn left" />
 	    	#{/form}
 	    </div>
     #{/if}
@@ -218,7 +224,12 @@
         	#{form @apply(),}
         		<input type="hidden" name="serviceId" value="${service.id}"/>
         		<input type="hidden" name="email" value="${userEmail}"/>
-    			<input type="submit" value="Apply Now!" class="apply-btn right" />
+                        #{if service.type == models.ServiceType.PROVIDES}
+                          <input type="submit" value="I'd like that" class="apply-btn right" />
+                        #{/if}
+                        #{else}
+                          <input type="submit" value="I can do that" class="apply-btn right" />
+                        #{/else}
     		#{/form}
    		#{/if}
     </div>
