@@ -268,7 +268,7 @@ public class Services extends BaseController {
     		int maxBasePoint,
     		String tags,
     		boolean searchSlots,
-    		int dayOfWeekInt,
+    		int dayOfWeek,
     		int hourStart,
     		int minStart,
     		int hourEnd,
@@ -278,8 +278,7 @@ public class Services extends BaseController {
 		String error = "";
 		ServiceSearchCriteria sc = new ServiceSearchCriteria();
 
-		DayOfWeek dayOfWeek = DayOfWeek.values()[dayOfWeekInt];
-	
+		DayOfWeek dayOfWeekEnum = DayOfWeek.values()[dayOfWeek];
 
 		if (searchDone == 1) {
 			sc.setDescription(description.trim());
@@ -293,7 +292,7 @@ public class Services extends BaseController {
 			sc.setTags(tags.trim());
 			
 			sc.searchSlots = searchSlots;
-			sc.dayOfWeek = dayOfWeek;
+			sc.dayOfWeek = dayOfWeekEnum;
 			sc.setStartTime(hourStart, minStart);
 			sc.setEndTime(hourEnd, minEnd);
 		} else if (searchDone == 2) {
