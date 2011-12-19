@@ -93,10 +93,10 @@
                     #{if submenuView == m.toLowerCase()}
                         <span class="selected">
                     #{/if}
-                    <img class="icons" src="@{'/public/images/icons/' + m.toLowerCase() + '.ico'}" />
+                    <img class="icons" src="@{'/public/images/icons/' + m.toLowerCase().replace(" ", "-") + '.ico'}" />
                     <a href="
                     *{Burasi biraz pis oldu...}*
-                    #{if m.toLowerCase() == "tasks"}
+                    #{if m.toLowerCase() == "service types"}
                         @{Tasks.proposals}
                     #{/if}
                     #{elseif m.toLowerCase() == "messages"}
