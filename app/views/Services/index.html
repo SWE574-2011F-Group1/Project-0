@@ -35,7 +35,7 @@
             <select id="${field.name}" name="${field.name}" class="${field.errorClass}">
                 <option value="" />-
                 #{list tasks, as:'t'}
-	               	<option value="${t.id}" data-point="${t.point}" #{if t.equals(service.task)}} selected #{/if} />${t.name}
+	               	<option value="${t.id}" data-point="${t.point}" #{if t.equals(service.task)}} selected #{/if}>${t.name} (${t.point})</option>
                 #{/list}
             </select>
             <span class="tip right point-tip"></span>
@@ -349,7 +349,8 @@
     $(document).ready(function() {
         $("select#taskId").bind("change", function() {
             if ($(this).val() != "") {
-                $("span.point-tip").html("You will gain <a href='javascript:return false;'>" + $(this).val() + "</a> points if you finish this task");
+                var point = $(this[this.selectedIndex]).data("point");
+                $("span.point-tip").html("You will gain <a href='javascript:return false;'>" + point + "</a> points if you finish this task");
                 $(".proposal").hide();
             } else {
                 $("span.point-tip").html("");

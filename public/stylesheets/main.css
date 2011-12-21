@@ -3,7 +3,7 @@
 .right {float: right;}
 .hidden {display: none;}
 
-form p label {width:100px; float: left;}
+form p label {width:115px; float: left;}
 form.search p label {width:120px; float: left;}
 form p label.required {font-weight: bold; font-style: italic;}
 form input[type=text]:not(.datepicker, .time), form textarea {width: 300px;}
