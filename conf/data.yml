@@ -1,5 +1,5 @@
 SUser(roy):
-  email: roy@roy.com
+  email: roy@ses.com
   password: 1234
   name: roy simkes  
   isAdmin: false
@@ -8,18 +8,61 @@ SUser(admin):
   password: test
   name: test test
   isAdmin: true
+SUser(ahmet):
+  email: ahmet@ses.com
+  password: test
+  name: Ahmet Cakar
+  isAdmin: false
+SUser(mehmet):
+  email: mehmet@ses.com
+  password: test
+  name: Mehmet Kahveci
+  isAdmin: false  
+SUser(ali):
+  email: ali@ses.com
+  password: test
+  name: Ali Cakir
+  isAdmin: false
+SUser(veli):
+  email: veli@ses.com
+  password: test
+  name: Veli Efendi
+  isAdmin: false
+SUser(hilmi):
+  email: hilmi@ses.com
+  password: test
+  name: Hilmi Midir
+  isAdmin: false
+SUser(hikmet):
+  email: hikmet@ses.com
+  password: test
+  name: Hikmet Gurses
+  isAdmin: false
+SUser(guven):
+  email: guven@ses.com
+  password: test
+  name: Guven Kurtul
+  isAdmin: false
+SUser(oya):
+  email: oya@ses.com
+  password: test
+  name: Oya Bilir
+  isAdmin: false
 Task(t1):
   name: Dishwashing
   point: 1
   status: ACTIVE
+  suggestedBy: hikmet
 Task(t2):
   name: Gardening
   point: 1
   status: ACTIVE
+  suggestedBy: ahmet
 Task(t3):
   name: Driving
   point: 0.5
   status: ACTIVE
+  suggestedBy: hilmi
 Task(t4):
   name: Tale Telling
   point: 1
@@ -30,6 +73,31 @@ Task(t5):
   point: 1
   status: PENDING
   suggestedBy: admin
+Task(t6):
+  name: Math Study
+  point: 1.5
+  status: PENDING
+  suggestedBy: mehmet
+Task(t7):
+  name: House Cleaning
+  point: 2
+  status: ACTIVE
+  suggestedBy: ahmet
+Task(t8):
+  name: Graphic Design
+  point: 2
+  status: ACTIVE
+  suggestedBy: veli
+Task(t9):
+  name: Legal Service
+  point: 3
+  status: ACTIVE
+  suggestedBy: oya
+Task(t10):
+  name: Web Site Making
+  point: 2
+  status: ACTIVE
+  suggestedBy: guven
 Reward(r1):
   name: Tipped
 Reward(r2):
