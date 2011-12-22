@@ -11,8 +11,8 @@ form textarea {height: 100px;}
 .form-separator {text-shadow: #fff 1px 1px 0px; font-size:11px;border-top:4px solid #4D8789!important; text-align: right; font-weight: bold;}
 
 div#menu {background-color: #1B676B; padding: 5px;}
-div#menu span.selected {background-color: #4D8789; border-top-right-radius: 5px; padding: 7px 10px 7px; margin-right:5px;}
-div#submenu {background-color: #4D8789; color: white; padding: 5px 0 5px 40px;}
+div#menu span.selected {background-color: #4D8789; border-top-right-radius: 10px; padding: 2px 10px 7px; margin-right:5px;}
+div#submenu {background-color: #4D8789; color: white; padding: 5px 0 5px 70px; box-shadow: black 1px 1px 15px;}
 div#search-bar {float: right; margin-right: 10px; margin-top: 3px;}
 
 div.flash-message {width: 300px; text-align: center; background-color: #6282A7; margin: 10px 25%; padding: 5px; border-top-right-radius: 5px; border-bottom-left-radius:5px; color: white; }
@@ -39,7 +39,7 @@ div.list-item a {color: #4D8789;}
 #crudHeader div.navigation a:hover {text-decoration: none;}
 span.radio-button {cursor: pointer;}
 
-div.profile-pic {float: left; padding: 3px; background-color:#1B676B; margin-right: 5px;}
+div.profile-pic {float: left; padding: 3px; background-color:#1B676B; margin-right: 5px; box-shadow: black 1px 1px 10px;}
 div.profile-pic div.default {background-image:url("/public/images/default-avatar.jpg"); width: 50px; height: 50px; background-repeat: no-repeat;}
 
 span.tip {font-size: 10px; font-style: italic; display: block; color: gray;}
