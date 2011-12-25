@@ -19,6 +19,10 @@ public class ServiceSearchCriteria {
 	public int minEnd;
 	public int startTimeMinutesAfterMidnight;
 	public int endTimeMinutesAfterMidnight;
+	public LocationType locationType=LocationType.ALL;
+	public double locationLat=-1;
+	public double locationLng=-1;
+	
 	
 	public void setStartTime(int hour, int min) {
 		this.hourStart = hour;
