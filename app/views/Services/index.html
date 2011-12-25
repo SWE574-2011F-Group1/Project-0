@@ -483,7 +483,7 @@
               
           	  if($(this).val()=="${models.LocationType.VIRTUAL}" || $(this).val()=="${models.LocationType.ANYLOCATION}"){
           		$("input#location").attr('disabled', true);
-          		$("div#map_canvas").children().remove();
+          		$("div#map_canvas").remove();
           	  }
           	  else{
           		$("input#location").attr('disabled', false);
