@@ -21,7 +21,7 @@ div.info.block span.item {float: none;}
 div.info span.item {font-weight: bold; color: #4D8789; width:300px; float: left; display: block;}
 div.info span.item.date {width:300px}
 div.info span.item span.value {color: black; font-weight: normal;}
-div.desc {margin-top: 10px; padding: 15px;}
+div.desc {margin-top: 10px; padding: 15px; background-color: white;}
 
 div#serviceDetail div.bot {margin-top: 20px;}
 div#serviceDetail div.desc {border-top-right-radius: 5px; border-bottom-left-radius:5px;}

@@ -133,6 +133,13 @@
     	        Employee:
     	        <ul>
     	       		<li>
+    	       			<a href="@{Profile.profile}/${service.employee.id}">
+				            <div class="activity-pic left">
+				            	#{if service.employee.fbId}
+				                	<img src="http://graph.facebook.com/${service.employee.fbId}/picture" />
+				                #{/if}
+				            </div>
+			            </a>
 		    	        <span class="value">
 		    	            <a href="/profile/${service.employee.id}">${service.employee.name}</a>
 		    	            #{if service.employee.email.equals(userEmail)}
@@ -165,6 +172,13 @@
 			             #{list service.applicants, as:'applicant'}
                             <li>
 				             <input type="radio" id="startApprovalEmail" name="email" value="${applicant.email}"/>
+				             <a href="@{Profile.profile}/${applicant.id}">
+					            <div class="activity-pic left">
+					            	#{if applicant.fbId}
+					                	<img src="http://graph.facebook.com/${applicant.fbId}/picture" />
+					                #{/if}
+					            </div>
+				            </a>
 				             <span class="value"><a href="/profile/${applicant.id}">${applicant.name}</a></span>
 				             #{if applicant.email.equals(userEmail)}
 				                (You)
@@ -186,6 +200,13 @@
 		            <ul>
 		        	#{list service.applicants, as:'applicant'}
 		        	    <li>
+			        	    <a href="@{Profile.profile}/${applicant.id}">
+					            <div class="activity-pic left">
+					            	#{if applicant.fbId}
+					                	<img src="http://graph.facebook.com/${applicant.fbId}/picture" />
+					                #{/if}
+					            </div>
+				            </a>
 	                        <span class="value"><a href="/profile/${applicant.id}">${applicant.name}</a></span>
 					         #{if applicant.email.equals(userEmail)}
 					            <a class="cancelBtn cancel-link" href="@{Services.cancelApply}?serviceId=${service.id}&email=${userEmail}">Cancel My Application</a>
@@ -311,6 +332,13 @@
    <h2>Comments</h2>
 	#{list serviceComments, as:'c'}
 		<div class="list-item">
+		<a href="@{Profile.profile}/${c.commenter.id}">
+	        <div class="activity-pic left">
+	        	#{if c.commenter.fbId}
+	            	<img src="http://graph.facebook.com/${c.commenter.fbId}/picture" />
+	            #{/if}
+	        </div>
+        </a>
 		<a href="@{Profile.profile}/${c.commenter.id}">${c.commenter.name}</a><em>  wrote on ${c.commentDateWithTime}</em>
 			<div class="info">
 				${c.comment}
