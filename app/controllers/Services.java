@@ -155,7 +155,7 @@ public class Services extends BaseController {
         a.affectedService = service;
         a.save();
         
-        findMatchServices(service,isUpdate);
+        Service.findMatchServices(service,isUpdate);
         
         detail(service.id);
     }
@@ -249,7 +249,8 @@ public class Services extends BaseController {
         else{
         	String sql = "select sm from ServiceMatch sm where sm.serviceOfuser.id="+service.id+
 					 		" order by matchPoint desc";
-			serviceMatches=ServiceMatch.find(sql,null).fetch();
+			serviceMatches = ServiceMatch.find(sql,null).fetch();
+			Logger.info("%s", serviceMatches);
         	//serviceMatches=ServiceMatch.findByServiceOfUser(service);
         }
         render(service, isBossUser,userEmail,isAppliedBefore,currentUser,serviceMatches, serviceComments);
@@ -271,7 +272,8 @@ public class Services extends BaseController {
     		int hourStart,
     		int minStart,
     		int hourEnd,
-    		int minEnd) {
+    		int minEnd,
+    		double locationLat,double locationLng,LocationType locationType) {
 		Date sd, ed;
 		// Map<String,String> errors=new HashMap<String,String>();
 		String error = "";
@@ -282,7 +284,9 @@ public class Services extends BaseController {
 		if (searchDone == 1) {
 			sc.setDescription(description.trim());
 			sc.setEndDate(endDate);
-			sc.setLocation(location.trim());
+			if(locationType==LocationType.NORMAL){
+				sc.setLocation(location.trim());
+			}
 			sc.setServiceType(serviceType);
 			sc.setStartDate(startDate);
 			sc.setTitle(title.trim());
@@ -294,6 +298,13 @@ public class Services extends BaseController {
 			sc.dayOfWeek = dayOfWeekEnum;
 			sc.setStartTime(hourStart, minStart);
 			sc.setEndTime(hourEnd, minEnd);
+			
+			System.out.println("Locationtype="+locationType);
+			sc.locationType=locationType;
+			if(locationType==LocationType.NORMAL){
+				sc.locationLat=locationLat;
+				sc.locationLng=locationLng;
+			}
 		} else if (searchDone == 2) {
 			sc.setTitle(title.trim());
 		}
@@ -331,7 +342,9 @@ public class Services extends BaseController {
 	public static void searchList(ServiceSearchCriteria sc, boolean quickSearch) {
 		
 		
-		Collection<Service> allServices = null;
+		List<Service> allServices = null;
+		Map<Long,Double> distanceMap=null;
+		List<Service> servicesOrderedBydistance=null;
 		if (!quickSearch) {
 			allServices = Service.find(prepareQueryForServiceSearch(sc), null)
 					.fetch();
@@ -340,17 +353,77 @@ public class Services extends BaseController {
 					prepareQueryForQuickServiceSearch(sc.getTitle()), null)
 					.fetch();
 		}
+		
+		if(allServices!=null && allServices.size()>0 && 
+				sc.locationType==LocationType.ALL || sc.locationType==LocationType.NORMAL){
+			Service searchReferenceService=new Service();
+			searchReferenceService.title="Search Reference Service";
+			searchReferenceService.locationLat=sc.locationLat;
+			searchReferenceService.locationLng=sc.locationLng;
+			distanceMap=Service.getDistances(searchReferenceService, allServices);
+			
+			servicesOrderedBydistance=new ArrayList<Service>();
+			
+			int center=-1;
+			int left=-1;
+			int right=-1;
+			int index=0;
+			for(int i=0;i<allServices.size();i++){
+			    Service s=allServices.get(i);
+			    double distance=distanceMap.get(new Long(s.id));
+				if(i==0){
+					servicesOrderedBydistance.add(s);
+					left=0;
+					right=servicesOrderedBydistance.size();
+					center=(left+right)/2;
+				}
+				else{
+					boolean found=false;
+					while(!found && center>=0 && center<servicesOrderedBydistance.size()){
+						Service centerService=servicesOrderedBydistance.get(center);
+						double distanceOfCService=distanceMap.get(new Long(centerService.id));
+						Logger.info("End left=%d right=%d center=%d distance=%s distcanceOfCenter=%s",
+								left,right,center,""+distance,""+distanceOfCService);
+						if(distance==distanceOfCService){
+							servicesOrderedBydistance.add(index,s);
+							found=true;
+						}
+						else if(left==right){
+							if(distanceOfCService>distance){
+								servicesOrderedBydistance.add(left,s);
+								found=true;
+							}
+							else if(distanceOfCService<distance){
+								servicesOrderedBydistance.add(left+1,s);
+								found=true;
+							}
+						}
+						else if(distanceOfCService<distance){
+							left=center+1;
+						}
+						else if(distanceOfCService>distance){
+							right=center-1;
+						}
+						center=(left+right)/2;
+						Logger.info("End left=%d right=%d center=%d",left,right,center);
+					}
+				}
+			}
+		}
+		else{
+			servicesOrderedBydistance=allServices;
+		}
 		int maxPageNumber=0;
-        if(allServices!=null){
-        	maxPageNumber=allServices.size()/serviceNumberPerPage;
-        	if(allServices.size()%serviceNumberPerPage>0)
+        if(servicesOrderedBydistance!=null){
+        	maxPageNumber=servicesOrderedBydistance.size()/serviceNumberPerPage;
+        	if(servicesOrderedBydistance.size()%serviceNumberPerPage>0)
         		maxPageNumber++;
         }
 
         List<Service> serializedServices=new ArrayList<Service>();
         List<Service> services=new ArrayList<Service>();
 
-        for (Service service : allServices) {
+        for (Service service : servicesOrderedBydistance) {
         	serializedServices.add(service);
         	
         	if(sc.searchSlots && service.slots != null && service.slots.size() != 0) {
@@ -370,8 +443,11 @@ public class Services extends BaseController {
 		}
 		Cache.set("filteredServices", services, "30min");
 
+		if(distanceMap!=null){
+			Cache.set("distanceMap", distanceMap, "30min");
+		}
 		Collection<Task> tasks = Task.findAllActive();
-		render(services, tasks,maxPageNumber);
+		render(services, tasks,maxPageNumber,distanceMap);
 	}
 
 	public static void apply(long serviceId,String email) throws Exception {
@@ -673,7 +749,7 @@ public class Services extends BaseController {
 			sql += " and t.point<=" + sc.getMaxBasePoint();
 		}
 
-		if (!sc.getLocation().equals("")) {
+		if (sc.locationType==LocationType.NORMAL && !sc.getLocation().equals("")) {
 			sql += " and s.location LIKE '%" + sc.getLocation() + "%'";
 		}
 
@@ -709,6 +785,9 @@ public class Services extends BaseController {
 			ed = y + "-" + m + "-" + d;
 			sql += " and s.endDate<='" + ed + "'";
 		}
+		if(sc.locationType!=LocationType.ALL){
+			sql += " and s.locationType="+sc.locationType.getOrdinal();
+		}
 
 		return sql;
 	}
@@ -731,6 +810,7 @@ public class Services extends BaseController {
        
         //services = Service.findAll();
         services=Cache.get("filteredServices",List.class);
+        Map<Long,Double> distanceMap=Cache.get("distanceMap",Map.class);
        
         Collection<Task> tasks = Task.findWithWeights();
         
@@ -743,364 +823,8 @@ public class Services extends BaseController {
         	services=getServicesForPage(services, page);
         }
         
-        render(services, tasks);
+        render(services, tasks,distanceMap);
  }
-	private  static void findMatchServices(Service service, boolean isUpdate){
-		
-		if(isUpdate){
-			String sql = "select sm from ServiceMatch sm where sm.serviceOfuser.id="+service.id+" " +
-					 " or sm.matchService.id="+service.id;
-			List<ServiceMatch> serviceMatches=ServiceMatch.find(sql,null).fetch();
-			for (ServiceMatch sm : serviceMatches) {
-				Logger.info("sm with id %d and wiht service %s is deleted", sm.id,sm.serviceOfuser.title);
-				sm.delete();
-			}
-		}
-		
-		ServiceType type=service.type;
-		int ordinal;
-		if(type==ServiceType.PROVIDES){
-			ordinal=ServiceType.REQUESTS.getOrdinal();
-		}
-		else{
-			ordinal=ServiceType.PROVIDES.getOrdinal();
-		}
-		
-		String sql = "select s from Service s where s.type="+ordinal+" " +
-					 " and s.boss.id!="+service.boss.id+" and s.status="+ServiceStatus.PUBLISHED.ordinal()
-					 +" and s.task.id="+service.task.id;
-		List<Service> services=Service.find(sql,null).fetch();
-		
-		Logger.info("Find match services size:%d services with ordinal %d found ",services.size(),ordinal);
-		
-		Map<Long,Double> distanceToOtherServices=new HashMap<Long, Double>();
-		if(service.locationType==LocationType.NORMAL){
-			distanceToOtherServices=getDistances(service, services);
-		}
-			
-		for (Service s : services) {
-			int matchPoint=2;
-			String taskName=s.task.name;
-			/*if(taskName.toLowerCase().equals(service.task.name.toLowerCase())){
-				matchPoint++;
-				Logger.info("TaskName1:%s TaskName2:%s. Match Point is incremented to:%d", service.task.name,taskName,matchPoint);
-			}*/
-			if(s.stags!=null && service.stags!=null && s.stags.size()>0 && service.stags.size()>0){
-				Set<STag> tags=s.stags;
-				for (STag tag : tags) {
-					String tText=tag.text.toLowerCase();
-					for (STag t : service.stags) {
-						String tText2=t.text.toLowerCase();
-						if(tText.equals(tText2) || tText.contains(tText2) || tText2.contains(tText)){
-							matchPoint++;
-							Logger.info("Tag1:%s Tag2:%s. Match Point is incremented to:%d", tText2,tText,matchPoint);
-						}
-					}
-				}
-			}
-
-			if(service.slots!=null && s.slots!=null && service.slots.size()>0 && s.slots.size()>0){
-				for (ServiceAvailabilitySlot serviceSlot : service.slots) {
-					for (ServiceAvailabilitySlot sSlot : s.slots) {
-						if(serviceSlot.dayOfWeek==sSlot.dayOfWeek){
-							int serviceStartMinute=serviceSlot.startTimeMinutesAfterMidnight;
-							int serviceEndMinute=serviceSlot.endTimeMinutesAfterMidnight;
-							int sStartMinute=sSlot.startTimeMinutesAfterMidnight;
-							int sEndMinute=sSlot.endTimeMinutesAfterMidnight;
-							
-							if(sStartMinute>=serviceStartMinute && sEndMinute<=serviceEndMinute){
-								matchPoint+=3;
-								Logger.info("Slot exact match.Match Point is incremented to:%d",matchPoint);
-							}
-							else if(sStartMinute>=serviceStartMinute && sEndMinute>serviceEndMinute){
-								matchPoint+=2;
-								Logger.info("Slot partial match.Match Point is incremented to:%d",matchPoint);
-							}
-							else if(sStartMinute<serviceStartMinute && sEndMinute>serviceStartMinute){
-								matchPoint+=2;
-								Logger.info("Slot partial match.Match Point is incremented to:%d",matchPoint);
-							}
-						}
-					}
-				}
-			}
-			String title=s.title.trim().toLowerCase();
-			if(title.contains(service.title.trim().toLowerCase()) || service.title.trim().toLowerCase().contains(title)){
-				matchPoint++;
-				Logger.info("Title1:%s Title2:%s. Match Point is incremented to:%d", service.title,title,matchPoint);
-			}
-			int minTitleLength=Math.min(title.length(), service.title.trim().length());
-			int diff=calculateTextDifference(title, service.title.trim().toLowerCase());
-			if(diff<=minTitleLength){
-				matchPoint++;
-				Logger.info("Title1:%s Title2:%s. Match Point is incremented to:%d", service.title,title,matchPoint);
-			}
-			
-			String location=s.location.trim().toLowerCase();
-			if(location.contains(service.location.trim().toLowerCase()) || service.location.trim().toLowerCase().contains(location)){
-				matchPoint++;
-				Logger.info("Location1:%s Location2:%s. Match Point is incremented to:%d", service.location,location,matchPoint);
-			}
-			int minLocationLength=Math.min(location.length(), service.location.trim().length());
-			diff=calculateTextDifference(location, service.location.trim().toLowerCase());
-			if(diff<=minLocationLength){
-				matchPoint++;
-				Logger.info("Location1:%s Location2:%s. Match Point is incremented to:%d", service.location,location,matchPoint);
-			}
-			
-			String desc=s.description.trim().toLowerCase();
-			if(desc.contains(service.description.trim().toLowerCase()) || service.description.trim().toLowerCase().contains(desc)){
-				matchPoint++;
-				Logger.info("Desc1:%s Desc2:%s. Match Point is incremented to:%d", service.description,desc,matchPoint);
-			}
-			int minDescLength=Math.min(desc.length(), service.description.trim().length());
-			diff=calculateTextDifference(desc, service.description.trim().toLowerCase());
-			if(diff<=minDescLength){
-				matchPoint++;
-				Logger.info("Desc1:%s Desc2:%s. Match Point is incremented to:%d", service.description,desc,matchPoint);
-			}
-			
-			Date startDate=s.startDate;
-			Date endDate=s.endDate;
-			
-			if(startDate!=null && endDate!=null && service.startDate!=null && service.endDate!=null){
-				if((startDate.compareTo(service.startDate)<=0 && startDate.compareTo(service.endDate)>=0)
-					|| (endDate.compareTo(service.startDate)>=0 && endDate.compareTo(service.endDate)<=0)	
-				){
-					matchPoint++;
-					Logger.info("StartDate1:%s EndDate1:%s StartDate2:%s EndDate2:%s. Match Point is incremented to:%d", service.startDate, service.endDate,startDate,endDate,matchPoint);
-				}
-				
-			}
-			else if(endDate!=null && service.startDate!=null){
-				if(endDate.compareTo(service.startDate)>=0){
-					matchPoint++;
-					Logger.info("StartDate1:%s EndDate2:%s. Match Point is incremented to:%d", service.startDate,endDate,matchPoint);
-				}
-			}
-			else if(startDate!=null && service.endDate!=null){
-				if(startDate.compareTo(service.endDate)<=0){
-					matchPoint++;
-					Logger.info("EndDate1:%s StartDate2:%s. Match Point is incremented to:%d", service.endDate,startDate,matchPoint);
-				}
-			}
-			else{
-				matchPoint++;
-				Logger.info("No date limitation. Match point is incremented to %d",matchPoint);
-			}
-			
-			System.out.println(service.locationType);
-			if(service.locationType==LocationType.NORMAL){
-				
-				System.out.println("if");
-				
-				Double distance=distanceToOtherServices.get(new Long(s.id));
-				if(distance!=null){
-					Logger.info("Distance is got from map for service:%s. Distance %s km",s.title,""+distance.doubleValue());
-					
-					if((distance.doubleValue()>0 && distance<50000) || distance.doubleValue()==-2){
-				
-						if(distance.doubleValue()<1000){
-							matchPoint+=30;
-						}
-						else if(distance.doubleValue()<5000){
-							matchPoint+=20;
-						}
-						else if(distance.doubleValue()<10000){
-							matchPoint+=15;
-						}
-						else if(distance.doubleValue()<30000){
-							matchPoint+=10;
-						}
-						else{
-							matchPoint+=5;
-						}
-						
-						Logger.info("Matchpoint is incremented to %d because of distance %s km",matchPoint,""+distance.doubleValue());
-						
-						
-						ServiceMatch sm=new ServiceMatch();
-						sm.setServiceOfuser(service);
-						sm.setMatchService(s);
-						sm.setMatchPoint(matchPoint);
-						sm.setUser(service.boss);
-						if(distance.doubleValue()==-2){
-							sm.distance=-2;//match service is not location based
-						}
-						else{
-							sm.distance=distance.doubleValue()/1000;
-						}
-						sm.save();
-						
-						Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",service.title,s.title,matchPoint,""+sm.distance);
-			
-						sm=new ServiceMatch();
-						sm.setServiceOfuser(s);
-						sm.setMatchService(service);
-						sm.setMatchPoint(matchPoint);
-						sm.setUser(s.boss);
-						if(distance.doubleValue()==-2){
-							sm.distance=-1;//service itself is not location based
-						}
-						else{
-							sm.distance=distance.doubleValue()/1000;
-						}
-						sm.save();
-						
-						Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",s.title,service.title,matchPoint,""+sm.distance);
-					}
-				}
-				
-			}
-			else{
-				System.out.println("else");
-				matchPoint+=30;
-				
-				Logger.info("Location type is not location based. Matchpoint is incremented to %d because service is not location based",matchPoint);
-				
-				ServiceMatch sm=new ServiceMatch();
-				sm.setServiceOfuser(service);
-				sm.setMatchService(s);
-				sm.setMatchPoint(matchPoint);
-				sm.setUser(service.boss);
-				sm.distance=-1;//service itself is not location based
-				sm.save();
-				
-				Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",service.title,s.title,matchPoint,""+sm.distance);
 	
-				sm=new ServiceMatch();
-				sm.setServiceOfuser(s);
-				sm.setMatchService(service);
-				sm.setMatchPoint(matchPoint);
-				sm.setUser(s.boss);
-				if(s.locationType!=LocationType.NORMAL){
-					sm.distance=-1;//service itself is not location based
-				}
-				else{
-					sm.distance=-2;//match service is not location based
-				}
-				sm.save();
-				
-				Logger.info("Service1:%s Service2:%s matchPoint:%d distance:%s saved",s.title,service.title,matchPoint,""+sm.distance);
-
-			}
-		}
-	}
-	private static int calculateTextDifference(String s1,String s2){
-		
-		int array[][]=new int[s1.length()+1][s2.length()+1];
-		
-		for(int i=0;i<=s1.length();i++){
-			array[i][0]=i;
-		}
-		
-		for(int j=0;j<=s2.length();j++){
-			array[0][j]=j;
-		}
-		
-		for(int i=1;i<=s1.length();i++){
-			for(int j=1;j<=s2.length();j++){
-				
-				int a=array[i-1][j]+1;
-				int b=array[i][j-1]+1;
-				int c=array[i-1][j-1];
-				if(s1.charAt(i-1)!=s2.charAt(j-1)){
-					c++;
-				}
-				
-				int d=Math.min(a, b);
-				array[i][j]=Math.min(c,d);
-			}
-		}
-		
-		Logger.info("String1:%s String2:%s is compared. Difference is %d", s1,s2,array[s1.length()][s2.length()]);
-		
-		return array[s1.length()][s2.length()];
-	}
 	
-	private static Map<Long,Double> getDistances(Service originService, List<Service> matchServices) {
-		
-		List<Service> locationBasedMatchServices=new ArrayList<Service>();
-		Map<Long,Double> distanceMap=new HashMap<Long,Double>();
-		
-		for (Service s: matchServices) {
-			if(s.locationType==LocationType.NORMAL){
-				locationBasedMatchServices.add(s);
-			}
-			else{
-				distanceMap.put(new Long(s.id), new Double(-2));
-			}
-		}
-		
-		
-		HttpClient client = new DefaultHttpClient();
-		String origins=""+originService.locationLat+","+originService.locationLng;
-		String destinations="";
-		int sentServices=0;
-		boolean first=true;
-		sentServices=0;
-		int index=0;
-		try {
-			while(index<locationBasedMatchServices.size()){
-				while(index<locationBasedMatchServices.size() && sentServices<=30){
-					if(!first){
-						destinations+="%7C";
-					}
-					Service s=locationBasedMatchServices.get(index);
-					destinations+=""+s.locationLat+","+s.locationLng;				
-					
-					
-					first=false;
-					sentServices++;
-					index++;
-				}
-				String URL="http://maps.googleapis.com/maps/api/distancematrix/json?sensor=false&";
-				HttpGet get = new HttpGet(URL+"origins="+origins+"&destinations="+destinations);
-				get.setHeader("Accept", "text/xml");
-		        HttpResponse response = client.execute(get);
-		        
-		        Logger.info("Index %d iken distance almak icin request yollandi", index);
-		        
-				HttpEntity entity = response.getEntity();
-				if (entity != null) {
-					String resp="";
-	           
-					resp = EntityUtils.toString(entity);
-				
-					JSONObject jsonObject=new JSONObject(resp);
-					JSONObject jsonObject2=new JSONObject(jsonObject.getString("rows").substring(1,jsonObject.getString("rows").length()-1));
-					JSONArray array=new JSONArray(jsonObject2.getString("elements"));
-			
-					for(int i=0;i<array.length();i++){
-						JSONObject o=array.getJSONObject(i);
-						
-						int whichSet=index/30;
-						if(index!=1 && (index-1)%30==0){
-							whichSet--;
-						}
-						int whichIndex=whichSet*30+i;
-						Service whichService=locationBasedMatchServices.get(whichIndex);
-						
-						if(o.getString("status").equals("OK")){
-							JSONObject jo=new JSONObject(o.getString("distance"));
-							
-							distanceMap.put(new Long(whichService.id), new Double(jo.getDouble("value")));
-							Logger.info("Service1:%s Service2:%s Distance:%s",originService.title,whichService.title,jo.getString("value"));
-						}
-						else{
-							Logger.info("Service1:%s Service2:%s Status Ok degil. Distance alınamadı",originService.title,whichService.title);
-						}
-					}
-				}
-				sentServices=0;
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Logger.info("Uzaklıklar alınırken hata olustu");
-
-		}
-		
-		return distanceMap;
-    }
 }
