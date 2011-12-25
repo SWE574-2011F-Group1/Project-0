@@ -40,6 +40,13 @@
     <div class="list-item">
         <div class="info">
             <div class="activity-date right">${act.getFormattedCreationDate()}</div>
+            <a href="@{Profile.profile}/${act.performer.id}">
+	            <div class="activity-pic left">
+	            	#{if act.performer.fbId}
+	                	<img src="http://graph.facebook.com/${act.performer.fbId}/picture" />
+	                #{/if}
+	            </div>
+            </a>
             *{ Show messages according to the type... }*
             #{if act.type == models.ActivityType.ADDED_SERVICE}
                 <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> created a new service <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>.
@@ -89,6 +96,7 @@
             </div>
             -->
         </div>
+        <div style="clear: both;"></div>
     </div>
 #{/list}
 #{else}
@@ -108,7 +116,7 @@
                 Point: <span class="value">${t.point}</span>
             </span>
             <span class="item">
-                Suggested By: <span class="value">${t.suggestedBy}</span>
+                Suggested By: <span class="value"><a href="@{Profile.profile}/${t.suggestedBy.id}">${t.suggestedBy}</a></span>
             </span>
              <span class="item">
                 Vote Count: <span class="value">${t.downvoteCount+t.upvoteCount}</span>
