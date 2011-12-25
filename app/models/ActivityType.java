@@ -11,6 +11,6 @@ public enum ActivityType {
     COMMENTED_ON,
     PROPOSED_TASK,
     VOTED_ON_TASK,
-    TASK_APPROVED
+    TASK_APPROVED,
+    REWARD_GIVEN
 }
-

@@ -17,6 +17,8 @@ GET     /                                       Application.index
 *       /services/processStartApproval	        Services.processStartApproval
 *       /services/employeeApproval	        	Services.employeeApproval
 *       /services/processEmployeeApproval	    Services.processEmployeeApproval
+*       /services/bossClose                     Services.bossClose
+*       /services/employeeClose                 Services.employeeClose
 *       /services/listPage                      Services.listPage
 *       /services/myservices                    Services.myServices
 * 		/services/index                   		Services.index

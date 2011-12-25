@@ -84,7 +84,17 @@
                 	</span>
 	            </span>
             #{/if}
-            
+            #{if service.status == models.ServiceStatus.FINISHED && service.rewards != null && service.rewards.size() > 0}
+                    <span class="item">
+                      Rewards given:
+                    <span class="value">
+                      <ul>
+                        #{list service.rewards, as:'reward'}
+                        <li>${reward.name}</li>
+                        #{/list}
+                      </ul>
+                    </span>
+            #{/if}
               #{if service.slots!=null && service.slots.size()>0}
 	            <span class="item">
 	                Available Slots: <span class="value">
@@ -241,17 +251,41 @@
         		<input type="hidden" name="email" value="${userEmail}"/>
         		<input type="hidden" name="employeeEmail" value="${service.employee.email}"/>
         		<label>Comment:</label><br> 
-        		<textarea rows="5" cols="5" name = "bossComment"></textarea>
+        		<textarea rows="5" cols="45" name = "bossComment"></textarea>
+                        #{if service.type==models.ServiceType.REQUESTS}
+                        <div>If you're satisfied with what he/she has done, why not give him/her a couple of rewards?</div>
+                        <div>
+                          #{list rewards, as:'reward'}
+                          <input type="checkbox" id="rewards-${reward.id}" name="rewards" value="${reward.id}" /><label for="rewards-${reward.id}">${reward.name}</label><br />
+                	  #{/list}
+                        </div>
+                        #{/if}
     			<input type="submit" value="Close &rarr;" class="close-btn right" />
     	#{/form} 
     #{/if}
     #{if service.status==models.ServiceStatus.WAITING_EMPLOYEE_FINISH && service.employee.id==currentUser.id}
     	#{form @employeeClose(),}
+                        #{if service.type==models.ServiceType.REQUESTS && service.rewards != null && service.rewards.size() > 0}
+                          Yay! You've earned a few rewards. Here they are:
+                          <ul>
+                            #{list service.rewards, as:'reward'}
+                            <li>${reward.name}</li>
+                            #{/list}
+                          </ul>
+                        #{/if}
+                        #{if service.type==models.ServiceType.PROVIDES}
+                        <div>If you're satisfied with what he/she has done, why not give him/her a couple of rewards?</div>
+                        <div>
+                          #{list rewards, as:'reward'}
+                          <input type="checkbox" id="rewards-${reward.id}" name="rewards" value="${reward.id}" /><label for="rewards-${reward.id}">${reward.name}</label><br />
+                	  #{/list}
+                        </div>
+                        #{/if}
         		<input type="hidden" name="serviceId" value="${service.id}"/>
         		<input type="hidden" name="email" value="${userEmail}"/>
         		<input type="hidden" name="bossEmail" value="${service.boss.email}"/>
         		<label>Comment:</label><br> 
-        		<textarea rows="5" cols="5" name = "employeeComment"></textarea>
+        		<textarea rows="5" cols="45" name = "employeeComment"></textarea>
     			<input type="submit" value="Close &rarr;" class="close-btn right" />
     	#{/form}
     #{/if}

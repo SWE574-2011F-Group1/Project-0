@@ -253,7 +253,10 @@ public class Services extends BaseController {
 			serviceMatches=ServiceMatch.find(sql,null).fetch();
         	//serviceMatches=ServiceMatch.findByServiceOfUser(service);
         }
-        render(service, isBossUser,userEmail,isAppliedBefore,currentUser,serviceMatches, serviceComments);
+
+        List<Reward> rewards = Reward.findAll();
+
+        render(service, isBossUser,userEmail,isAppliedBefore,currentUser,serviceMatches, serviceComments, rewards);
     }
     
     public static void search(
@@ -401,24 +404,44 @@ public class Services extends BaseController {
 		        
 	        detail(service.id);
 	}
-	public static void bossClose(long serviceId,String email, String bossComment, String employeeEmail) throws Exception {
+	public static void bossClose(long serviceId,
+                                     String email,
+                                     String bossComment,
+                                     String employeeEmail,
+                                     List<String> rewards) throws Exception {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
         SUser employer = SUser.findByEmail(employeeEmail);
         boolean isBossUser = service.boss.email.equals(email);
         Logger.info("employeeEmail:" + employeeEmail);
-         if(service.status==ServiceStatus.IN_PROGRESS && isBossUser ){
-	     
-	        service.status=ServiceStatus.WAITING_EMPLOYEE_FINISH;
-	        service.save();
-	        
-	        Activity a = new Activity();
+
+        if (service.status == ServiceStatus.IN_PROGRESS && isBossUser) {
+            if (rewards != null && rewards.size() > 0) {
+                service.rewards = new HashSet<Reward>();
+                for (String rewardIdStr : rewards) {
+                    Reward reward = Reward.findById(Long.parseLong(rewardIdStr));
+                    service.rewards.add(reward);
+                }
+            }
+            
+            service.status=ServiceStatus.WAITING_EMPLOYEE_FINISH;
+            service.save();
+	    
+            Activity a = new Activity();
             a.performer = user;
             a.affectedService = service;
             a.type = ActivityType.FINISHED_SERVICE;
             a.affectedUsers.add(employer);
             a.save();
-	        
+
+            if (rewards != null && rewards.size() > 0) {
+                Activity rewardActivity = new Activity();
+                rewardActivity.performer = service.boss;
+                rewardActivity.affectedService = service;
+                rewardActivity.type = ActivityType.REWARD_GIVEN;
+                rewardActivity.affectedUsers.add(service.employee);
+                rewardActivity.save();
+            }
         }
 
         if (bossComment != null && !"".equals(bossComment)) {
@@ -439,24 +462,43 @@ public class Services extends BaseController {
         detail(service.id);
     }
 	
-	public static void employeeClose(long serviceId,String email, String employeeComment, String bossEmail) throws Exception {
+	public static void employeeClose(long serviceId,
+                                         String email,
+                                         String employeeComment,
+                                         String bossEmail,
+                                         List<String> rewards) throws Exception {
         Service service = Service.findById(serviceId);
         SUser user=SUser.findByEmail(email);
 
-        if(service.status==ServiceStatus.WAITING_EMPLOYEE_FINISH && service.employee.id==user.id){
-	      
-	        service.status=ServiceStatus.FINISHED;
-	        service.employee.providerPoint+=service.task.point;
-	        service.boss.requesterPoint+=service.task.point;
-	        service.save();
+        if (service.status == ServiceStatus.WAITING_EMPLOYEE_FINISH && service.employee.id == user.id) {
+            if (rewards != null && rewards.size() > 0) {
+                service.rewards = new HashSet<Reward>();
+                for (String rewardIdStr : rewards) {
+                    Reward reward = Reward.findById(Long.parseLong(rewardIdStr));
+                    service.rewards.add(reward);
+                }
+            }
+
+            service.status=ServiceStatus.FINISHED;
+            service.employee.providerPoint+=service.task.point;
+            service.boss.requesterPoint+=service.task.point;
+            service.save();
 	        
-	        Activity a = new Activity();
+            Activity a = new Activity();
             a.performer = user;
             a.affectedService = service;
             a.type = ActivityType.FINISHED_SERVICE;
             a.affectedUsers.add(service.boss);
             a.save();
-	        
+
+            if (rewards != null && rewards.size() > 0) {
+                Activity rewardActivity = new Activity();
+                rewardActivity.performer = service.employee;
+                rewardActivity.affectedService = service;
+                rewardActivity.type = ActivityType.REWARD_GIVEN;
+                rewardActivity.affectedUsers.add(service.boss);
+                rewardActivity.save();
+            }
         }
 
         if (employeeComment != null && !"".equals(employeeComment)) {

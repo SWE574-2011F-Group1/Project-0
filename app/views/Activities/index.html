@@ -47,6 +47,10 @@
             #{if act.type == models.ActivityType.TASK_APPROVED}
                 Yes! <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> has done it! With his last vote, <a href="@{Tasks.proposals}">${act.affectedTask.name}</a> as a task is approved. Go on try it!
             #{/if}
+            #{if act.type == models.ActivityType.REWARD_GIVEN}
+                ${act.performer} has just given ${act.affectedUsers.get(0)} a reward.
+                <a href="@{Services.detail}/${act.affectedService.id}">Go check it out.</a>
+            #{/if}
             <!--
             <div>
                 #{if act.affectedUsers.size() > 0}
