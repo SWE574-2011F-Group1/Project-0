@@ -18,6 +18,19 @@
                 Owner: <span class="value"><a style="color:black;" href="@{Profile.profile}/${s.boss.id}">${s.boss}</a></span>
             </span>
             <span class="item">
+	            LocationType: <span class="value">
+	            	#{if s.locationType==models.LocationType.VIRTUAL}
+	            		VIRTUAL LOCATION
+	            	#{/if}
+	            	#{elseif s.locationType==models.LocationType.ANYLOCATION}
+	            		ANY LOCATION
+	            	#{/elseif}
+	            	#{else}
+	            		LOCATION BASED
+	            	#{/else}
+	            </span>
+	        </span>
+            <span class="item">
                 Location: <span class="value">${s.location}</span>
             </span>
             #{if s?.startDate}

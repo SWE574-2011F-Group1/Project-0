@@ -56,7 +56,7 @@
             <label class="required">Location Type:</label>
             
             #{if service.locationType==models.LocationType.NORMAL}
-            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}" checked/>Location Based
+            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}" checked="checked" />Location Based
             #{/if}
             #{else}
             	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}"/>Location Based
@@ -92,9 +92,9 @@
 
             #{/field}
             #{if service.locationType==models.LocationType.NORMAL}
-            	<div id="map_canvas" style="width: 500px; height: 300px"></div>
-            #{/if}
-        </p>
+				<div id="map_canvas" style="width: 500px; height: 300px"></div>
+			#{/if}
+        </p>        
         <p>
             #{field 'description'}
             <label class="required">Description:</label><br />
@@ -371,6 +371,24 @@
                 $(".proposal").show();
             }
         });
+        
+        if ($("input#locationType:checked").val() == "${models.LocationType.VIRTUAL}" || $("input#locationType:checked").val() == "${models.LocationType.ANYLOCATION}") {
+      	    $("input#location").attr('disabled', true);
+      		$("p.location").hide();
+      		$("div#map_canvas").remove();
+      	} else {
+      		$("input#location").attr('disabled', false);
+      		$("p.location").show();
+      		if ($("div#map_canvas").length<=0){
+      			$("input#location").parent().append("<div id='map_canvas' style='width: 500px; height: 300px'></div>");
+      		}
+      		initialize();
+      	}
+      	locationType=$("input#locationType").val();
+        
+        
+        
+        
         $("select#taskId").change();
         
         $(".change-type-btn").bind("click", function() {

@@ -3,7 +3,8 @@ package models;
 public enum LocationType {
 	VIRTUAL,
     ANYLOCATION,
-    NORMAL;
+    NORMAL,
+    ALL;
     
     public int getOrdinal() {
         return ordinal();

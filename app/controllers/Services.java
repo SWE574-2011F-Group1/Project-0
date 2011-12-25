@@ -271,7 +271,8 @@ public class Services extends BaseController {
     		int hourStart,
     		int minStart,
     		int hourEnd,
-    		int minEnd) {
+    		int minEnd,
+    		double locationLat,double locationLng,LocationType locationType) {
 		Date sd, ed;
 		// Map<String,String> errors=new HashMap<String,String>();
 		String error = "";
@@ -282,7 +283,9 @@ public class Services extends BaseController {
 		if (searchDone == 1) {
 			sc.setDescription(description.trim());
 			sc.setEndDate(endDate);
-			sc.setLocation(location.trim());
+			if(locationType==LocationType.NORMAL){
+				sc.setLocation(location.trim());
+			}
 			sc.setServiceType(serviceType);
 			sc.setStartDate(startDate);
 			sc.setTitle(title.trim());
@@ -294,6 +297,13 @@ public class Services extends BaseController {
 			sc.dayOfWeek = dayOfWeekEnum;
 			sc.setStartTime(hourStart, minStart);
 			sc.setEndTime(hourEnd, minEnd);
+			
+			System.out.println("Locationtype="+locationType);
+			sc.locationType=locationType;
+			if(locationType==LocationType.NORMAL){
+				sc.locationLat=locationLat;
+				sc.locationLng=locationLng;
+			}
 		} else if (searchDone == 2) {
 			sc.setTitle(title.trim());
 		}
@@ -673,7 +683,7 @@ public class Services extends BaseController {
 			sql += " and t.point<=" + sc.getMaxBasePoint();
 		}
 
-		if (!sc.getLocation().equals("")) {
+		if (sc.locationType==LocationType.NORMAL && !sc.getLocation().equals("")) {
 			sql += " and s.location LIKE '%" + sc.getLocation() + "%'";
 		}
 
@@ -708,6 +718,9 @@ public class Services extends BaseController {
 			String y = st.nextToken();
 			ed = y + "-" + m + "-" + d;
 			sql += " and s.endDate<='" + ed + "'";
+		}
+		if(sc.locationType!=LocationType.ALL){
+			sql += " and s.locationType="+sc.locationType.getOrdinal();
 		}
 
 		return sql;
