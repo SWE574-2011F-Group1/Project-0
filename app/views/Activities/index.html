@@ -6,6 +6,13 @@
     <div class="list-item">
         <div class="info">
             <div class="activity-date right">${act.getFormattedCreationDate()}</div>
+            <a href="@{Profile.profile}/${act.performer.id}">
+	            <div class="activity-pic left">
+	            	#{if act.performer.fbId}
+	                	<img src="http://graph.facebook.com/${act.performer.fbId}/picture" />
+	                #{/if}
+	            </div>
+            </a>
             *{ Show messages according to the type... }*
             #{if act.type == models.ActivityType.ADDED_SERVICE}
                 <a href="@{Profile.profile}/${act.performer.id}">${act.performer}</a> created a new service <a href="@{Services.detail}/${act.affectedService.id}">${act.affectedService.title}</a>.
@@ -55,5 +62,6 @@
             </div>
             -->
         </div>
+        <div style="clear:both;"></div>
     </div>
 #{/list}

@@ -1,3 +1,89 @@
+STag(homework):
+  text: homework
+STag(website):
+  text: website
+STag(psd):
+  text: psd
+STag(psd2):
+  text: psd
+STag(css):
+  text: css
+STag(html):
+  text: html
+STag(tableless-design):
+  text: tableless design
+STag(education):
+  text: education
+STag(copyright):
+  text: copyright
+STag(lawyer):
+  text: lawyer
+STag(lawyer2):
+  text: lawyer
+STag(lawyer3):
+  text: lawyer
+STag(legal):
+  text: legal
+STag(design):
+  text: design
+STag(graphical):
+  text: graphical
+STag(graphical-design):
+  text: graphical design
+STag(paid-job):
+  text: paid job
+STag(high-quality):
+  text: high quality
+STag(photoshop):
+  text: photoshop
+STag(zekeriyakoy):
+  text: zekeriyakoy
+STag(mecidiyekoy):
+  text: mecidiyekoy
+STag(maslak):
+  text: maslak
+STag(sariyer):
+  text: sariyer
+STag(sariyer2):
+  text: sariyer
+STag(zincirlikuyu):
+  text: zincirlikuyu
+STag(driving):
+  text: driving
+STag(car-service):
+  text: car service
+STag(car-service2):
+  text: car service
+STag(gardener):
+  text: gardener
+STag(istanbul):
+  text: istanbul
+STag(istanbul2):
+  text: istanbul
+STag(istanbul3):
+  text: istanbul
+STag(istanbul4):
+  text: istanbul
+STag(istanbul5):
+  text: istanbul
+STag(istanbul6):
+  text: istanbul
+STag(palace):
+  text: palace
+STag(aged-persons):
+  text: ages-persons
+STag(aged-persons2):
+  text: ages-persons
+STag(housekeeping):
+  text: housekeeping
+STag(housekeeping2):
+  text: housekeeping
+STag(gardening):
+  text: gardening
+STag(besiktas):
+  text: besiktas
+STag(levent):
+  text: levent
 SUser(roy):
   email: roy@ses.com
   password: 1234
@@ -125,8 +211,10 @@ Service(se1):
   title: Best Gardener Ever!
   location: "Besiktas, Istanbul"
   description: Love Gardening Work! I would love to keep clean your garden. Please Pick Me!
+  locationType: NORMAL
   locationLat: 38.341656192795924
   locationLng: 27.24609375
+  stags: [gardening, istanbul, besiktas]
 Service(se2):
   boss: admin
   type: REQUESTS
@@ -135,8 +223,10 @@ Service(se2):
   title: Driver Needed For Old Man
   location: "Levent, Istanbul"
   description: "I'm an old man living in the neighbourhood. I require someone who can drive me to my grandson's birthday party. I would really appraciate help and I can be generous too."
+  locationType: NORMAL
   locationLat: 41.049323867571616
   locationLng: 29.07257080078125
+  stags: [aged-persons, car-service, levent]
 Service(se3):
   boss: admin
   type: REQUESTS
@@ -145,8 +235,10 @@ Service(se3):
   title: Need A Gardenar for my palace(!)
   location: "Zekeriyakoy, Istanbul"
   description: "I need a gardener who loves to work with gardens and grass. I need you to cut the grasses, plant some flowers and make the garden look like cool."
+  locationType: NORMAL
   locationLat: 39.842286020743394
   locationLng: 32.87109375
+  stags: [gardener, sariyer, istanbul2, palace]
 Service(se4):
   boss: admin
   type: PROVIDES
@@ -155,8 +247,132 @@ Service(se4):
   title: Can drive people to work from Zekeriyakoy to Mecidiyekoy
   location: "Zekeriyakoy, Istanbul"
   description: "I have a car and all the mornings, I go to work to Mecidiyekoy using my car. I can help anyone in the neighbourhood, pick them up (limited to the seat count of course) and drive them To Mecidiyekoy or vicinity.\n\n Contact me for the exact location and route."
+  locationType: NORMAL
   locationLat: 41.03223326026193
   locationLng: 29.0313720703125
+  stags: [zekeriyakoy, mecidiyekoy, maslak, sariyer2, zincirlikuyu, driving, car-service2]
+Service(se5):
+  boss: oya
+  type: PROVIDES
+  task: t8
+  status: PUBLISHED
+  title: Graphical Designs at the best quality
+  location: ""
+  locationType: VIRTUAL
+  description: "I'm a graphical design student living in Italia, Florence. I'm currently at my third year and I try to improve my skills. If you got any jobs related to graphical, I can help you out. Please contact me by message and I will answer you as soon as possible. For my portfolio, check out my deviantart page.\n\n I'm willing to work with anyone in the world, as my job is mostly digital."
+  stags: [design, graphical, high-quality, psd, photoshop]
+Service(se6):
+  boss: oya
+  type: REQUESTS
+  task: t9
+  status: PUBLISHED
+  title: Digital Copyright Information Need
+  locationType: NORMAL
+  location: "Florence, Italy"
+  description: "I'm a graphical design student, and I'm really worried about my work being stolen or credited to someone else. What can I do to protect my copyright? Some nice documents or an abbrevation might be good enough for me, however I prefer a lawyer to contact me and explain me direct"
+  locationLat: "43.7687324"
+  locationLng: "11.2569013"
+  stags: [copyright, lawyer, legal]
+Service(se7):
+  boss: veli
+  type: REQUESTS
+  task: t10
+  status: PUBLISHED
+  title: I need a simple web site for myself
+  location: ""
+  locationType: VIRTUAL
+  description: "I'm a little boy, working on a web site making homework. I need some very simple HTML codes to satisfy my teacher, It will be als good if someone helps me via skype or something and explain me how it is done. A crash course is more than welcome. Please send me and email and don't tell my mom."
+  startTime: "2012-01-01"
+  endTime: "2012-03-01"
+  stags: [homework, website, education]
+Service(se8):
+  boss: oya
+  type: PROVIDES
+  task: t10
+  status: PUBLISHED
+  title: Helping people to make their web sites.
+  location: ""
+  locationType: VIRTUAL
+  description: "I'm a graphical design student working in Florence, Italy. I'm mostly doing graphics, but I can also make small and easy web sites, based on my designs. \nI can cut images from PSDs etc. too. \n\nI have a limited knowledge of CSS and HTML however, I can make somewhat tableless design."
+  stags: [html, tableless-design, psd2, css]
+Service(se9):
+  boss: hikmet
+  type: PROVIDES
+  task: t9
+  status: PUBLISHED
+  title: Counsellor on legal issues
+  locationType: NORMAL
+  location: "Mecidiyekoy, Istanbul"
+  localtionLat: 41.00527
+  locationLng: 28.97696
+  description: "I'm a law student on Istanbul University. I'm trying to improve my knowledge on legal issues related to the divorcement. I would love to counsel people about divorcing. What problems can be or things like that.\n I do not say that the things I will say will work out 100% and I can't represent you on court however I can direct you to the right people and give you some idea on what can happen."
+  stags: [istanbul3, lawyer2]
+Service(se10):
+  boss: hilmi
+  type: REQUESTS
+  task: t7
+  status: PUBLISHED
+  title: Dishwasher need for the house
+  locationType: NORMAL
+  location: "Mecidiyekoy, Istanbul"
+  localtionLat: 41.00527
+  locationLng: 28.97696
+  description: "I'm an old guy living alone in Istanbul. I require a young boy to help me clean the house, mostly the dishwashing as I hate doing that and cannot afford to buy a dishwasher"
+Service(se11):
+  boss: ali
+  type: PROVIDES
+  task: t7
+  status: PUBLISHED
+  title: Helping keep clean houses
+  locationType: NORMAL
+  location: "Istanbul"
+  localtionLat: 41.013583900170545
+  locationLng: 28.970260620117188
+  description: "I'm young, energetic and willing to help my elders, to keep their houses clean. I can visit them once a week or so to help them"
+  stags: [aged-persons2, housekeeping, istanbul4]
+Service(se12):
+  boss: mehmet
+  type: PROVIDES
+  task: t8
+  status: PUBLISHED
+  title: Turkish Graphical Designer Looking For Job
+  locationType: VIRTUAL
+  location: ""
+  description: "Hi,\n\n I'm a graphical designer living in Istanbul. I have problems finding job so I'm willing to have a paid job because I can barely live. Thanks in advance if you even read this"
+  stags: [istanbul5, graphical-design, paid-job]
+Service(se13):
+  boss: mehmet
+  type: REQUESTS
+  task: t9
+  status: PUBLISHED
+  title: Legal Counsel Required on Turkish Copyright law
+  locationType: NORMAL
+  location: "Istanbul"
+  locationLat: 41.013583900170545
+  locationLng: 28.970260620117188
+  description: "I'm a designer and I have a serious dispute with someone who has stolen my work and claimed for his own. I'm having problems with my current lawyer who nearly took all my money, and haven't giving anything back to me at all. I really need someone else to have a look on my case, and give me some advice. Thanks in regards."
+  stags: [lawyer3, istanbul6]
+Service(se14):
+  boss: ahmet
+  type: PROVIDES
+  task: t10
+  status: PUBLISHED
+  title: "Can make your website in a week!!!!"
+  locationType: VIRTUAL
+  location: ""
+  description: "I'm a web developer working in a high profile company with exceptional abilities regarding to HTML, CSS, Javascript and PHP. I'm willing to help anyone to do make their web site homeworks or to fulfill their deadlines. \n\n I can make conference calls using skype to understand your needs. I use open source software to give this service, so if you are a Microsoft lover, I cannot work with you."
+Service(se15):
+  boss: ahmet
+  type: REQUESTS
+  task: t7
+  status: PUBLISHED
+  title: Housekeeper for a developer
+  locationType: NORMAL
+  location: "Istanbul"
+  locationLat: 41.061362312362355
+  locationLng: 29.01111602783203
+  description: "I'm working late at nights on my company, and I can't spare enough time to keep my house clean or prepare food for myself. I would welcome anyone who can help me about this. \n\nI'm willing to reward anyone regarding this generously too."
+  stags: [housekeeping2]
 Activity(a1):
   performer: roy
   type: ADDED_SERVICE
