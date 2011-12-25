@@ -37,3 +37,63 @@
         <div class="clearfix"></div>
     </div>
 #{/list}
+<hr />
+<label>Not found what you're looking for? Why not propose a new one?</label>
+<div id="newTaskProposal">
+    #{form @sendModeration(), id:'propose-task'}
+        <p class="error hidden">
+        </p>
+        <p>
+            #{field 'name'}
+            <label>Name:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
+            <span class="tip">Something to define the task. One word is best, three is too much. More then three perhaps it's not a task...</span>
+            #{/field}
+        </p>
+        <p>
+            #{field 'point'}
+            <label>Point:</label>
+            <select id="point" name="${field.name}">
+	       <option value="1">01</option>
+	       <option value="2">02</option>
+	       <option value="3">03</option>
+	       <option value="4">04</option>
+	       <option value="5">05</option>
+	       <option value="6">06</option>
+	       <option value="7">07</option>
+	       <option value="8">08</option>
+	       <option value="9">09</option>
+	       <option value="10">10</option>
+	       </select>
+            <span class="tip">We use 1-10 point scale. Higher point indicates, higher value of service type.</span>
+            #{/field}
+        </p>	
+        <p>
+            <input type="button" value="Continue &rarr;" id="submit-btn">
+        </p>
+    #{/form}
+</div>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+        //FIXME: Burasi copy paste olmayaydi iyiydi...
+        $("input[type=button]#submit-btn").bind("click", function() {
+            //Check empty values, show an error if there are any empty values...
+            var form = $("form#propose-task");
+            var errorDiv = $("p.error").addClass("hidden").html("");
+            var errors = false;
+            form.find("input#name, input#point").each(function() {
+                errors = false;
+                if (!$(this).val()) {
+                    errorDiv.html("This field cannot be empty");
+                    errorDiv.removeClass("hidden");
+                    $(this).focus();
+                    errors = true;
+                    return false;
+                }
+            });
+            if (!errors) {
+                form.submit();
+            }
+        });
+    });
+</script>
