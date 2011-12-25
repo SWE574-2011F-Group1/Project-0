@@ -9,6 +9,8 @@
          </p>
      #{/if}
     #{form @search(), class:'search'}
+    	<input type="hidden" id="locationLat" name="locationLat" value="${sc.locationLat}"/>
+    	<input type="hidden" id="locationLng" name="locationLng" value="${sc.locationLng}"/>
         <input type="hidden" name="searchDone" value="1"/>
                 <p>
                 <label>Task:</label>
@@ -56,12 +58,52 @@
                         <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${sc.description}" />
                     #{/field}
                 </p>
-                <p>
-                <label>Location:</label>
+                 <p>
+		            #{field 'locationType'}
+		            <label class="required">Location Type:</label>
+		            
+		             #{if sc.locationType==models.LocationType.ALL}
+		            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.ALL}" checked/>All
+		            #{/if}
+		            #{else}
+		            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.ALL}"/>All
+		            #{/else}
+		            #{if sc.locationType==models.LocationType.NORMAL}
+		            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}" checked/>Location Based
+		            #{/if}
+		            #{else}
+		            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}"/>Location Based
+		            #{/else}
+		            
+		            #{if sc.locationType==models.LocationType.VIRTUAL}
+		            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.VIRTUAL}" checked/>Virtual Location
+		            #{/if}
+		            #{else}
+		           		<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.VIRTUAL}"/>Virtual Location
+		            #{/else}
+		            
+		            #{if sc.locationType==models.LocationType.ANYLOCATION}
+		            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.ANYLOCATION}" checked/>Any Location
+		            #{/if}
+		            #{else}
+		            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.ANYLOCATION}"/>Any Location
+		            #{/else}
+		            
+		            <span class="tip">Choose a location type for your service.</span>
+		            #{/field}
+		        </p>
+		        
+                <p class="location">
+                	<label>Location:</label>
                     #{field 'location'}
                         <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${sc.location}" />
+                        <span class="tip">Well, if you are in Istanbul, someone in New York may not help you! Best tell it!</span>       		
                     #{/field}
+                    #{if sc.locationType==models.LocationType.NORMAL || sc.locationType==models.LocationType.ALL}
+            			<div id="map_canvas" style="width: 500px; height: 300px"></div>
+            		#{/if}
                 </p>
+                
             <p>
                 <label>Max Base Point:</label>
                     #{field 'maxBasePoint'}
@@ -316,6 +358,35 @@
         		$(this).parent().find("select").attr("disabled", true);
         		}
         	
+        });
+        
+        
+        if ($("input#locationType:checked").val() == "${models.LocationType.VIRTUAL}" || $("input#locationType:checked").val() == "${models.LocationType.ANYLOCATION}") {
+      	    $("input#location").attr('disabled', true);
+      		$("p.location").hide();
+      		$("div#map_canvas").remove();
+      	} else {
+      		$("input#location").attr('disabled', false);
+      		$("p.location").show();
+      		if ($("div#map_canvas").length<=0){
+      			$("input#location").parent().append("<div id='map_canvas' style='width: 500px; height: 300px'></div>");
+      		}
+      		initialize();
+      	}
+        
+        $("input#locationType").bind("click", function() {
+        	if ($(this).val() == "${models.LocationType.VIRTUAL}" || $(this).val() == "${models.LocationType.ANYLOCATION}") {
+          	    $("input#location").attr('disabled', true);
+          		$("p.location").hide();
+          		$("div#map_canvas").remove();
+          	} else {
+          		$("input#location").attr('disabled', false);
+          		$("p.location").show();
+          		if ($("div#map_canvas").length<=0){
+          			$("input#location").parent().append("<div id='map_canvas' style='width: 500px; height: 300px'></div>");
+          		}
+          		initialize();
+          	}
         });
         
     });

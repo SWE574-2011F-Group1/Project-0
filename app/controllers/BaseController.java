@@ -11,6 +11,7 @@ import com.restfb.types.User;
 
 import controllers.Secure.Security;
 import models.*;
+
 /**
  * Life Cycle of an HTTP request
  *
@@ -34,6 +35,9 @@ public class BaseController extends Controller {
                 renderArgs.put("loggedIn", true);
                 renderArgs.put("menuItems", new String[] {"Services", "Messages", "Service Types", "Activities"});
                 renderArgs.put("message", flash.get("message"));
+                Random r = new Random(new Date().getTime());
+                String[] greetings = new String[] { "Hello", "Merhaba", "Olà", "Բարեւ", "Bonjour", "Pronto" };
+                renderArgs.put("greetings", greetings[r.nextInt(greetings.length)]);
             }
         }
     }

@@ -37,9 +37,10 @@
                 #{list tasks, as:'t'}
 	               	<option value="${t.id}" data-point="${t.point}" #{if t.equals(service.task)}} selected #{/if}>${t.name} (${t.point})</option>
                 #{/list}
+                <option value="-1">Propose A New Task!</option>
             </select>
-            <span class="tip right point-tip"></span>
-            <span class="tip right proposal">Not Found What You're looking for? Check the <a href="@{Tasks.proposals}">proposals!</a></span>
+            <span class="tip point-tip"></span>
+            <span class="tip proposal">Not Found What You're looking for? Check the <a href="@{Tasks.proposals}">proposals!</a></span>
             <span class="tip">This service is related with what? You shall gain points based on this option.</span>
             #{/field}
         </p>
@@ -53,6 +54,14 @@
          <p>
             #{field 'locationType'}
             <label class="required">Location Type:</label>
+            
+            #{if service.locationType==models.LocationType.NORMAL}
+            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}" checked="checked" />Location Based
+            #{/if}
+            #{else}
+            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}"/>Location Based
+            #{/else}
+            
             #{if service.locationType==models.LocationType.VIRTUAL}
             	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.VIRTUAL}" checked/>Virtual Location
             #{/if}
@@ -67,16 +76,10 @@
             	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.ANYLOCATION}"/>Any Location
             #{/else}
             
-            #{if service.locationType==models.LocationType.NORMAL}
-            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}" checked/>Location Based
-            #{/if}
-            #{else}
-            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}"/>Location Based
-            #{/else}
-            <span class="tip"></span>
+            <span class="tip">Choose a location type for your service.</span>
             #{/field}
         </p>
-        <p>
+        <p class="location">
             #{field 'location'}
             <label class="required">Location:</label>
             #{if service.locationType==models.LocationType.NORMAL}
@@ -89,9 +92,9 @@
 
             #{/field}
             #{if service.locationType==models.LocationType.NORMAL}
-            	<div id="map_canvas" style="width: 500px; height: 300px"></div>
-            #{/if}
-        </p>
+				<div id="map_canvas" style="width: 500px; height: 300px"></div>
+			#{/if}
+        </p>        
         <p>
             #{field 'description'}
             <label class="required">Description:</label><br />
@@ -349,6 +352,17 @@
     $(document).ready(function() {
         $("select#taskId").bind("change", function() {
             if ($(this).val() != "") {
+                
+                if ($(this).val() == -1) {
+                    if (confirm("Do you want to be redirected to task suggestion page?")) {
+                        document.location = "@{Tasks.suggest}";
+                        return;
+                    } else {
+                        $(this).val("");
+                        return;
+                    }
+                }
+                
                 var point = $(this[this.selectedIndex]).data("point");
                 $("span.point-tip").html("You will gain <a href='javascript:return false;'>" + point + "</a> points if you finish this task");
                 $(".proposal").hide();
@@ -357,6 +371,24 @@
                 $(".proposal").show();
             }
         });
+        
+        if ($("input#locationType:checked").val() == "${models.LocationType.VIRTUAL}" || $("input#locationType:checked").val() == "${models.LocationType.ANYLOCATION}") {
+      	    $("input#location").attr('disabled', true);
+      		$("p.location").hide();
+      		$("div#map_canvas").remove();
+      	} else {
+      		$("input#location").attr('disabled', false);
+      		$("p.location").show();
+      		if ($("div#map_canvas").length<=0){
+      			$("input#location").parent().append("<div id='map_canvas' style='width: 500px; height: 300px'></div>");
+      		}
+      		initialize();
+      	}
+      	locationType=$("input#locationType").val();
+        
+        
+        
+        
         $("select#taskId").change();
         
         $(".change-type-btn").bind("click", function() {
@@ -419,7 +451,6 @@
     							 added=true;
     							
     					}
-    				
     			});
     			if(!added)
     				{
@@ -480,20 +511,19 @@
         	 
         
         $("input#locationType").bind("click", function() {
-              
-          	  if($(this).val()=="${models.LocationType.VIRTUAL}" || $(this).val()=="${models.LocationType.ANYLOCATION}"){
-          		$("input#location").attr('disabled', true);
-          		$("div#map_canvas").children().remove();
-          	  }
-          	  else{
+            if ($(this).val() == "${models.LocationType.VIRTUAL}" || $(this).val() == "${models.LocationType.ANYLOCATION}") {
+          	    $("input#location").attr('disabled', true);
+          		$("p.location").hide();
+          		$("div#map_canvas").remove();
+          	} else {
           		$("input#location").attr('disabled', false);
-          		if($("div#map_canvas").length<=0){
+          		$("p.location").show();
+          		if ($("div#map_canvas").length<=0){
           			$("input#location").parent().append("<div id='map_canvas' style='width: 500px; height: 300px'></div>");
           		}
           		initialize();
-          	  }
+          	}
           	locationType=$(this).val();
-          	
-          });
+        });
     });
 </script>

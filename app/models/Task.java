@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
-public class Task extends Model {
+public class Task extends CommentableModel {
     
     public String name;
     
