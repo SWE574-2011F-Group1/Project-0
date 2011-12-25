@@ -40,7 +40,9 @@ div.list-item a {color: #4D8789;}
 span.radio-button {cursor: pointer;}
 
 div.profile-pic {float: left; padding: 3px; background-color:#1B676B; margin-right: 5px; box-shadow: black 1px 1px 10px;}
-div.profile-pic div.default {background-image:url("/public/images/default-avatar.jpg"); width: 50px; height: 50px; background-repeat: no-repeat;}
+div.profile-pic div.default,
+.activity-pic {background-image:url("/public/images/default-avatar.jpg"); width: 50px; height: 50px; background-repeat: no-repeat;}
+.activity-pic {margin-right: 10px;}
 
 span.tip {font-size: 10px; font-style: italic; display: block; color: gray;}
 
@@ -56,9 +58,9 @@ span.error {float:right; position: relative; left: 2px; color: #A05C5A;}
 .icons-big {width: 32px; height: 32px;}
 #search-bar input[type=text] {width: 150px;}
 
-.sidebar {position: absolute; right: 0px; height: 500px; width: 250px;}
+.sidebar {position: absolute; right: 0px; height: 600px; width: 350px; top: 10px;}
 .sidebar h3 {text-align:center;}
-.cloud {height: 100px; width: 250px;}
+.cloud {height: 300px; width: 350px; position: relative; top:-20px;}
 
 .dashboard-buttons { width: 210px; float: right; }
 .dashboard-buttons button { float: right; margin-bottom: 10px; width: 200px; font-size: 14px; height: 40px; }
@@ -125,9 +127,8 @@ a {
 }
 
 .wrapper {
-    padding: 20px 0;
+    padding: 20px 100px 20px 50px;
     width: 900px;
-    margin: auto;
     margin-top: 50px;
     position: relative; 
 }
