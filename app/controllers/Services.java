@@ -196,8 +196,7 @@ public class Services extends BaseController {
         for (Service service : services) {
         	serializedServices.add(service);
 		}
-        Cache.set("listServices", serializedServices, "30min");
-        
+        Cache.set("filteredServices", serializedServices, "30min");
         
         if (maxPageNumber != 0) {
         	services = getServicesForPage(services, 1);
