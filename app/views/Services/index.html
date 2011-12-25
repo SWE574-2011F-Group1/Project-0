@@ -37,9 +37,10 @@
                 #{list tasks, as:'t'}
 	               	<option value="${t.id}" data-point="${t.point}" #{if t.equals(service.task)}} selected #{/if}>${t.name} (${t.point})</option>
                 #{/list}
+                <option value="-1">Propose A New Task!</option>
             </select>
-            <span class="tip right point-tip"></span>
-            <span class="tip right proposal">Not Found What You're looking for? Check the <a href="@{Tasks.proposals}">proposals!</a></span>
+            <span class="tip point-tip"></span>
+            <span class="tip proposal">Not Found What You're looking for? Check the <a href="@{Tasks.proposals}">proposals!</a></span>
             <span class="tip">This service is related with what? You shall gain points based on this option.</span>
             #{/field}
         </p>
@@ -349,6 +350,17 @@
     $(document).ready(function() {
         $("select#taskId").bind("change", function() {
             if ($(this).val() != "") {
+                
+                if ($(this).val() == -1) {
+                    if (confirm("Do you want to be redirected to task suggestion page?")) {
+                        document.location = "@{Tasks.suggest}";
+                        return;
+                    } else {
+                        $(this).val("");
+                        return;
+                    }
+                }
+                
                 var point = $(this[this.selectedIndex]).data("point");
                 $("span.point-tip").html("You will gain <a href='javascript:return false;'>" + point + "</a> points if you finish this task");
                 $(".proposal").hide();

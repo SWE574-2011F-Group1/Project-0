@@ -1,5 +1,4 @@
 <!DOCTYPE html>
- 
 <html>
     <head>
         <title>SES: #{get 'title' /}</title>
@@ -79,7 +78,7 @@
                         </a>
                     </div>
                 </div>
-                Բարեւ, <a href="@{Profile.profile}">${userObj.name}</a>! |
+                ${greetings}, <a href="@{Profile.profile}">${userObj.name}</a>! |
                 #{if submenuView == null}
                     <span class="selected">
                 #{/if}
