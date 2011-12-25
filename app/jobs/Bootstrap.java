@@ -12,7 +12,7 @@ import models.*;
 @OnApplicationStart
 public class Bootstrap extends Job {
     public void doJob() {
-	    if (SUser.count() == 0) {
+	    if (SUser.count() == 0) {	    	
             Fixtures.loadModels("data.yml");
             List<Service> list = Service.findAll();
             for (Service s : list) {
