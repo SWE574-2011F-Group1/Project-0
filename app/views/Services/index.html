@@ -54,6 +54,14 @@
          <p>
             #{field 'locationType'}
             <label class="required">Location Type:</label>
+            
+            #{if service.locationType==models.LocationType.NORMAL}
+            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}" checked/>Location Based
+            #{/if}
+            #{else}
+            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}"/>Location Based
+            #{/else}
+            
             #{if service.locationType==models.LocationType.VIRTUAL}
             	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.VIRTUAL}" checked/>Virtual Location
             #{/if}
@@ -68,16 +76,10 @@
             	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.ANYLOCATION}"/>Any Location
             #{/else}
             
-            #{if service.locationType==models.LocationType.NORMAL}
-            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}" checked/>Location Based
-            #{/if}
-            #{else}
-            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.LocationType.NORMAL}"/>Location Based
-            #{/else}
-            <span class="tip"></span>
+            <span class="tip">Choose a location type for your service.</span>
             #{/field}
         </p>
-        <p>
+        <p class="location">
             #{field 'location'}
             <label class="required">Location:</label>
             #{if service.locationType==models.LocationType.NORMAL}
@@ -431,7 +433,6 @@
     							 added=true;
     							
     					}
-    				
     			});
     			if(!added)
     				{
@@ -492,20 +493,19 @@
         	 
         
         $("input#locationType").bind("click", function() {
-              
-          	  if($(this).val()=="${models.LocationType.VIRTUAL}" || $(this).val()=="${models.LocationType.ANYLOCATION}"){
-          		$("input#location").attr('disabled', true);
+            if ($(this).val() == "${models.LocationType.VIRTUAL}" || $(this).val() == "${models.LocationType.ANYLOCATION}") {
+          	    $("input#location").attr('disabled', true);
+          		$("p.location").hide();
           		$("div#map_canvas").remove();
-          	  }
-          	  else{
+          	} else {
           		$("input#location").attr('disabled', false);
-          		if($("div#map_canvas").length<=0){
+          		$("p.location").show();
+          		if ($("div#map_canvas").length<=0){
           			$("input#location").parent().append("<div id='map_canvas' style='width: 500px; height: 300px'></div>");
           		}
           		initialize();
-          	  }
+          	}
           	locationType=$(this).val();
-          	
-          });
+        });
     });
 </script>
