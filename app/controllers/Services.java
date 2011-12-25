@@ -360,7 +360,7 @@ public class Services extends BaseController {
 			searchReferenceService.title="Search Reference Service";
 			searchReferenceService.locationLat=sc.locationLat;
 			searchReferenceService.locationLng=sc.locationLng;
-			distanceMap=getDistances(searchReferenceService, allServices);
+			distanceMap=Service.getDistances(searchReferenceService, allServices);
 			
 			servicesOrderedBydistance=new ArrayList<Service>();
 			
