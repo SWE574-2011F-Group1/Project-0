@@ -342,7 +342,9 @@ public class Services extends BaseController {
 	public static void searchList(ServiceSearchCriteria sc, boolean quickSearch) {
 		
 		
-		Collection<Service> allServices = null;
+		List<Service> allServices = null;
+		Map<Long,Double> distanceMap=null;
+		List<Service> servicesOrderedBydistance=null;
 		if (!quickSearch) {
 			allServices = Service.find(prepareQueryForServiceSearch(sc), null)
 					.fetch();
@@ -351,17 +353,77 @@ public class Services extends BaseController {
 					prepareQueryForQuickServiceSearch(sc.getTitle()), null)
 					.fetch();
 		}
+		
+		if(allServices!=null && allServices.size()>0 && 
+				sc.locationType==LocationType.ALL || sc.locationType==LocationType.NORMAL){
+			Service searchReferenceService=new Service();
+			searchReferenceService.title="Search Reference Service";
+			searchReferenceService.locationLat=sc.locationLat;
+			searchReferenceService.locationLng=sc.locationLng;
+			distanceMap=Service.getDistances(searchReferenceService, allServices);
+			
+			servicesOrderedBydistance=new ArrayList<Service>();
+			
+			int center=-1;
+			int left=-1;
+			int right=-1;
+			int index=0;
+			for(int i=0;i<allServices.size();i++){
+			    Service s=allServices.get(i);
+			    double distance=distanceMap.get(new Long(s.id));
+				if(i==0){
+					servicesOrderedBydistance.add(s);
+					left=0;
+					right=servicesOrderedBydistance.size();
+					center=(left+right)/2;
+				}
+				else{
+					boolean found=false;
+					while(!found && center>=0 && center<servicesOrderedBydistance.size()){
+						Service centerService=servicesOrderedBydistance.get(center);
+						double distanceOfCService=distanceMap.get(new Long(centerService.id));
+						Logger.info("End left=%d right=%d center=%d distance=%s distcanceOfCenter=%s",
+								left,right,center,""+distance,""+distanceOfCService);
+						if(distance==distanceOfCService){
+							servicesOrderedBydistance.add(index,s);
+							found=true;
+						}
+						else if(left==right){
+							if(distanceOfCService>distance){
+								servicesOrderedBydistance.add(left,s);
+								found=true;
+							}
+							else if(distanceOfCService<distance){
+								servicesOrderedBydistance.add(left+1,s);
+								found=true;
+							}
+						}
+						else if(distanceOfCService<distance){
+							left=center+1;
+						}
+						else if(distanceOfCService>distance){
+							right=center-1;
+						}
+						center=(left+right)/2;
+						Logger.info("End left=%d right=%d center=%d",left,right,center);
+					}
+				}
+			}
+		}
+		else{
+			servicesOrderedBydistance=allServices;
+		}
 		int maxPageNumber=0;
-        if(allServices!=null){
-        	maxPageNumber=allServices.size()/serviceNumberPerPage;
-        	if(allServices.size()%serviceNumberPerPage>0)
+        if(servicesOrderedBydistance!=null){
+        	maxPageNumber=servicesOrderedBydistance.size()/serviceNumberPerPage;
+        	if(servicesOrderedBydistance.size()%serviceNumberPerPage>0)
         		maxPageNumber++;
         }
 
         List<Service> serializedServices=new ArrayList<Service>();
         List<Service> services=new ArrayList<Service>();
 
-        for (Service service : allServices) {
+        for (Service service : servicesOrderedBydistance) {
         	serializedServices.add(service);
         	
         	if(sc.searchSlots && service.slots != null && service.slots.size() != 0) {
@@ -381,8 +443,11 @@ public class Services extends BaseController {
 		}
 		Cache.set("filteredServices", services, "30min");
 
+		if(distanceMap!=null){
+			Cache.set("distanceMap", distanceMap, "30min");
+		}
 		Collection<Task> tasks = Task.findAllActive();
-		render(services, tasks,maxPageNumber);
+		render(services, tasks,maxPageNumber,distanceMap);
 	}
 
 	public static void apply(long serviceId,String email) throws Exception {
@@ -745,6 +810,7 @@ public class Services extends BaseController {
        
         //services = Service.findAll();
         services=Cache.get("filteredServices",List.class);
+        Map<Long,Double> distanceMap=Cache.get("distanceMap",Map.class);
        
         Collection<Task> tasks = Task.findWithWeights();
         
@@ -757,7 +823,7 @@ public class Services extends BaseController {
         	services=getServicesForPage(services, page);
         }
         
-        render(services, tasks);
+        render(services, tasks,distanceMap);
  }
 	
 	

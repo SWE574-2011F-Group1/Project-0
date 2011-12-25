@@ -489,7 +489,7 @@ public class Service extends CommentableModel {
 		return array[s1.length()][s2.length()];
 	}
 
-	private static Map<Long, Double> getDistances(Service originService,
+	public static Map<Long, Double> getDistances(Service originService,
 			List<Service> matchServices) {
 
 		List<Service> locationBasedMatchServices = new ArrayList<Service>();

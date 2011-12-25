@@ -20,8 +20,8 @@ public class ServiceSearchCriteria {
 	public int startTimeMinutesAfterMidnight;
 	public int endTimeMinutesAfterMidnight;
 	public LocationType locationType=LocationType.ALL;
-	public double locationLat=-1;
-	public double locationLng=-1;
+	public double locationLat=41;
+	public double locationLng=32;
 	
 	
 	public void setStartTime(int hour, int min) {
