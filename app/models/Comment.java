@@ -24,6 +24,9 @@ public class Comment extends Model {
     @ManyToOne
     public Service service;
     
+    @ManyToOne
+    public Task task;
+    
     @Lob
     public String comment;
     
@@ -48,6 +51,10 @@ public class Comment extends Model {
     
     public static List<Comment> findByService(long serviceId) {
     	return find ("select c from Comment c where c.service.id = ?", serviceId).fetch();
+    }
+    
+    public static List<Comment> findByTask(long taskId) {
+    	return find ("select c from Comment c where c.task.id = ?", taskId).fetch();
     }
 }
 

@@ -15,13 +15,23 @@
         </div>
         <div class="info" style="display:inline;">
             <span class="item">
-                Title: <span class="value">${t.name}</span>
+                Title: <span class="value"><a href="@{Tasks.taskDetail}/${t.id}">${t.name}</a></span>
             </span>
             <span class="item">
                 Point: <span class="value">${t.point}</span>
             </span>
             <span class="item">
                 Suggested By: <span class="value">${t.suggestedBy}</span>
+            </span>
+             <span class="item">
+              <a href="@{Tasks.taskDetail}/${t.id}">Comments </a>
+                <ul>
+                #{list t.comments, as:'c'}
+            	<li>
+                <span class="value">${c.comment}</span>
+                </li>
+                #{/list}
+                </ul>
             </span>
         </div>
         <div class="clearfix"></div>

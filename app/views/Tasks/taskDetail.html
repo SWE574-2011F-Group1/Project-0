@@ -1,0 +1,47 @@
+#{extends 'main.html' /}
+#{set title: 'Service Type Proposals' /}
+#{set submenuView: 'tasks' /}
+
+#{form @addComment(), id:'add-comment'}
+    <div class="list-item">
+        <div class="desc" style="display:inline; float: left;">
+        <div>
+            <a href="@{Tasks.upvote}/${task.id}"><img border="0" src="/public/images/up.png"  style="border:0px !important;"/></a>
+            </div>
+            <div class="voteDiff" style="text-align: center; font-size: 14pt;">${task.voteDiff}</div>
+            <div>
+            <a href="@{Tasks.downvote}/${task.id}"><img border="0" src="/public/images/down.png"  style="border:0px !important;"/></a>
+        </div>
+        </div>
+        <div class="info" style="display:inline;">
+        #{field 'id'}
+        <input type="hidden" name="${field.name}" value="${task.id}">
+           #{/field}
+            <span class="item">
+                Title: <span class="value">${task.name}</span>
+            </span>
+            <span class="item">
+                Point: <span class="value">${task.point}</span>
+            </span>
+            <span class="item">
+                Suggested By: <span class="value">${task.suggestedBy}</span>
+            </span>
+             <span class="item">
+                Comments:<br>
+                #{list task.comments, as:'c'}
+                <p style="border-top:solid 1px;"> ${c.owner.name}
+                <br><span class="value">${c.comment}</span>
+                </p>
+                #{/list}
+                
+                #{field 'comment'}
+            <label>Add A Comment:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" style="width:300px;" />
+            <span class="tip">Any comments accepted</span>
+            <input type="submit" value="add Comment"/>
+            #{/field}
+            </span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+ #{/form}
