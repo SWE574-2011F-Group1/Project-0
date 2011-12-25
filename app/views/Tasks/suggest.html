@@ -20,8 +20,27 @@
         <p>
             #{field 'point'}
             <label>Point:</label>
-            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${task?.point}" />
-            <span class="tip">Use dot as a delimiter for decimal values like: 0.3 or 1.7</span>
+           <select id="hourStart" name="${field.name}" >
+	       <option value="1">01</option>
+	       <option value="2">02</option>
+	       <option value="3">03</option>
+	       <option value="4">04</option>
+	       <option value="5">05</option>
+	       <option value="6">06</option>
+	       <option value="7">07</option>
+	       <option value="8">08</option>
+	       <option value="9">09</option>
+	       <option value="10">10</option>
+	       </select>
+<!--             <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${task?.point}" /> -->
+            <span class="tip">We use 1-10 point scale. Higher point indicates, higher value of service type.</span>
+            #{/field}
+        </p>	
+        <p>
+            #{field 'comment'}
+            <label>Comment:</label>
+            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
+            <span class="tip">Any comments accepted</span>
             #{/field}
         </p>	
         <p>
@@ -51,13 +70,13 @@
                 }
             });
             //Now check if the point input is a numeric value or not.
-            var pointField = form.find("input#point");
-            if (!isNumber(pointField.val())) {
-                errors = true;
-                errorDiv.html("This field must be a numeric value");
-                errorDiv.removeClass("hidden");
-                pointField.focus();
-            }
+//             var pointField = form.find("input#point");
+//             if (!isNumber(pointField.val())) {
+//                 errors = true;
+//                 errorDiv.html("This field must be a numeric value");
+//                 errorDiv.removeClass("hidden");
+//                 pointField.focus();
+//             }
             if (!errors) {
                 form.submit();
             }
