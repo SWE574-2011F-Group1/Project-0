@@ -99,7 +99,7 @@
                         <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${sc.location}" />
                         <span class="tip">Well, if you are in Istanbul, someone in New York may not help you! Best tell it!</span>       		
                     #{/field}
-                    #{if sc.locationType==models.LocationType.NORMAL}
+                    #{if sc.locationType==models.LocationType.NORMAL || sc.locationType==models.LocationType.ALL}
             			<div id="map_canvas" style="width: 500px; height: 300px"></div>
             		#{/if}
                 </p>
@@ -361,7 +361,7 @@
         });
         
         
-        if ($("input#locationType:checked").val() =="${models.LocationType.ALL}" || $("input#locationType:checked").val() == "${models.LocationType.VIRTUAL}" || $("input#locationType:checked").val() == "${models.LocationType.ANYLOCATION}") {
+        if ($("input#locationType:checked").val() == "${models.LocationType.VIRTUAL}" || $("input#locationType:checked").val() == "${models.LocationType.ANYLOCATION}") {
       	    $("input#location").attr('disabled', true);
       		$("p.location").hide();
       		$("div#map_canvas").remove();

@@ -33,6 +33,21 @@
             <span class="item">
                 Location: <span class="value">${s.location}</span>
             </span>
+             #{if distanceMap!=null && distanceMap.get(new Long(s.id))!=null}
+             	<span class="item">
+	        		 	Distance : <span class="value">
+		        		 	#{if distanceMap.get(new Long(s.id)).doubleValue()==-1}
+		        		 		NONE(Service itself is not location based)
+		        		 	#{/if}
+		        		 	#{elseif distanceMap.get(new Long(s.id)).doubleValue()==-2} 
+		        		 		NONE(Match service is not location based)
+		        		 	#{/elseif}
+		        		 	#{else}
+		        		 		${distanceMap.get(new Long(s.id)).doubleValue()} km
+		        		 	#{/else}
+	            		</span>
+	        	</span>
+             #{/if}
             #{if s?.startDate}
                 <span class="item date">
                     Date Interval:
