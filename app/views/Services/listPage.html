@@ -43,7 +43,7 @@
 		        		 		NONE(Match service is not location based)
 		        		 	#{/elseif}
 		        		 	#{else}
-		        		 		${distanceMap.get(new Long(s.id)).doubleValue()} km
+		        		 		${distanceMap.get(new Long(s.id)).doubleValue()/1000} km
 		        		 	#{/else}
 	            		</span>
 	        	</span>

@@ -302,11 +302,11 @@ public class Services extends BaseController {
 			sc.setStartTime(hourStart, minStart);
 			sc.setEndTime(hourEnd, minEnd);
 			
-			System.out.println("Locationtype="+locationType);
 			sc.locationType=locationType;
-			if(locationType==LocationType.NORMAL){
+			if(locationType==LocationType.NORMAL || locationType==LocationType.ALL){
 				sc.locationLat=locationLat;
 				sc.locationLng=locationLng;
+				System.out.println("set edildi");
 			}
 		} else if (searchDone == 2) {
 			sc.setTitle(title.trim());
@@ -365,6 +365,7 @@ public class Services extends BaseController {
 			searchReferenceService.locationLng=sc.locationLng;
 			distanceMap=Service.getDistances(searchReferenceService, allServices);
 			
+			
 			servicesOrderedBydistance=new ArrayList<Service>();
 			
 			int center=-1;
@@ -373,32 +374,36 @@ public class Services extends BaseController {
 			int index=0;
 			for(int i=0;i<allServices.size();i++){
 			    Service s=allServices.get(i);
-			    double distance=distanceMap.get(new Long(s.id));
+			    
+			    double distance=distanceMap.get(new Long(s.id)).doubleValue();
+			    left=0;
+				right=servicesOrderedBydistance.size();
+				center=(left+right)/2;
 				if(i==0){
 					servicesOrderedBydistance.add(s);
-					left=0;
-					right=servicesOrderedBydistance.size();
-					center=(left+right)/2;
 				}
 				else{
 					boolean found=false;
 					while(!found && center>=0 && center<servicesOrderedBydistance.size()){
 						Service centerService=servicesOrderedBydistance.get(center);
 						double distanceOfCService=distanceMap.get(new Long(centerService.id));
-						Logger.info("End left=%d right=%d center=%d distance=%s distcanceOfCenter=%s",
+						Logger.info("Start left=%d right=%d center=%d distance=%s distcanceOfCenter=%s",
 								left,right,center,""+distance,""+distanceOfCService);
 						if(distance==distanceOfCService){
-							servicesOrderedBydistance.add(index,s);
+							servicesOrderedBydistance.add(center,s);
 							found=true;
+							Logger.info("Add to index:%d",center);
 						}
-						else if(left==right){
+						else if(left>=right){
 							if(distanceOfCService>distance){
-								servicesOrderedBydistance.add(left,s);
+								servicesOrderedBydistance.add(center,s);
 								found=true;
+								Logger.info("Add to index:%d",center);
 							}
 							else if(distanceOfCService<distance){
-								servicesOrderedBydistance.add(left+1,s);
+								servicesOrderedBydistance.add(center+1,s);
 								found=true;
+								Logger.info("Add to index:%d",(center+1));
 							}
 						}
 						else if(distanceOfCService<distance){

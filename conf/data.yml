@@ -217,7 +217,7 @@ Service(se9):
   title: Counsellor on legal issues
   locationType: NORMAL
   location: "Mecidiyekoy, Istanbul"
-  localtionLat: 41.00527
+  locationLat: 41.00527
   locationLng: 28.97696
   description: "I'm a law student on Istanbul University. I'm trying to improve my knowledge on legal issues related to the divorcement. I would love to counsel people about divorcing. What problems can be or things like that.\n I do not say that the things I will say will work out 100% and I can't represent you on court however I can direct you to the right people and give you some idea on what can happen."
   stags: [istanbul3, lawyer2]
@@ -229,7 +229,7 @@ Service(se10):
   title: Dishwasher need for the house
   locationType: NORMAL
   location: "Mecidiyekoy, Istanbul"
-  localtionLat: 41.00527
+  locationLat: 41.00527
   locationLng: 28.97696
   description: "I'm an old guy living alone in Istanbul. I require a young boy to help me clean the house, mostly the dishwashing as I hate doing that and cannot afford to buy a dishwasher"
 Service(se11):
@@ -240,7 +240,7 @@ Service(se11):
   title: Helping keep clean houses
   locationType: NORMAL
   location: "Istanbul"
-  localtionLat: 41.013583900170545
+  locationLat: 41.013583900170545
   locationLng: 28.970260620117188
   description: "I'm young, energetic and willing to help my elders, to keep their houses clean. I can visit them once a week or so to help them"
   stags: [aged-persons2, housekeeping, istanbul4]
