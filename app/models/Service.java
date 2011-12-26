@@ -53,7 +53,7 @@ public class Service extends CommentableModel {
 	@NotEmpty
 	public double locationLng;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "service")
 	public Set<STag> stags;
 
 	public Date startDate;

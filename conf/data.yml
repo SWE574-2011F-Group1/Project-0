@@ -1,89 +1,3 @@
-STag(homework):
-  text: homework
-STag(website):
-  text: website
-STag(psd):
-  text: psd
-STag(psd2):
-  text: psd
-STag(css):
-  text: css
-STag(html):
-  text: html
-STag(tableless-design):
-  text: tableless design
-STag(education):
-  text: education
-STag(copyright):
-  text: copyright
-STag(lawyer):
-  text: lawyer
-STag(lawyer2):
-  text: lawyer
-STag(lawyer3):
-  text: lawyer
-STag(legal):
-  text: legal
-STag(design):
-  text: design
-STag(graphical):
-  text: graphical
-STag(graphical-design):
-  text: graphical design
-STag(paid-job):
-  text: paid job
-STag(high-quality):
-  text: high quality
-STag(photoshop):
-  text: photoshop
-STag(zekeriyakoy):
-  text: zekeriyakoy
-STag(mecidiyekoy):
-  text: mecidiyekoy
-STag(maslak):
-  text: maslak
-STag(sariyer):
-  text: sariyer
-STag(sariyer2):
-  text: sariyer
-STag(zincirlikuyu):
-  text: zincirlikuyu
-STag(driving):
-  text: driving
-STag(car-service):
-  text: car service
-STag(car-service2):
-  text: car service
-STag(gardener):
-  text: gardener
-STag(istanbul):
-  text: istanbul
-STag(istanbul2):
-  text: istanbul
-STag(istanbul3):
-  text: istanbul
-STag(istanbul4):
-  text: istanbul
-STag(istanbul5):
-  text: istanbul
-STag(istanbul6):
-  text: istanbul
-STag(palace):
-  text: palace
-STag(aged-persons):
-  text: ages-persons
-STag(aged-persons2):
-  text: ages-persons
-STag(housekeeping):
-  text: housekeeping
-STag(housekeeping2):
-  text: housekeeping
-STag(gardening):
-  text: gardening
-STag(besiktas):
-  text: besiktas
-STag(levent):
-  text: levent
 SUser(roy):
   email: roy@ses.com
   password: 1234
@@ -373,6 +287,135 @@ Service(se15):
   locationLng: 29.01111602783203
   description: "I'm working late at nights on my company, and I can't spare enough time to keep my house clean or prepare food for myself. I would welcome anyone who can help me about this. \n\nI'm willing to reward anyone regarding this generously too."
   stags: [housekeeping2]
+STag(website):
+  text: website
+  service: se7
+STag(homework):
+  text: homework
+  service: se7
+STag(psd):
+  text: psd
+  service: se5
+STag(psd2):
+  text: psd
+  service: se8
+STag(css):
+  text: css
+  service: se8
+STag(html):
+  text: html
+  service: se8
+STag(tableless-design):
+  text: tableless design
+  service: se8
+STag(education):
+  text: education
+  service: se7
+STag(copyright):
+  text: copyright
+  service: se6
+STag(lawyer):
+  text: lawyer
+  service: se6
+STag(lawyer2):
+  text: lawyer
+  service: se9
+STag(lawyer3):
+  text: lawyer
+  service: se13
+STag(legal):
+  text: legal
+  service: se6
+STag(design):
+  text: design
+  service: se5
+STag(graphical):
+  text: graphical
+  service: se5
+STag(graphical-design):
+  text: graphical design
+  service: se12
+STag(paid-job):
+  text: paid job
+  service: se12
+STag(high-quality):
+  text: high quality
+  service: se5
+STag(photoshop):
+  text: photoshop
+  service: se5
+STag(zekeriyakoy):
+  text: zekeriyakoy
+  service: se4
+STag(mecidiyekoy):
+  text: mecidiyekoy
+  service: se4
+STag(maslak):
+  text: maslak
+  service: se4
+STag(sariyer):
+  text: sariyer
+  service: se3
+STag(sariyer2):
+  text: sariyer
+  service: se4
+STag(zincirlikuyu):
+  text: zincirlikuyu
+  service: se4
+STag(driving):
+  text: driving
+  service: se4
+STag(car-service):
+  text: car service
+  service: se2
+STag(car-service2):
+  text: car service
+  service: se4
+STag(gardener):
+  text: gardener
+  service: se3
+STag(istanbul):
+  text: istanbul
+  service: se1
+STag(istanbul2):
+  text: istanbul
+  service: se3
+STag(istanbul3):
+  text: istanbul
+  service: se9
+STag(istanbul4):
+  text: istanbul
+  service: se11
+STag(istanbul5):
+  text: istanbul
+  service: se12
+STag(istanbul6):
+  text: istanbul
+  service: se13
+STag(palace):
+  text: palace
+  service: se3
+STag(aged-persons):
+  text: ages-persons
+  service: se2
+STag(aged-persons2):
+  text: ages-persons
+  service: se11
+STag(housekeeping):
+  text: housekeeping
+  service: se11
+STag(housekeeping2):
+  text: housekeeping
+  service: se15
+STag(gardening):
+  text: gardening
+  service: se1
+STag(besiktas):
+  text: besiktas
+  service: se1
+STag(levent):
+  text: levent
+  service: se2
 Activity(a1):
   performer: roy
   type: ADDED_SERVICE
