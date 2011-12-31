@@ -2,16 +2,6 @@
 #{set title:'Browse Services' /}
 #{set submenuView: 'services' /}
 
-<div class="sidebar">
-    <h3>Popular Service Types</h3>
-    <div id="task-cloud" class="cloud right"></div>
-    #{if tagClouds!=null && tagClouds.size()>0}
-	    <h3>Popular Tags</h3>
-	    <div id="tag-cloud" class="cloud right">
-	</div>
-#{/if}
-</div>
-
 <script type="text/javascript" charset="utf-8">
     $("document").ready(function() {
        var words = new Array();
@@ -27,14 +17,13 @@
        $("div#tag-cloud").jQCloud(tags);
     });
 </script>
+<div id="middlePanel">
 #{if services.size() < 1}
 	No service is found.
 #{/if}
 #{else}
-<div id="container">
- 
 <div class="search-background">
-			<label><img src="public/images/loader.gif" alt="" /></label></div>
+	<label><img src="public/images/loader.gif" alt="" /></label>
 </div>
 	#{if maxPageNumber>1}
 	 	<div id="paging_button1">
@@ -61,6 +50,20 @@
 	#{/if}
 </div>
 #{/else}
+</div>
+
+<div id="rigtPanel">
+    <div class="services">
+        #{if tagClouds!=null && tagClouds.size()>0}
+    	    <h2>Popular Tags</h3>
+    	    <div id="tag-cloud" class="cloud right">
+        	</div>
+        #{/if}
+        <h2>Popular Service Types</h3>
+        <div id="task-cloud" class="cloud right"></div>
+    </div>
+</div>
+
 <script type="text/javascript" charset="utf-8">
     
     $(document).ready(function(){

@@ -9,6 +9,7 @@
         <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/jqcloud.css'}">
         #{get 'moreStyles' /}
         <link rel="shortcut icon" type="image/png" href="@{'/public/images/favicon.png'}">
+        <link rel="stylesheet" media="screen" href="@{'/public/stylesheets/dusky.css'}">
         <script src="@{'/public/javascripts/ajax-suggestion.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         <script src="@{'/public/javascripts/jquery-1.6.2.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
         <script src="@{'/public/javascripts/jquery-ui-1.8.16.custom.min.js'}" type="text/javascript" charset="${_response_encoding}"></script>
@@ -57,18 +58,9 @@
             };
         </script>
         <script src="http://connect.facebook.net/en_US/all.js" type="text/javascript"></script>
-        <div id="header">
-            <div id="search-bar">
-                #{form @Services.search()}
-					<input type="hidden" name="searchDone" value="2"/>
-		            #{field 'title'}
-						<input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
-					#{/field}
-                	<input type="submit" name="search" value="Search Services" id="search">
-                #{/form}
-            </div>
-            <div id="menu">
-            #{if loggedIn}
+        #{if loggedIn}
+        <div id="topNav">
+            <div class="quickNav">
                 <div class="profile-pic">
                     <div class="default">
                         <a href="@{Profile.profile}">
@@ -78,74 +70,98 @@
                         </a>
                     </div>
                 </div>
-                ${greetings}, <a href="@{Profile.profile}">${userObj.name}</a>! |
-                #{if submenuView == null}
-                    <span class="selected">
-                #{/if}
-                    <img class="icons" src="@{'/public/images/icons/dashboard.ico'}" />
-                    <a href="@{Application.index}">Dashboard</a>
-                #{if submenuView == null}
-                    </span>
-                #{/if} |
-                #{list menuItems, as:'m'}
-                    #{set additionalMenuMessage:'' /}
-                    #{if submenuView == m.toLowerCase()}
-                        <span class="selected">
-                    #{/if}
-                    <img class="icons" src="@{'/public/images/icons/' + m.toLowerCase().replace(" ", "-") + '.ico'}" />
-                    <a href="
-                    *{Burasi biraz pis oldu...}*
-                    #{if m.toLowerCase() == "service types"}
-                        @{Tasks.proposals}
-                    #{/if}
-                    #{elseif m.toLowerCase() == "messages"}
-                        @{UserMessages.index}
-                        #{if unreadMsgCount > 0}
-                            #{set additionalMenuMessage: '(' + unreadMsgCount + ')' /}
-                        #{/if}
-                    #{/elseif}
-                    #{elseif m.toLowerCase() == "activities"}
-                        @{Activities.index}
-                    #{/elseif}
-                    #{else}
-                        @{Services.list}
-                    #{/else}
-                    ">${m}</a><sup>${additionalMenuMessage}</sup>
-                    #{if submenuView == m.toLowerCase()}
-                        </span>
-                    #{/if}
-                    |
-                #{/list}
-                #{secure.check 'admin'}
-                    <a href="/admin">Admin</a> |
-                #{/secure.check}
-                <a href="@{Secure.logout}">Logout</a>
-            #{/if}
-            #{else}
-                <div class="fb-login-btn"></div>
-            #{/else}
+                <ul>
+                    <li>
+                        ${greetings}, <a href="@{Profile.profile}">${userObj.name}</a>!
+                    </li>
+                    <li>
+                        <a href="@{Services.index}?type=0">Provide A New Service!</a>
+                    </li>
+                    <li>
+                        <a href="@{Services.index}?type=1">Request A New Service!</a>
+                    </li>
+                </ul>
+                <div class="right">
+                    #{secure.check 'admin'}
+                        <a href="/admin">Admin</a> |
+                    #{/secure.check}
+                    <a href="@{Secure.logout}">Logout</a>
+                </div>
             </div>
-            <div id="submenu">
-                #{if submenuView != null}
-                    #{include 'submenu/' + submenuView + '.html' /}
-                #{/if}
-            </div>
+        #{/if}
         </div>
-        <div class="wrapper">
-            <div id="pageContent">
-                <div class="wikistyle">
-                    <h1>#{get 'title' /}</h1>
-                    #{if message != null}
-                        <div class="flash-message">
-                            ${message}
-                        </div>
+        
+        <div id="headWrap">
+            <div id="headpanel">
+                <div id="logo"><h1>SES</h1></div>
+                <div id="quots">Sharing is easy, again...</div>
+                 *{
+                     <div id="search-bar">
+                         #{form @Services.search()}
+         					<input type="hidden" name="searchDone" value="2"/>
+         		            #{field 'title'}
+         						<input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
+         					#{/field}
+                         	<input type="submit" name="search" value="Search Services" id="search">
+                         #{/form}
+                     </div>
+                     
+                    }*
+                <div id="menu">
+                    #{if loggedIn}
+                    <ul>
+                        <li><a href="@{Application.index}">Dashboard</a></li>
+                        <li><div class="gap"></div></li>
+                        <li><a href="@{Services.list}">Services</a></li>
+                        <li><div class="gap"></div></li>
+                        <li><a href="@{UserMessages.index}">Messages</a></li>
+                        <li><div class="gap"></div></li>
+                        <li><a href="@{Tasks.proposals}">Tasks</a></li>
+                        <li><div class="gap"></div></li>
+                        <li><a href="@{Activities.index}">Activities</a></li>
+                        <li><div class="gap"></div></li>
+                    </ul>
                     #{/if}
-                    #{doLayout /}
+                    #{else}
+                        <div class="fb-login-btn"></div>
+                    #{/else}
                 </div>
             </div>
         </div>
-        <div id="footer">
-            <a href="@{StaticPages.about}">About</a> | <a href="@{StaticPages.faq}">FAQ</a> | <a href="@{StaticPages.help}">Help</a>
+        <div id="contentWrap">
+            <div id="contentPanel">
+                #{if title != ''}
+                    <h2>#{get 'title' /}</h2>                    
+                #{/if}
+                #{if message != null}
+                    <div class="flash-message">
+                        ${message}
+                    </div>
+                #{/if}
+                #{if submenuView != null}
+                    <div id="leftPanel" class="menu">
+                        <div class="toplinks">
+                            #{include 'submenu/' + submenuView + '.html' /}
+                        </div>
+                    </div>
+                #{/if}
+                #{doLayout /}
+            </div>
+        </div>
+        <div id="footWrap">
+            <div id="footPanel">
+                <div id="footNav">
+                    <ul>
+                        <li><a href="@{Application.index}">Home</a></li>
+                        <li><div class="blank">|</div></li>
+                        <li><a href="@{StaticPages.about}">About</a></li>
+                        <li><div class="blank">|</div></li>
+                        <li><a href="@{StaticPages.faq}">FAQ</a></li>
+                        <li><div class="blank">|</div></li>
+                        <li><a href="@{StaticPages.help}">Help</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
         <script type="text/javascript">
             $(document).ready(function(){
