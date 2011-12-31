@@ -3,51 +3,81 @@ SUser(roy):
   password: 1234
   name: roy simkes  
   isAdmin: false
+  registrationTime: 2011-12-04
+  providerPoint: 0
+  requesterPoint: 0
 SUser(admin):
   email: admin@test.com
   password: test
   name: test test
   isAdmin: true
+  registrationTime: 2005-12-04
+  providerPoint: 4
+  requesterPoint: 5
 SUser(ahmet):
   email: ahmet@ses.com
   password: test
   name: Ahmet Cakar
   isAdmin: false
+  registrationTime: 2007-12-04
+  providerPoint: 10
+  requesterPoint: 20
 SUser(mehmet):
   email: mehmet@ses.com
   password: test
   name: Mehmet Kahveci
-  isAdmin: false  
+  isAdmin: false
+  registrationTime: 2008-12-04
+  providerPoint: 30
+  requesterPoint: 40  
 SUser(ali):
   email: ali@ses.com
   password: test
   name: Ali Cakir
   isAdmin: false
+  registrationTime: 2011-08-04
+  providerPoint: 10
+  requesterPoint: 5
 SUser(veli):
   email: veli@ses.com
   password: test
   name: Veli Efendi
   isAdmin: false
+  registrationTime: 2011-04-04
+  providerPoint: 10
+  requesterPoint: 10
 SUser(hilmi):
   email: hilmi@ses.com
   password: test
   name: Hilmi Midir
   isAdmin: false
+  registrationTime: 2010-04-04
+  providerPoint: 30
+  requesterPoint: 30
 SUser(hikmet):
   email: hikmet@ses.com
   password: test
   name: Hikmet Gurses
   isAdmin: false
+  registrationTime: 2008-08-08
+  providerPoint: 60
+  requesterPoint: 90
 SUser(guven):
   email: guven@ses.com
   password: test
   name: Guven Kurtul
   isAdmin: false
+  registrationTime: 2009-02-02
+  providerPoint: 80
+  requesterPoint: 100
 SUser(oya):
   email: oya@ses.com
   password: test
   name: Oya Bilir
   isAdmin: false
+  registrationTime: 2006-05-04
+  providerPoint: 150
+  requesterPoint: 200
 Task(t1):
   name: Dishwashing
   point: 1

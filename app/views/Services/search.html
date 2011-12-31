@@ -334,6 +334,49 @@
                         <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="${sc.tags}" />
                     #{/field}
                 </p>
+                 <p>
+                	<label>Ranking Type:</label>
+                    #{field 'rankingType'}
+                    	<select id="${field.name}" name="${field.name}">
+                    		#{if sc.rankingType==models.RankingType.NONE}
+		  						<option value="${models.RankingType.NONE}" selected>NONE</option>
+		  					#{/if}
+		            		#{else}
+		            			<option value="${models.RankingType.NONE}">NONE</option>
+		            		#{/else}
+		            		#{if sc.rankingType==models.RankingType.DISTANCE}
+		  						<option value="${models.RankingType.DISTANCE}" selected>DISTANCE</option>
+		  					#{/if}
+		            		#{else}
+		            			<option value="${models.RankingType.DISTANCE}">DISTANCE</option>
+		            		#{/else}
+		  					#{if sc.rankingType==models.RankingType.POINT}
+		  						<option value="${models.RankingType.POINT}" selected>POINT</option>
+		  					#{/if}
+		            		#{else}
+		            			<option value="${models.RankingType.POINT}">POINT</option>
+		            		#{/else}
+		  				</select>
+                    #{/field}
+                </p>
+                 <p id="orderType">
+		            #{field 'orderType'}
+			            <label>Order Type:</label>
+			            
+			            #{if sc.orderType==models.OrderType.ASC}
+			            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.OrderType.ASC}" checked/>ASCENDING
+			            #{/if}
+			            #{else}
+			            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.OrderType.ASC}"/>ASCENDING
+			            #{/else}
+			             #{if sc.orderType==models.OrderType.DESC}
+			            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.OrderType.DESC}" checked/>DESCENDING
+			            #{/if}
+			            #{else}
+			            	<input type="radio" id="${field.name}" name="${field.name}" value="${models.OrderType.DESC}"/>DESCENDING
+			            #{/else}
+		            #{/field}
+		        </p>
                 <p>
                     <input type="submit" value="Search &rarr;" id="submit-btn">
                     </p>
@@ -361,6 +404,10 @@
         });
         
         
+        if ($("select#rankingType").val() == "${models.RankingType.NONE}"){
+        	$("p#orderType").hide();
+        }
+        
         if ($("input#locationType:checked").val() == "${models.LocationType.VIRTUAL}" || $("input#locationType:checked").val() == "${models.LocationType.ANYLOCATION}") {
       	    $("input#location").attr('disabled', true);
       		$("p.location").hide();
@@ -387,6 +434,15 @@
           		}
           		initialize();
           	}
+        });
+        
+        $("select#rankingType").bind("change", function() {
+        	if ($(this).val() == "${models.RankingType.NONE}"){
+            	$("p#orderType").hide();
+            }
+        	else{
+        		$("p#orderType").show();
+        	}
         });
         
     });
