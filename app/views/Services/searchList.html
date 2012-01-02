@@ -6,6 +6,8 @@
 	No results found  <a href="@{Services.search}">Go back to search</a>
 #{/if}
 #{else}
+
+<div id="middlePanel" class="full">
 <div id="container">
  
 <div class="search-background">
@@ -36,7 +38,7 @@
 	#{/if}
 </div>
 #{/else}
-
+</div>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function() {
         $("#filter-btn").bind("click", function() {
