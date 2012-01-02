@@ -6,6 +6,7 @@
 #{set subject: '' /}
 #{set messageContent: '' /}
     
+<div id="middlePanel" class="full">
 #{form @send(), id:'compose-message'}
     <p class="error hidden">
     </p>
@@ -56,6 +57,7 @@
         <input type="button" value="Send It!" id="submit-btn">
     </p>
 #{/form}
+</div>
 </div>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){

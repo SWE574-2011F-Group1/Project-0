@@ -7,6 +7,7 @@
 #{/else}
 #{set submenuView: 'messages' /}
 
+<div id="middlePanel" class="full">
 #{list pms, as:'m'}
 <div class="list-item">
     <div class="info">
@@ -47,6 +48,7 @@
     </div>
 </div>
 #{/list}
+</div>
 <script type="text/javascript" charset="utf-8">
     $("document").ready(function() {
         $("input.mark-read-btn").bind("click", function() {

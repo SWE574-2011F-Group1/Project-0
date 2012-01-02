@@ -80,6 +80,9 @@
                     <li>
                         <a href="@{Services.index}?type=1">Request A New Service!</a>
                     </li>
+                    <li>
+                        <a href="@{Tasks.suggest}?type=1">Propose New Service Type!</a>
+                    </li>
                 </ul>
                 <div class="right">
                     #{secure.check 'admin'}
@@ -116,7 +119,7 @@
                         <li><div class="gap"></div></li>
                         <li><a href="@{UserMessages.index}">Messages</a></li>
                         <li><div class="gap"></div></li>
-                        <li><a href="@{Tasks.proposals}">Tasks</a></li>
+                        <li><a href="@{Tasks.proposals}">Service Types</a></li>
                         <li><div class="gap"></div></li>
                         <li><a href="@{Activities.index}">Activities</a></li>
                         <li><div class="gap"></div></li>

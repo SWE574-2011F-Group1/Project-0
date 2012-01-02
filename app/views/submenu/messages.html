@@ -1,3 +1,20 @@
-<img src="@{'/public/images/icons/messages-inbox.ico'}" class="icons" /> <a href="@{UserMessages.inbox}">Inbox</a> |
-<img src="@{'/public/images/icons/messages-outbox.ico'}" class="icons" /> <a href="@{UserMessages.outbox}">Outbox</a> |
-<img src="@{'/public/images/icons/messages-compose.ico'}" class="icons" /> <a href="@{UserMessages.compose}">Compose New Message</a>
+<ul>
+    <li>
+        <a href="@{UserMessages.inbox}">
+            <img src="@{'/public/images/icons/messages-inbox.ico'}" class="icons" />
+            Inbox
+        </a>
+    </li>
+    <li>
+            <a href="@{UserMessages.outbox}">
+            <img src="@{'/public/images/icons/messages-outbox.ico'}" class="icons" />
+            Outbox
+        </a>
+    </li>
+    <li>
+        <a href="@{UserMessages.compose}">
+            <img src="@{'/public/images/icons/messages-compose.ico'}" class="icons" />
+            Compose New Message
+        </a>
+    </li>
+</ul>

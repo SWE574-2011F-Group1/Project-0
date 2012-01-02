@@ -2,6 +2,7 @@
 #{set title: 'Service Type Proposals' /}
 #{set submenuView: 'tasks' /}
 
+<div id="middlePanel" class="full">
 #{form @addComment(), id:'add-comment'}
     <div class="list-item">
         <div class="desc" style="display:inline; float: left;">
@@ -27,16 +28,16 @@
                 Suggested By: <span class="value">${task.suggestedBy}</span>
             </span>
              <span class="item">
-                Comments:<br>
+                Comments:
                 #{list task.comments, as:'c'}
-                <p style="border-top:solid 1px;"> ${c.owner.name}
-                <br><span class="value">${c.comment}</span>
-                </p>
+                    <p style="border-top:solid 1px;"> ${c.owner.name}
+                        <br><span class="value">${c.comment.nl2br()}</span>
+                    </p>
                 #{/list}
-                
                 #{field 'comment'}
+            <br /><br />
             <label>Add A Comment:</label>
-            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" style="width:300px;" />
+            <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}" style="width:300px;"></textarea>
             <span class="tip">Any comments accepted</span>
             <input type="submit" value="add Comment"/>
             #{/field}
@@ -45,3 +46,4 @@
         <div class="clearfix"></div>
     </div>
  #{/form}
+</div>

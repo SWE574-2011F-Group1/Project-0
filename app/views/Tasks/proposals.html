@@ -2,6 +2,7 @@
 #{set title: 'Service Type Proposals' /}
 #{set submenuView: 'tasks' /}
 
+<div id="middlePanel" class="full">
 #{list tasks, as:'t'}
     <div class="list-item">
         <div class="desc" style="display:inline; float: left;">
@@ -72,6 +73,7 @@
             <input type="button" value="Continue &rarr;" id="submit-btn">
         </p>
     #{/form}
+</div>
 </div>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){

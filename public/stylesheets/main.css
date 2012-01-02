@@ -3,7 +3,7 @@
 .right {float: right;}
 .hidden {display: none;}
 
-#topNav { width:100%; background-color: black; height: 30px; position: fixed;}
+#topNav { width:100%; background-color: black; height: 30px; position: fixed; z-index: 10;}
 .quickNav {float: left; color: white; margin-left: 20px; line-height:30px; width: 95%;}
 .quickNav ul {float: left; height: 30px; margin:0px; padding:0px;}
 .quickNav ul li {float: left; height: 30px; list-style: none; padding:0 10px; border-right: 1px solid gray; }
@@ -13,7 +13,7 @@ form p label {width:115px; float: left;}
 form.search p label {width:120px; float: left;}
 form p label.required {font-weight: bold; font-style: italic;}
 form input[type=text]:not(.datepicker, .time), form textarea {width: 300px;}
-form textarea {height: 100px;}
+form textarea {height: 100px; width: 300px;}
 .form-separator {text-shadow: #fff 1px 1px 0px; font-size:11px;border-top:4px solid #4D8789!important; text-align: right; font-weight: bold;}
 
 div#search-bar {float: right; margin-right: 10px; margin-top: 3px;}
@@ -21,21 +21,21 @@ div#search-bar {float: right; margin-right: 10px; margin-top: 3px;}
 div.flash-message {width: 300px; text-align: center; background-color: #6282A7; margin: 10px 25%; padding: 5px; border-top-right-radius: 5px; border-bottom-left-radius:5px; color: white; }
 
 div.info.block span.item {float: none;}
-div.info span.item {font-weight: bold; color: #4D8789; width:300px; float: left; display: block;}
+div.info span.item {font-weight: bold; color: #4F790A; width:300px; float: left; display: block;}
 div.info span.item.date {width:300px}
 div.info span.item span.value {color: black; font-weight: normal;}
-div.desc {margin-top: 10px; padding: 15px; background-color: #F7F7F7;}
+div.desc {margin-top: 10px; padding: 15px; border: 1px dashed #C6D09D;}
 
 div#serviceDetail div.bot {margin-top: 20px;}
 div#serviceDetail div.desc {border-top-right-radius: 5px; border-bottom-left-radius:5px;}
-div#serviceDetail a.cancelBtn {color: red; font-style: italic;}
+div#serviceDetail a.cancelBtn {font-style: italic;}
 div#serviceDetail ul, div#serviceDetail li {list-style: none; margin: 0px !important;}
 div#serviceDetail .value.status,div#list-item .value.status{color: #CF7F26;}
 
 div#newService textarea {width: 400px;}
 
-div.list-item {background-color: #F7F7F7; padding: 5px; border-top-right-radius: 5px; border-bottom-left-radius:5px; margin-bottom: 10px;}
-div.list-item a {color: #4D8789;}
+div.list-item {padding: 5px; margin-bottom: 10px; border-bottom: 1px dashed #C6D09D;}
+div.list-item a {color: #D25930;}
 
 #crudHeader div.navigation {float: right; color: gold;}
 #crudHeader div.navigation a {color: gold; text-decoration: underline;}
@@ -51,9 +51,9 @@ span.tip {font-size: 10px; font-style: italic; display: block; color: gray;}
 
 div.activity-date {font-size: 10px; color: gray; position: relative; top: -2px;}
 
-p.error {margin: 5px; padding: 5px 25px; background-color: #A05C5A; color: white; font-weight: bold; border-bottom-left-radius: 5px; border-top-right-radius: 5px;}
-.error-field {border: 1px solid #A05C5A;}
-span.error {float:right; position: relative; left: 2px; color: #A05C5A;}
+p.error {margin: 5px; padding: 5px 25px; background-color: red; color: white; font-weight: bold; border-bottom-left-radius: 5px; border-top-right-radius: 5px;}
+.error-field {border: 1px solid red;}
+span.error {float:right; position: relative; left: 2px; color: red;}
 
 .fb-login-btn {cursor: pointer; background-image: url("../images/fb-login-btn.png"); width: 87px; height:21px;}
 
@@ -125,7 +125,7 @@ div#header a, div#header {
 }
 
 a {
-    color: #000;
+    color: #D25930;
 }
 
 .wrapper {

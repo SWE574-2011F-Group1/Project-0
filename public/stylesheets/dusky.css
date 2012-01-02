@@ -44,7 +44,7 @@ body{margin:0px; padding:0px; background:#00ac69;}
 #projectsPanel a{width:55px; height:16px; margin:7px 0 0 0; margin-left:5px; padding:0px; float:right; font-family:Arial; font-size:10px; color:#000000; line-height:14px; text-align:center; text-decoration:none; border:#bdbcbd solid 1px; background:#FFFFFF} 
 #projectsPanel a:hover{background:#CCCCCC}
 #middlePanel{width:388px; margin:0px; padding:0 0 38px 32px; float:left; border-right:#c6d09d dashed 1px}
-#middlePanel.full {width:606px;}
+#middlePanel.full {width:606px; padding-right: 10px;}
 #middlePanel.wide {width:524px;}
 #middlePanel .top{width:350px; margin:0px; padding:0 0 0 3px; float:left}
 #middlePanel .top h2{width:350px; margin:0px; padding:0px; float:left; font-family:Georgia; font-size:28px; color:#000000; line-height:32px; font-weight:normal}

@@ -15,7 +15,9 @@
                 Type: <span class="value #{if s.type == s.type.PROVIDES} service-provide #{/if}#{else}service-request#{/else}">${s.type}</span>
             </span>
             <span class="item">
-                Owner: <span class="value"><a style="color:black;" href="@{Profile.profile}/${s.boss.id}">${s.boss}</a></span>
+                Owner: <span class="value">
+                    <a href="@{Profile.profile}/${s.boss.id}"> ${s.boss}</a>
+                    </span>
             </span>
             <span class="item">
 	            LocationType: <span class="value">

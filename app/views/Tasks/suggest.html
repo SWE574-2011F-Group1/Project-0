@@ -2,6 +2,7 @@
 #{set title: 'Propose a Service Type' /}
 #{set submenuView: 'tasks' /}
 
+<div id="middlePanel" class="full">
 <div>
     Before you propose a service type, consider checking out the <a href="@{Tasks.proposals}">proposals page</a>! Perhaps someone else has already seen the lack of it and acted before you! 
 </div>
@@ -39,7 +40,7 @@
         <p>
             #{field 'comment'}
             <label>Comment:</label>
-            <input type="text" id="${field.name}" name="${field.name}" class="${field.errorClass}" value="" />
+            <textarea id="${field.name}" name="${field.name}" class="${field.errorClass}"></textarea>
             <span class="tip">Any comments accepted</span>
             #{/field}
         </p>	
@@ -50,6 +51,7 @@
             <input type="hidden" value="${taskId}" name="taskId" id="taskId" />
         #{/if}
     #{/form}
+</div>
 </div>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
@@ -69,14 +71,6 @@
                     return false;
                 }
             });
-            //Now check if the point input is a numeric value or not.
-//             var pointField = form.find("input#point");
-//             if (!isNumber(pointField.val())) {
-//                 errors = true;
-//                 errorDiv.html("This field must be a numeric value");
-//                 errorDiv.removeClass("hidden");
-//                 pointField.focus();
-//             }
             if (!errors) {
                 form.submit();
             }
