@@ -276,7 +276,9 @@ public class Services extends BaseController {
     		int minStart,
     		int hourEnd,
     		int minEnd,
-    		double locationLat,double locationLng,LocationType locationType) {
+    		double locationLat,double locationLng,LocationType locationType,
+    		RankingType rankingType,
+    		OrderType orderType) {
 		Date sd, ed;
 		// Map<String,String> errors=new HashMap<String,String>();
 		String error = "";
@@ -308,6 +310,8 @@ public class Services extends BaseController {
 				sc.locationLng=locationLng;
 				System.out.println("set edildi");
 			}
+			sc.rankingType=rankingType;
+			sc.orderType=orderType;
 		} else if (searchDone == 2) {
 			sc.setTitle(title.trim());
 		}
@@ -334,6 +338,8 @@ public class Services extends BaseController {
 			List<ServiceType> serviceTypes = new ArrayList<ServiceType>();
 			serviceTypes.add(ServiceType.REQUESTS);
 			serviceTypes.add(ServiceType.PROVIDES);
+			sc.rankingType=RankingType.NONE;
+			sc.orderType=OrderType.ASC;
 			render(error, serviceTypes, tasks, sc);
 		} else if (searchDone == 1) {
 			searchList(sc, false);
@@ -347,7 +353,7 @@ public class Services extends BaseController {
 		
 		List<Service> allServices = null;
 		Map<Long,Double> distanceMap=null;
-		List<Service> servicesOrderedBydistance=null;
+		List<Service> servicesOrdered=null;
 		if (!quickSearch) {
 			allServices = Service.find(prepareQueryForServiceSearch(sc), null)
 					.fetch();
@@ -365,73 +371,45 @@ public class Services extends BaseController {
 			searchReferenceService.locationLng=sc.locationLng;
 			distanceMap=Service.getDistances(searchReferenceService, allServices);
 			
-			
-			servicesOrderedBydistance=new ArrayList<Service>();
-			
-			int center=-1;
-			int left=-1;
-			int right=-1;
-			int index=0;
-			for(int i=0;i<allServices.size();i++){
-			    Service s=allServices.get(i);
-			    
-			    double distance=distanceMap.get(new Long(s.id)).doubleValue();
-			    left=0;
-				right=servicesOrderedBydistance.size();
-				center=(left+right)/2;
-				if(i==0){
-					servicesOrderedBydistance.add(s);
+			if(sc.rankingType==RankingType.DISTANCE){
+				if(sc.orderType==OrderType.ASC){
+					Logger.info("Ranking services with ascending distance...");
+					servicesOrdered=rankServicesWithAscendingDistances(allServices, distanceMap);
 				}
 				else{
-					boolean found=false;
-					while(!found && center>=0 && center<servicesOrderedBydistance.size()){
-						Service centerService=servicesOrderedBydistance.get(center);
-						double distanceOfCService=distanceMap.get(new Long(centerService.id));
-						Logger.info("Start left=%d right=%d center=%d distance=%s distcanceOfCenter=%s",
-								left,right,center,""+distance,""+distanceOfCService);
-						if(distance==distanceOfCService){
-							servicesOrderedBydistance.add(center,s);
-							found=true;
-							Logger.info("Add to index:%d",center);
-						}
-						else if(left>=right){
-							if(distanceOfCService>distance){
-								servicesOrderedBydistance.add(center,s);
-								found=true;
-								Logger.info("Add to index:%d",center);
-							}
-							else if(distanceOfCService<distance){
-								servicesOrderedBydistance.add(center+1,s);
-								found=true;
-								Logger.info("Add to index:%d",(center+1));
-							}
-						}
-						else if(distanceOfCService<distance){
-							left=center+1;
-						}
-						else if(distanceOfCService>distance){
-							right=center-1;
-						}
-						center=(left+right)/2;
-						Logger.info("End left=%d right=%d center=%d",left,right,center);
-					}
-				}
+					Logger.info("Ranking services with descending distance...");
+					servicesOrdered=rankServicesWithDescendingDistances(allServices, distanceMap);
+				}		
 			}
+			else if(sc.rankingType==RankingType.POINT){
+				if(sc.orderType==OrderType.ASC){
+					Logger.info("Ranking services with ascending point...");
+					servicesOrdered=rankServicesWithAscendingPoint(allServices);
+				}
+				else{
+					Logger.info("Ranking services with descending point...");
+					servicesOrdered=rankServicesWithDescendingPoint(allServices);
+				}		
+			}
+			else{
+				servicesOrdered=allServices;
+			}
+			
 		}
 		else{
-			servicesOrderedBydistance=allServices;
+			servicesOrdered=allServices;
 		}
 		int maxPageNumber=0;
-        if(servicesOrderedBydistance!=null){
-        	maxPageNumber=servicesOrderedBydistance.size()/serviceNumberPerPage;
-        	if(servicesOrderedBydistance.size()%serviceNumberPerPage>0)
+        if(servicesOrdered!=null){
+        	maxPageNumber=servicesOrdered.size()/serviceNumberPerPage;
+        	if(servicesOrdered.size()%serviceNumberPerPage>0)
         		maxPageNumber++;
         }
 
         List<Service> serializedServices=new ArrayList<Service>();
         List<Service> services=new ArrayList<Service>();
 
-        for (Service service : servicesOrderedBydistance) {
+        for (Service service : servicesOrdered) {
         	serializedServices.add(service);
         	
         	if(sc.searchSlots && service.slots != null && service.slots.size() != 0) {
@@ -458,6 +436,236 @@ public class Services extends BaseController {
 		render(services, tasks,maxPageNumber,distanceMap);
 	}
 
+	private static List<Service> rankServicesWithAscendingDistances(List<Service> allServices,Map<Long,Double> distanceMap){
+		List<Service> servicesOrderedBydistance=new ArrayList<Service>();
+		
+		int center=-1;
+		int left=-1;
+		int right=-1;
+		for(int i=0;i<allServices.size();i++){
+		    Service s=allServices.get(i);
+		    
+		    double distance=distanceMap.get(new Long(s.id)).doubleValue();
+		    left=0;
+			right=servicesOrderedBydistance.size();
+			center=(left+right)/2;
+			if(i==0){
+				servicesOrderedBydistance.add(s);
+			}
+			else{
+				boolean found=false;
+				while(!found && center>=0 && center<servicesOrderedBydistance.size()){
+					Service centerService=servicesOrderedBydistance.get(center);
+					double distanceOfCService=distanceMap.get(new Long(centerService.id));
+					Logger.info("Start left=%d right=%d center=%d distance=%s distcanceOfCenter=%s",
+							left,right,center,""+distance,""+distanceOfCService);
+					if(distance==distanceOfCService){
+						servicesOrderedBydistance.add(center,s);
+						found=true;
+						Logger.info("Add to index:%d",center);
+					}
+					else if(left>=right){
+						if(distanceOfCService>distance){
+							servicesOrderedBydistance.add(center,s);
+							found=true;
+							Logger.info("Add to index:%d",center);
+						}
+						else if(distanceOfCService<distance){
+							servicesOrderedBydistance.add(center+1,s);
+							found=true;
+							Logger.info("Add to index:%d",(center+1));
+						}
+					}
+					else if(distanceOfCService<distance){
+						left=center+1;
+					}
+					else if(distanceOfCService>distance){
+						right=center-1;
+					}
+					center=(left+right)/2;
+					Logger.info("End left=%d right=%d center=%d",left,right,center);
+				}
+				if(!found){
+					servicesOrderedBydistance.add(servicesOrderedBydistance.size(),s);
+					Logger.info("Add to index:%d",(servicesOrderedBydistance.size()-1));
+				}
+			}
+		}
+		return servicesOrderedBydistance;
+	}
+	private static List<Service> rankServicesWithAscendingPoint(List<Service> allServices){
+		List<Service> servicesOrderedBypoint=new ArrayList<Service>();
+		
+		int center=-1;
+		int left=-1;
+		int right=-1;
+		for(int i=0;i<allServices.size();i++){
+		    Service s=allServices.get(i);
+		    
+		    float point=s.task.point;
+		    left=0;
+			right=servicesOrderedBypoint.size();
+			center=(left+right)/2;
+			if(i==0){
+				servicesOrderedBypoint.add(s);
+			}
+			else{
+				boolean found=false;
+				while(!found && center>=0 && center<servicesOrderedBypoint.size()){
+					Service centerService=servicesOrderedBypoint.get(center);
+					float pointOfCService=centerService.task.point;
+					Logger.info("Start left=%d right=%d center=%d point=%s pointOfCenter=%s",
+							left,right,center,""+point,""+pointOfCService);
+					if(point==pointOfCService){
+						servicesOrderedBypoint.add(center,s);
+						found=true;
+						Logger.info("Add to index:%d",center);
+					}
+					else if(left>=right){
+						if(pointOfCService>point){
+							servicesOrderedBypoint.add(center,s);
+							found=true;
+							Logger.info("Add to index:%d",center);
+						}
+						else if(pointOfCService<point){
+							servicesOrderedBypoint.add(center+1,s);
+							found=true;
+							Logger.info("Add to index:%d",(center+1));
+						}
+					}
+					else if(pointOfCService<point){
+						left=center+1;
+					}
+					else if(pointOfCService>point){
+						right=center-1;
+					}
+					center=(left+right)/2;
+					Logger.info("End left=%d right=%d center=%d",left,right,center);
+				}
+				if(!found){
+					servicesOrderedBypoint.add(servicesOrderedBypoint.size(),s);
+					Logger.info("Add to index:%d",(servicesOrderedBypoint.size()-1));
+				}
+			}
+		}
+		return servicesOrderedBypoint;
+	}
+	private static List<Service> rankServicesWithDescendingPoint(List<Service> allServices){
+		List<Service> servicesOrderedBypoint=new ArrayList<Service>();
+		
+		int center=-1;
+		int left=-1;
+		int right=-1;
+		for(int i=0;i<allServices.size();i++){
+		    Service s=allServices.get(i);
+		    
+		    float point=s.task.point;
+		    left=0;
+			right=servicesOrderedBypoint.size();
+			center=(left+right)/2;
+			if(i==0){
+				servicesOrderedBypoint.add(s);
+			}
+			else{
+				boolean found=false;
+				while(!found && center>=0 && center<servicesOrderedBypoint.size()){
+					Service centerService=servicesOrderedBypoint.get(center);
+					float pointOfCService=centerService.task.point;
+					Logger.info("Start left=%d right=%d center=%d point=%s pointOfCenter=%s",
+							left,right,center,""+point,""+pointOfCService);
+					if(point==pointOfCService){
+						servicesOrderedBypoint.add(center,s);
+						found=true;
+						Logger.info("Add to index:%d",center);
+					}
+					else if(left>=right){
+						if(pointOfCService<point){
+							servicesOrderedBypoint.add(center,s);
+							found=true;
+							Logger.info("Add to index:%d",center);
+						}
+						else if(pointOfCService>point){
+							servicesOrderedBypoint.add(center+1,s);
+							found=true;
+							Logger.info("Add to index:%d",(center+1));
+						}
+					}
+					else if(pointOfCService>point){
+						left=center+1;
+					}
+					else if(pointOfCService<point){
+						right=center-1;
+					}
+					center=(left+right)/2;
+					Logger.info("End left=%d right=%d center=%d",left,right,center);
+				}
+				if(!found){
+					servicesOrderedBypoint.add(servicesOrderedBypoint.size(),s);
+					Logger.info("Add to index:%d",(servicesOrderedBypoint.size()-1));
+				}
+			}
+		}
+		return servicesOrderedBypoint;
+	}
+	private static List<Service> rankServicesWithDescendingDistances(List<Service> allServices,Map<Long,Double> distanceMap){
+		List<Service> servicesOrderedBydistance=new ArrayList<Service>();
+		
+		int center=-1;
+		int left=-1;
+		int right=-1;
+		for(int i=0;i<allServices.size();i++){
+		    Service s=allServices.get(i);
+		    
+		    double distance=distanceMap.get(new Long(s.id)).doubleValue();
+		    left=0;
+			right=servicesOrderedBydistance.size();
+			center=(left+right)/2;
+			if(i==0){
+				servicesOrderedBydistance.add(s);
+				
+				Logger.info("First service is added to index:0");
+			}
+			else{
+				boolean found=false;
+				while(!found && center>=0 && center<servicesOrderedBydistance.size()){
+					Service centerService=servicesOrderedBydistance.get(center);
+					double distanceOfCService=distanceMap.get(new Long(centerService.id));
+					Logger.info("Start left=%d right=%d center=%d distance=%s distcanceOfCenter=%s",
+							left,right,center,""+distance,""+distanceOfCService);
+					if(distance==distanceOfCService){
+						servicesOrderedBydistance.add(center,s);
+						found=true;
+						Logger.info("Add to index:%d",center);
+					}
+					else if(left>=right){
+						if(distanceOfCService<distance){
+							servicesOrderedBydistance.add(center,s);
+							found=true;
+							Logger.info("Add to index:%d",center);
+						}
+						else if(distanceOfCService>distance){
+							servicesOrderedBydistance.add(center+1,s);
+							found=true;
+							Logger.info("Add to index:%d",(center+1));
+						}
+					}
+					else if(distanceOfCService>distance){
+						left=center+1;
+					}
+					else if(distanceOfCService<distance){
+						right=center-1;
+					}
+					center=(left+right)/2;
+					Logger.info("End left=%d right=%d center=%d",left,right,center);
+				}
+				if(!found){
+					servicesOrderedBydistance.add(servicesOrderedBydistance.size(),s);
+					Logger.info("Add to index:%d",(servicesOrderedBydistance.size()-1));
+				}
+			}
+		}
+		return servicesOrderedBydistance;
+	}
 	public static void apply(long serviceId,String email) throws Exception {
 	        Service service = Service.findById(serviceId);
 	        SUser user=SUser.findByEmail(email);
@@ -835,7 +1043,7 @@ public class Services extends BaseController {
 		if(sc.locationType!=LocationType.ALL){
 			sql += " and s.locationType="+sc.locationType.getOrdinal();
 		}
-
+		
 		return sql;
 	}
 

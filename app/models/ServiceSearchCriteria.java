@@ -23,6 +23,9 @@ public class ServiceSearchCriteria {
 	public double locationLat=41;
 	public double locationLng=32;
 	
+	public RankingType rankingType;
+	public OrderType orderType;
+	
 	
 	public void setStartTime(int hour, int min) {
 		this.hourStart = hour;

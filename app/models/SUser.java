@@ -7,6 +7,7 @@ import javax.persistence.*;
 
 import org.hibernate.annotations.CascadeType;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import play.data.validation.*;
@@ -27,6 +28,9 @@ public class SUser extends CommentableModel {
     public String password;
     
     public String fbId;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date registrationTime;
     
     public boolean isAdmin;
     public boolean getIsAdmin()
@@ -102,6 +106,11 @@ public class SUser extends CommentableModel {
 
     public String toString() {
     	return this.name;
+    }
+    
+    public String getFormattedRegistrationDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(this.registrationTime);
     }
 }
 

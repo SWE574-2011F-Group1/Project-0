@@ -57,6 +57,7 @@ public class BaseController extends Controller {
                 //Email uniqueness is controlled by Facebook I suppose, so no need to check on our side...
                 sesUser = new SUser(fbUser.getName(), fbUser.getEmail());
                 sesUser.fbId = fbUser.getId();
+                sesUser.registrationTime=new Date(System.currentTimeMillis());
                 sesUser.save();
             }
             session.put("username", sesUser.email);
