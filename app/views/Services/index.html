@@ -2,6 +2,7 @@
 #{set submenuView: 'services' /}
 #{set tagString:'' /}
 
+<div id="middlePanel" class="full">
 #{if serviceId}
     <input type="button" class="back-btn" value="&larr; Discard Changes" />
     #{set title:'Edit Your Service: ' + service.title /}
@@ -9,8 +10,6 @@
 #{else}
     #{set title:'Add Your Service' /}
 #{/else}
-
-<div id="middlePanel" class="full">
 <div id="newService">
     #{form @save(), id:'add-service'}
     	<input type="hidden" id="locationLat" name="locationLat" value="${service.locationLat}"/>

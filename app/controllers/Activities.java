@@ -10,7 +10,7 @@ import models.*;
 public class Activities extends BaseController {
 
     public static void index() {
-        List<Activity> list = Activity.findLatest(10);
+        List<Activity> list = Activity.findLatest(15);
         render(list);
     }    
 }

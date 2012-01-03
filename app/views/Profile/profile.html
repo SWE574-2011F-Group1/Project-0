@@ -5,31 +5,46 @@
 #{elseif !loginUser}
 	#{set title: User.name + '\'s Profile' /}
 #{/elseif}
-#{set submenuView:'profile' /}
-
-
-<div class="social-bar right">
-    #{if !loginUser}
- 		#{if !isBookmarked}
- 			#{form @addBookmark(), }
- 				<input type="hidden" name="userId" value="${User.id}"/>
-				<input type="submit" value="Add to Bookmarks" class="close-btn right" />
-			#{/form} 
-		#{/if}
-		#{elseif isBookmarked}			
-			#{form @removeBookmark(),}
-				<input type="hidden" name="userId" value="${User.id}"/>
-				<input type="submit" value="Remove from Bookmarks" class="close-btn right" />
-			#{/form}
-		#{/elseif}
-	#{/if}
+<div id="leftPanel" class="menu">
+    <div class="social-bar">
+        <h2>Be Social</h2>
+        #{if !loginUser}
+     		#{if !isBookmarked}
+     			#{form @addBookmark(), }
+     				<input type="hidden" name="userId" value="${User.id}"/>
+    				<input type="submit" value="Add to Bookmarks" class="close-btn" />
+    			#{/form} 
+    		#{/if}
+    		#{elseif isBookmarked}			
+    			#{form @removeBookmark(),}
+    				<input type="hidden" name="userId" value="${User.id}"/>
+    				<input type="submit" value="Remove from Bookmarks" class="close-btn" />
+    			#{/form}
+    		#{/elseif}
+    	#{/if}
+    </div>
+    <h2>Activity</h2>
+    <div class="toplinks">
+    <ul>
+        <li>
+            <a href="@{Services.list}/${User.id}/1">Active Service Requests</a>
+        </li>
+        <li>
+            <a href="@{Services.list}/${User.id}/3">Planned Service Req/Offers</a>
+        </li>
+        <li>
+    	    <a href="@{Services.list}/${User.id}/4">Done Service Req/Offers</a>
+    	</li>
+    </ul>
+    </div>
 </div>
-<div class="clearfix"></div>
-<div>
+
+<div id="middlePanel" class="full">
+    <div class="clearfix"></div>
     #{if User.fbId}
         <img src="http://graph.facebook.com/${User.fbId}/picture?type=large" class="right" />
     #{/if}
-    <h2>About</h2>
+    <h2>${title}</h2>
 	<div class="info block">
 		<span class="item">Name: <span class="value">${User.name}</span></span>
         <span class="item">Email: <span class="value">${User.email}</span></span>
@@ -38,11 +53,6 @@
 		<span class="item">Requester Point: <span class="value">${User.requesterPoint}</span></span>
 		<span class="item">Social Point: <span class="value">${User.getAbsoluteSocialPoint()}</span></span>
 	</div>
-	<h2>Actions</h2>
-	<a href="@{Services.list}/${User.id}/1">Active Service Requests</a> | 
-	<a href="@{Services.list}/${User.id}/2">Active Service Offers</a> |
-	<a href="@{Services.list}/${User.id}/3">Planned Service Req/Offers</a> |
-	<a href="@{Services.list}/${User.id}/4">Done Service Req/Offers</a>
 	#{if loginUser}
 		<h2>My Bookmarked Users</h2>
 		#{list bookmarks, as:'b'}
@@ -64,5 +74,6 @@
     	</div>
     #{/list}	
     -->
-</div>			        		
+</div>	
+</div>		        		
 
