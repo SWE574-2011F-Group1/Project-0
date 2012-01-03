@@ -3,7 +3,7 @@ body{margin:0px; padding:0px; background:#00ac69;}
 #headpanel{width:934px; height:315px; margin:0 auto; padding:0px}
 #logo{width:235px; height:53px; margin:31px 0 0 0; padding:0px; float:right;}
 #logo h1{font-family:Tahoma; font-size:46px; color:#FFFFFF; font-weight:bold; line-height:50px; margin:0px; padding:0px;}
-#quots{width:290px; height:73px; margin:61px 0 0 0; padding:0 30px 0; float:right; text-indent:-9999px;}
+#quots{width:290px; height:73px; margin:61px 0 0 0; padding:0 30px 0; float:left;}
 #menu{width:934px; height:28px; margin:153px 0 0 0; padding:0px; float:left}
 #menu ul{width:934px; height:28px; margin:0px; padding:0px; float:left; display:block}
 #menu ul li{width:auto; height:28px; margin:0px; padding:0px; float:left; display:block}
@@ -12,7 +12,7 @@ body{margin:0px; padding:0px; background:#00ac69;}
 #menu ul li a:hover{color:#FFFFFF; background:url(../images/dusky/menuHover.jpg) no-repeat center bottom}
 #contentWrap{width:100%; margin:0px; padding:0px; float:left; background:#fffcd5 url(../images/dusky/contentBg.jpg) repeat-x}
 #contentPanel{width:934px; margin:0 auto; padding: 0px}
-#leftPanel{width:259px; margin:0px; padding:0 10px 34px 0; float:left; border-right:#c6d09d dashed 1px}
+#leftPanel{width:259px; margin:0px; padding:0 0 34px 0; float:left; border-right:#c6d09d dashed 1px}
 #leftPanel .toplinks{width:259px; margin:0px; padding:0px; float:left}
 #leftPanel .toplinks h2{width:224px; margin:0px; padding:0px; float:left; font-family:Georgia; font-size:20px; color:#000000; line-height:24px; font-weight:normal}
 #leftPanel .toplinks h3{width:224px; margin:5px 0 0 0; padding:0px; float:left; font-family:Arial; font-size:12px; color:#005b7f; line-height:16px; font-weight:bold}

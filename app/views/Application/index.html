@@ -5,36 +5,38 @@
 
 <div class="dashboard">
 
-<div class="dashboard-buttons">
-    <button id="create-new-provide-btn">
-        <img src="@{'/public/images/icons/services-provide.ico'}" class="icons left icons-big" />
-        <span>Provide A New Service!<span>
-    </button>
-    <button id="create-new-request-btn">
-        <img src="@{'/public/images/icons/services-request.ico'}" class="icons left icons-big" /> 
-        <span>Request A New Service!</span>
-    </button>
-</div>
-<script type="text/javascript" charset="utf-8">
-    $(document).ready(function() {
-        $("#create-new-request-btn").bind("click", function() {
-            document.location = '@{Services.index}?type=1';
-        });
-        $("#create-new-provide-btn").bind("click", function() {
-            document.location = '@{Services.index}?type=0';
-        });
-    })
-</script>
 <p>
     Now that you are logged in, everything will go smoother! Now you can use all the features of this site.
     Go on, look around. Check <a href="@{Services.list}">services</a> or explore the possibilities by searching! 
 </p>
 
-<div class="clearfix">
-    
+<div id="leftPanel">
+<h3 class="dash"><a href="@{Tasks.proposals}">Proposed Service Types</a></h3>
+#{list tasks, as:'t'}
+    <div class="list-item">
+        <div class="info" style="display:inline;">
+            <span class="item">
+                Title: <span class="value">${t.name}</span>
+            </span>
+            <span class="item">
+                Point: <span class="value">${t.point}</span>
+            </span>
+            <span class="item">
+                Suggested By: <span class="value"><a href="@{Profile.profile}/${t.suggestedBy.id}">${t.suggestedBy}</a></span>
+            </span>
+             <span class="item">
+                Vote Count: <span class="value">${t.downvoteCount+t.upvoteCount}</span>
+            </span>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+#{/list}
+#{else}
+    <div class="list-item"><div class="not-found">No proposed service types yet! Is it so then? We cover all the service types that is possible?</div></div>
+#{/else}
 </div>
 
-<div id="activities" class="block right">
+<div id="middlePanel">
 <h3 class="dash"><a href="@{Activities.index}">Activities</a></h3>
 #{list activities, as:'act'}
     <div class="list-item">
@@ -108,33 +110,8 @@
 #{/else}
 </div>
 
-<div id="proposedTasks" class="block">
-<h3 class="dash"><a href="@{Tasks.proposals}">Proposed Service Types</a></h3>
-#{list tasks, as:'t'}
-    <div class="list-item">
-        <div class="info" style="display:inline;">
-            <span class="item">
-                Title: <span class="value">${t.name}</span>
-            </span>
-            <span class="item">
-                Point: <span class="value">${t.point}</span>
-            </span>
-            <span class="item">
-                Suggested By: <span class="value"><a href="@{Profile.profile}/${t.suggestedBy.id}">${t.suggestedBy}</a></span>
-            </span>
-             <span class="item">
-                Vote Count: <span class="value">${t.downvoteCount+t.upvoteCount}</span>
-            </span>
-        </div>
-        <div class="clearfix"></div>
-    </div>
-#{/list}
-#{else}
-    <div class="list-item"><div class="not-found">No proposed service types yet! Is it so then? We cover all the service types that is possible?</div></div>
-#{/else}
-</div>
-<div id="matchedServices" class="block wide">
-<h3 class="dash">Service Matches</h3>
+<div id="rigtPanel">
+<h3 class="dash"><a href="@{Services.list}">Service Matches</a></h3>
 #{list services, as:'s'}
    <div class="list-item" id="list-item">
         <a href="@{Services.detail}/${s.id}">${s.title}</a>

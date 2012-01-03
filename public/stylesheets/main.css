@@ -70,10 +70,11 @@ span.error {float:right; position: relative; left: 2px; color: red;}
 .dashboard-buttons button span { vertical-align: middle; display: block; }
 .dashboard-buttons button img { position: relative; top: -2px }
 
-.dashboard .block { width: 310px; background-color: #F7F7F7; padding: 5px; margin-bottom: 10px; border-top-left-radius: 36px; border-bottom-right-radius: 18px;}
+.dashboard .block { width: 310px; padding: 5px; margin-bottom: 10px;}
 .wide {width: 100% !important;}
-.dashboard .list-item {border-top: 1px solid black; border-radius: 0px; margin-bottom: 0px;}
-.dashboard h3.dash { margin-bottom: -2px; margin-left: 8px; margin-top: 4px !important; text-align: right; font-style: italic; color: #444444;}
+.dashboard .list-item {border-radius: 0px; margin-bottom: 0px;}
+.dashboard h3.dash { margin-bottom: -2px; margin-left: 8px; margin-top: 4px !important; font-style: italic; color: #444444; border-bottom: 1px solid black;}
+.dashboard h3.dash a {text-decoration: none;}
 .dashboard .not-found {color: gray; font-size: 10px; margin-bottom: 0; text-align: center;}
 
 .service-request, .service-provide {font-weight: bold !important; text-transform: uppercase !important;}
