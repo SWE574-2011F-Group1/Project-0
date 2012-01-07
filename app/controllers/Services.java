@@ -33,6 +33,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
+import org.bouncycastle.crypto.engines.ISAACEngine;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -43,7 +44,7 @@ import com.sun.jndi.toolkit.url.UrlUtil;
 @Check("user")
 public class Services extends BaseController {
 	
-	public static int serviceNumberPerPage = 5;
+	public static int serviceNumberPerPage = 6;
 
 
     public static void index() {
@@ -198,13 +199,29 @@ public class Services extends BaseController {
 		}
         Cache.set("filteredServices", serializedServices, "30min");
         
-        if (maxPageNumber != 0) {
+        /*if (maxPageNumber != 0) {
         	services = getServicesForPage(services, 1);
-        }
+        }*/
        
         List<STagCloud> tagClouds=getTagCloudData();
         
         
+        Cache.set("rankingNone", new Boolean(true), "30min");
+		Cache.set("rankingNoneWithDistance", new Boolean(false), "30min");
+		
+		Logger.info("Getting services ranked by registration date...");
+		List<Service> regisDateRankedServices=rankServicesWithAscendingRegistationDate(services);
+		
+		Logger.info("Ranking services with ascending  social point...");
+		List<Service> socialPointRankedServices=rankServicesWithAscendingSocalPoint(services);
+		
+		
+		Cache.set("regisDateRankedServices", regisDateRankedServices, "30min");
+		Cache.set("socialPointRankedServices", socialPointRankedServices, "30min");
+		
+		Map<Long,Boolean> servicesRankedBefore=new HashMap<Long,Boolean>();
+		Cache.set("servicesRankedBefore", servicesRankedBefore, "30min");
+
         render(services, tasks,maxPageNumber,tagClouds);
 
     }
@@ -363,6 +380,9 @@ public class Services extends BaseController {
 					.fetch();
 		}
 		
+		Cache.set("rankingNone", new Boolean(false), "30min");
+		boolean distanceRanking=false;
+		
 		if(allServices!=null && allServices.size()>0 && 
 				sc.locationType==LocationType.ALL || sc.locationType==LocationType.NORMAL){
 			Service searchReferenceService=new Service();
@@ -371,8 +391,8 @@ public class Services extends BaseController {
 			searchReferenceService.locationLng=sc.locationLng;
 			distanceMap=Service.getDistances(searchReferenceService, allServices);
 			
-			if(sc.rankingType==RankingType.DISTANCE){
-				if(sc.orderType==OrderType.ASC){
+			if(sc.rankingType==RankingType.DISTANCE || sc.rankingType==RankingType.NONE){
+				if(sc.rankingType==RankingType.NONE || sc.orderType==OrderType.ASC){
 					Logger.info("Ranking services with ascending distance...");
 					servicesOrdered=rankServicesWithAscendingDistances(allServices, distanceMap);
 				}
@@ -380,8 +400,12 @@ public class Services extends BaseController {
 					Logger.info("Ranking services with descending distance...");
 					servicesOrdered=rankServicesWithDescendingDistances(allServices, distanceMap);
 				}		
+				distanceRanking=true;
 			}
-			else if(sc.rankingType==RankingType.POINT){
+		}
+		
+		if(!distanceRanking || (distanceRanking && sc.rankingType==RankingType.NONE)){
+			if(sc.rankingType==RankingType.POINT){
 				if(sc.orderType==OrderType.ASC){
 					Logger.info("Ranking services with ascending point...");
 					servicesOrdered=rankServicesWithAscendingPoint(allServices);
@@ -391,14 +415,39 @@ public class Services extends BaseController {
 					servicesOrdered=rankServicesWithDescendingPoint(allServices);
 				}		
 			}
+			else if(sc.rankingType==RankingType.NONE){
+				Cache.set("rankingNone", new Boolean(true), "30min");
+				
+				if(sc.locationType==LocationType.ALL || sc.locationType==LocationType.NORMAL){
+					Cache.set("distanceRankServices", servicesOrdered, "30min");
+					Cache.set("distanceMap", distanceMap, "30min");
+					Cache.set("rankingNoneWithDistance", new Boolean(true), "30min");
+				}
+				else{
+					Cache.set("rankingNoneWithDistance", new Boolean(false), "30min");
+				}
+				
+				Logger.info("Getting services ranked by registration date...");
+				List<Service> regisDateRankedServices=rankServicesWithAscendingRegistationDate(allServices);
+				
+				Logger.info("Ranking services with ascending  social point...");
+				List<Service> socialPointRankedServices=rankServicesWithAscendingSocalPoint(allServices);
+				
+				
+				Cache.set("regisDateRankedServices", regisDateRankedServices, "30min");
+				Cache.set("socialPointRankedServices", socialPointRankedServices, "30min");
+				
+				Map<Long,Boolean> servicesRankedBefore=new HashMap<Long,Boolean>();
+				Cache.set("servicesRankedBefore", servicesRankedBefore, "30min");
+				
+				servicesOrdered=allServices;
+				
+			}
 			else{
 				servicesOrdered=allServices;
 			}
-			
 		}
-		else{
-			servicesOrdered=allServices;
-		}
+		
 		int maxPageNumber=0;
         if(servicesOrdered!=null){
         	maxPageNumber=servicesOrdered.size()/serviceNumberPerPage;
@@ -549,6 +598,120 @@ public class Services extends BaseController {
 			}
 		}
 		return servicesOrderedBypoint;
+	}
+	private static List<Service> rankServicesWithAscendingSocalPoint(List<Service> allServices){
+		List<Service> servicesOrderedBypoint=new ArrayList<Service>();
+		
+		int center=-1;
+		int left=-1;
+		int right=-1;
+		for(int i=0;i<allServices.size();i++){
+		    Service s=allServices.get(i);
+		    
+		    long socialPoint=s.boss.getAbsoluteSocialPoint();
+		    left=0;
+			right=servicesOrderedBypoint.size();
+			center=(left+right)/2;
+			if(i==0){
+				servicesOrderedBypoint.add(s);
+			}
+			else{
+				boolean found=false;
+				while(!found && center>=0 && center<servicesOrderedBypoint.size()){
+					Service centerService=servicesOrderedBypoint.get(center);
+					long socialPointOfCService=centerService.boss.getAbsoluteSocialPoint();
+					Logger.info("Start left=%d right=%d center=%d socailPoint=%s socialPointOfCenter=%s",
+							left,right,center,""+socialPoint,""+socialPointOfCService);
+					if(socialPoint==socialPointOfCService){
+						servicesOrderedBypoint.add(center,s);
+						found=true;
+						Logger.info("Add to index:%d",center);
+					}
+					else if(left>=right){
+						if(socialPointOfCService>socialPoint){
+							servicesOrderedBypoint.add(center,s);
+							found=true;
+							Logger.info("Add to index:%d",center);
+						}
+						else if(socialPointOfCService<socialPoint){
+							servicesOrderedBypoint.add(center+1,s);
+							found=true;
+							Logger.info("Add to index:%d",(center+1));
+						}
+					}
+					else if(socialPointOfCService<socialPoint){
+						left=center+1;
+					}
+					else if(socialPointOfCService>socialPoint){
+						right=center-1;
+					}
+					center=(left+right)/2;
+					Logger.info("End left=%d right=%d center=%d",left,right,center);
+				}
+				if(!found){
+					servicesOrderedBypoint.add(servicesOrderedBypoint.size(),s);
+					Logger.info("Add to index:%d",(servicesOrderedBypoint.size()-1));
+				}
+			}
+		}
+		return servicesOrderedBypoint;
+	}
+	private static List<Service> rankServicesWithAscendingRegistationDate(List<Service> allServices){
+		List<Service> servicesOrderedRegistrationDate=new ArrayList<Service>();
+		
+		int center=-1;
+		int left=-1;
+		int right=-1;
+		for(int i=0;i<allServices.size();i++){
+		    Service s=allServices.get(i);
+		    
+		    Date rDate=s.boss.registrationTime;
+		    left=0;
+			right=servicesOrderedRegistrationDate.size();
+			center=(left+right)/2;
+			if(i==0){
+				servicesOrderedRegistrationDate.add(s);
+			}
+			else{
+				boolean found=false;
+				while(!found && center>=0 && center<servicesOrderedRegistrationDate.size()){
+					Service centerService=servicesOrderedRegistrationDate.get(center);
+					Date rDateOfCService=centerService.boss.registrationTime;
+					Logger.info("Start left=%d right=%d center=%d rDate=%s rDateOfCenter=%s",
+							left,right,center,""+s.boss.getFormattedRegistrationDate(),""+centerService.boss.getFormattedRegistrationDate());
+					if(rDate.equals(rDateOfCService)){
+						servicesOrderedRegistrationDate.add(center,s);
+						found=true;
+						Logger.info("Add to index:%d",center);
+					}
+					else if(left>=right){
+						if(rDateOfCService.before(rDate)){
+							servicesOrderedRegistrationDate.add(center,s);
+							found=true;
+							Logger.info("Add to index:%d",center);
+						}
+						else if(rDateOfCService.after(rDate)){
+							servicesOrderedRegistrationDate.add(center+1,s);
+							found=true;
+							Logger.info("Add to index:%d",(center+1));
+						}
+					}
+					else if(rDateOfCService.after(rDate)){
+						left=center+1;
+					}
+					else if(rDateOfCService.before(rDate)){
+						right=center-1;
+					}
+					center=(left+right)/2;
+					Logger.info("End left=%d right=%d center=%d",left,right,center);
+				}
+				if(!found){
+					servicesOrderedRegistrationDate.add(servicesOrderedRegistrationDate.size(),s);
+					Logger.info("Add to index:%d",(servicesOrderedRegistrationDate.size()-1));
+				}
+			}
+		}
+		return servicesOrderedRegistrationDate;
 	}
 	private static List<Service> rankServicesWithDescendingPoint(List<Service> allServices){
 		List<Service> servicesOrderedBypoint=new ArrayList<Service>();
@@ -1062,24 +1225,147 @@ public class Services extends BaseController {
     	}
     	
     	List<Service> services = null;
-       
-        //services = Service.findAll();
-        services=Cache.get("filteredServices",List.class);
-        Map<Long,Double> distanceMap=Cache.get("distanceMap",Map.class);
-       
-        Collection<Task> tasks = Task.findWithWeights();
-        
-        int maxPageNumber=0;
-        if(services!=null){
-        	maxPageNumber=services.size()/serviceNumberPerPage;
-        	maxPageNumber+=services.size()%serviceNumberPerPage;
-        }
-        if(maxPageNumber!=0){
-        	services=getServicesForPage(services, page);
-        }
+    	Collection<Task> tasks = Task.findWithWeights();
+    	Map<Long,Double> distanceMap=Cache.get("distanceMap",Map.class);
+    	Boolean rankingNone=Cache.get("rankingNone",Boolean.class);
+
+    	if(rankingNone.booleanValue()==true){
+    		
+    		Logger.info("Ranking is none. Hybrid list will be prepared.");
+    		
+    		Boolean rankingNoneWithDistance=Cache.get("rankingNoneWithDistance",Boolean.class);
+    		List<Service> regisDateRankedServices=Cache.get("regisDateRankedServices",List.class);
+    		List<Service> socialPointRankedServices=Cache.get("socialPointRankedServices",List.class);
+    		Map<Long,Boolean> servicesRankedBefore=Cache.get("servicesRankedBefore",Map.class);
+    		
+    		if(rankingNoneWithDistance.booleanValue()==true){
+    			List<Service> distanceRankServices=Cache.get("distanceRankServices",List.class);
+    			Logger.info("Hybrid list with distance is prepared.");
+    			services=prepareHybridRankServicesWithDistance(regisDateRankedServices, socialPointRankedServices, distanceRankServices, servicesRankedBefore, page);
+    		}
+    		else{
+    			Logger.info("Hybrid list without distance is prepared.");
+    			services=prepareHybridRankServicesWithoutDistance(regisDateRankedServices, socialPointRankedServices, servicesRankedBefore, page);
+    		}
+    		Cache.set("servicesRankedBefore", servicesRankedBefore, "30min");
+    		
+    		if(services.size()==0){
+    			services=Cache.get("servicesAddedBefore"+page,List.class);
+    		}
+    		else{
+    			Cache.set("servicesAddedBefore"+page, services, "30min");
+    		}
+    	}
+    	else{
+    	
+	        //services = Service.findAll();
+	        services=Cache.get("filteredServices",List.class);
+	
+	        int maxPageNumber=0;
+	        if(services!=null){
+	        	maxPageNumber=services.size()/serviceNumberPerPage;
+	        	maxPageNumber+=services.size()%serviceNumberPerPage;
+	        }
+	        if(maxPageNumber!=0){
+	        	services=getServicesForPage(services, page);
+	        }
+    	}
         
         render(services, tasks,distanceMap);
  }
 	
-	
+	private static List<Service> prepareHybridRankServicesWithDistance(List<Service> regisDateRankedServices,
+														   List<Service> socialPointRankedServices,
+														   List<Service> distanceRankServices,
+														   Map<Long,Boolean> servicesRankedBefore,int page) {
+		
+		List<Service> result=new ArrayList<Service>();
+		int startFrom=2*(page-1);
+		
+		int index=startFrom;
+		int added=0;
+		while(index<regisDateRankedServices.size() && added<2){
+			Service s=regisDateRankedServices.get(index);
+			Boolean isAddedBefore=servicesRankedBefore.get(new Long(s.id));
+			
+			if(isAddedBefore==null || isAddedBefore.booleanValue()==false){
+				result.add(s);
+				servicesRankedBefore.put(new Long(s.id), new Boolean(true));
+				added++;
+				Logger.info("Service with id %s is added(Regist date). index=%d added=%d",""+s.id,index,added);
+			}
+			index++;
+		}
+		
+		index=startFrom;
+		added=0;
+		while(index<socialPointRankedServices.size() && added<2){
+			Service s=socialPointRankedServices.get(index);
+			Boolean isAddedBefore=servicesRankedBefore.get(new Long(s.id));
+			
+			if(isAddedBefore==null || isAddedBefore.booleanValue()==false){
+				result.add(s);
+				servicesRankedBefore.put(new Long(s.id), new Boolean(true));
+				added++;
+				Logger.info("Service with id %s is added(Social Point). index=%d added=%d",""+s.id,index,added);
+			}
+			index++;
+		}
+		
+		index=startFrom;
+		added=0;
+		while(index<distanceRankServices.size() && added<2){
+			Service s=distanceRankServices.get(index);
+			Boolean isAddedBefore=servicesRankedBefore.get(new Long(s.id));
+			
+			if(isAddedBefore==null || isAddedBefore.booleanValue()==false){
+				result.add(s);
+				servicesRankedBefore.put(new Long(s.id), new Boolean(true));
+				added++;
+				Logger.info("Service with id %s is added(Distance). index=%d added=%d",""+s.id,index,added);
+			}
+			index++;
+		}
+			
+		return result;
+	}
+	private static List<Service> prepareHybridRankServicesWithoutDistance(List<Service> regisDateRankedServices,
+			   List<Service> socialPointRankedServices,
+			   Map<Long,Boolean> servicesRankedBefore,int page) {
+
+				List<Service> result=new ArrayList<Service>();
+				int startFrom=3*(page-1);
+				
+				int index=startFrom;
+				int added=0;
+				while(index<regisDateRankedServices.size() && added<3){
+					Service s=regisDateRankedServices.get(index);
+					Boolean isAddedBefore=servicesRankedBefore.get(new Long(s.id));
+					
+					if(isAddedBefore==null || isAddedBefore.booleanValue()==false){
+						result.add(s);
+						servicesRankedBefore.put(new Long(s.id), new Boolean(true));
+						added++;
+						Logger.info("Service with id %s is added(Regist date). index=%d added=%d",""+s.id,index,added);
+					}
+					index++;
+				}
+				
+				index=startFrom;
+				added=0;
+				while(index<socialPointRankedServices.size() && added<3){
+					Service s=socialPointRankedServices.get(index);
+					Boolean isAddedBefore=servicesRankedBefore.get(new Long(s.id));
+					
+					if(isAddedBefore==null || isAddedBefore.booleanValue()==false){
+						result.add(s);
+						servicesRankedBefore.put(new Long(s.id), new Boolean(true));
+						added++;
+						Logger.info("Service with id %s is added(Social point). index=%d added=%d",""+s.id,index,added);
+					}
+					index++;
+				}
+				
+				return result;
+	}
 }

@@ -3,8 +3,9 @@ package models;
 public enum RankingType {
 	NONE,
     DISTANCE,
-    POINT;
-    
+    POINT,
+	REGISTDATEFORNONE;
+	
     public int getOrdinal() {
         return ordinal();
     }
