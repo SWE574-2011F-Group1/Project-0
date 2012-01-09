@@ -3,6 +3,8 @@
 #{set tagString:'' /}
 #{set title:'Employee Service Approval' /}
 
+<div id="middlePanel" class="full">
+
 	#{form @processEmployeeApproval(), id:'process-employee-approval'}
 		<input type="hidden" value="${service.id}" name="serviceId" id="serviceId" />
         <input type="hidden" value="${user.id}" name="applicantId" id="applicantId" />
@@ -33,6 +35,8 @@
        	 	</p>
 	    </div>
   #{/form}  
+  
+</div>
 <script type="text/javascript" charset="utf-8">
    function setApproval(approval){
 	   $('input[type=hidden]#approval').val(approval);

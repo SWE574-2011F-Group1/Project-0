@@ -3,6 +3,8 @@
 #{set title:'Start Service Approval' /}
 #{set submenuView: 'services' /}
 
+<div id="middlePanel" class="full">
+
         <div class="info">
            <span class="item">
 	            Service Name: <span class="value">${service.title}</span>
@@ -55,6 +57,8 @@
             <input type="button" value="Send For Approval &rarr;" id="submit-btn">
         </p>
     #{/form}
+</div>
+
 </div>
 <script type="text/javascript" charset="utf-8">
     $(document).ready(function(){
